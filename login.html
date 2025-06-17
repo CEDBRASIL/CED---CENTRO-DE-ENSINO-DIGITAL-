@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - CED BRASIL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.jpg" type="image/jpeg" />
+</head>
+<body class="min-h-screen overflow-x-hidden bg-gradient-to-br from-black via-gray-900 to-gray-950">
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-[-1]">
+        <div class="glow-effect -top-40 -left-40 w-[500px] h-[500px] bg-green-500 rounded-full"></div>
+        <div class="glow-effect top-1/2 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-emerald-600 rounded-full"></div>
+        <div class="glow-effect -bottom-40 -right-40 w-[500px] h-[500px] bg-teal-500 rounded-full"></div>
+    </div>
+
+    <header class="bg-transparent py-4 sticky top-0 z-50 backdrop-blur-sm border-b border-transparent">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <a href="index.html"><img src="ced.svg" alt="CED Brasil" class="h-16 inline-block"></a>
+            <div class="flex items-center gap-4">
+                <label class="theme-switch" for="theme-checkbox">
+                    <input type="checkbox" id="theme-checkbox" />
+                    <div class="slider"></div>
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-sm">
+            <form id="loginForm" class="card card-glow bg-[#181818]/80 p-8 rounded-2xl shadow-2xl shadow-spotify-green/20 border border-gray-800 backdrop-blur-lg">
+                <h1 class="text-2xl font-bold mb-6 text-center text-white">Acessar Área do Aluno</h1>
+                <div class="mb-4">
+                    <label for="usuario" class="block mb-2 text-sm font-semibold text-gray-300">Usuário</label>
+                    <input type="text" id="usuario" class="form-control w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green transition-all" placeholder="Login" required />
+                </div>
+                <div class="mb-6">
+                    <label for="senha" class="block mb-2 text-sm font-semibold text-gray-300">Senha</label>
+                    <input type="password" id="senha" class="form-control w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green transition-all" placeholder="Senha" required />
+                </div>
+                <button type="submit" class="w-full bg-spotify-green text-black font-bold py-3 rounded-lg hover-bg-spotify-green-darker transition-colors button-glow">Entrar</button>
+                <p id="loginMsg" class="mt-4 text-center hidden"></p>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const themeCheckbox = document.getElementById('theme-checkbox');
+            const body = document.body;
+
+            function applyTheme(isLight) {
+                body.classList.toggle('light-theme', isLight);
+                if (themeCheckbox) themeCheckbox.checked = isLight;
+            }
+
+            const savedTheme = localStorage.getItem('theme') === 'light';
+            applyTheme(savedTheme);
+
+            if (themeCheckbox) {
+                themeCheckbox.addEventListener('change', e => {
+                    const isChecked = e.currentTarget.checked;
+                    applyTheme(isChecked);
+                    localStorage.setItem('theme', isChecked ? 'light' : 'dark');
+                });
+            }
+
+            loginForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const usuario = document.getElementById('usuario').value.trim();
+                const senha = document.getElementById('senha').value.trim();
+                const msg = document.getElementById('loginMsg');
+                msg.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-green-500 text-xl"></i> Redirecionando...';
+                msg.className = 'mt-4 text-center text-gray-300';
+                const url = `https://api.cedbrasilia.com.br/login/?usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`;
+                window.location.href = url;
+            });
+        });
+    </script>
+</body>
+</html>

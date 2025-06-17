@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cursos Online - Página de Vendas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            color: #f5f5f5;
+        }
+        .spotify-green {
+            color: #1db954;
+        }
+        .bg-spotify-green {
+            background-color: #1db954;
+        }
+      .border-spotify-green {
+        border-color: #1db954;
+      }
+      .hover-bg-spotify-green-darker:hover {
+        background-color: #1aa34a;
+      }
+      .scroll-to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background-color: #1db954;
+        color: #000;
+        border-radius: 9999px;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        opacity: 0;
+        transform: scale(0);
+        transition: opacity 0.3s, transform 0.3s;
+        pointer-events: none;
+        z-index: 1000;
+      }
+      .scroll-to-top.show {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+      }
+      .section-title {
+        font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: #a0a0a0;
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #333;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 200, 83, 0.15);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1db954;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1aa34a;
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+    <header class="bg-[#181818] py-4 px-6 flex justify-between items-center">
+        <a href="https://www.cedbrasilia.com.br" class="text-3xl font-bold"><img src="../ced.svg" alt="CedBrasil" class="h-12 inline-block"></a>
+    </header>
+
+    <main class="flex-grow">
+        <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center bg-cover bg-center" style="background-image: linear-gradient(rgba(18,18,18,0.85), rgba(18,18,18,0.85)), url('https://placehold.co/1600x900/101010/1DB954?text=Conhecimento+Sem+Limites');">
+            <h2 class="text-5xl md:text-6xl font-extrabold mb-6">Invista no seu futuro agora</h2>
+            <p class="text-lg md:text-xl mb-8 max-w-3xl">Escolha o curso que melhor se adapta aos seus objetivos e avance na sua carreira.</p>
+            <a href="#cursos" class="bg-spotify-green text-black px-8 py-3 rounded-full font-bold hover-bg-spotify-green-darker transition shadow-lg">Ver Cursos</a>
+        </section>
+<section id="beneficios" class="py-16 bg-[#121212]">
+    <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-8 text-center">
+            <div class="card flex flex-col items-center">
+                <i class="fas fa-chalkboard-teacher text-4xl spotify-green mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">100% Online</h3>
+                <p class="text-gray-400">Aprenda no seu ritmo, de qualquer lugar.</p>
+            </div>
+            <div class="card flex flex-col items-center">
+                <i class="fas fa-headset text-4xl spotify-green mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Suporte Especializado</h3>
+                <p class="text-gray-400">Equipe pronta para tirar suas dúvidas.</p>
+            </div>
+            <div class="card flex flex-col items-center">
+                <i class="fas fa-certificate text-4xl spotify-green mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Certificado Reconhecido</h3>
+                <p class="text-gray-400">Comprove suas habilidades no mercado.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <section id="cursos" class="py-20 bg-[#181818]">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">Nossos Cursos</h2>
+                <div class="grid md:grid-cols-3 gap-8 mt-12">
+                    <div class="card flex flex-col items-center text-center">
+                        <i class="fas fa-briefcase text-4xl spotify-green mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Administração</h3>
+                        <p class="text-gray-400 mb-6">Desenvolva habilidades essenciais para gerir empresas e projetos.</p>
+                        <a href="https://pay.kiwify.com.br/KiDYcv8" class="bg-spotify-green text-black font-bold px-6 py-3 rounded hover-bg-spotify-green-darker transition shadow-lg">Comprar Curso</a>
+                    </div>
+                    <div class="card flex flex-col items-center text-center">
+                        <i class="fas fa-bullhorn text-4xl spotify-green mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Marketing Digital</h3>
+                        <p class="text-gray-400 mb-6">Aprenda estratégias que convertem e conquiste o mercado online.</p>
+                        <a href="https://pay.kiwify.com.br/EqOTtRL" class="bg-spotify-green text-black font-bold px-6 py-3 rounded hover-bg-spotify-green-darker transition shadow-lg">Comprar Curso</a>
+                    </div>
+                    <div class="card flex flex-col items-center text-center">
+                        <i class="fas fa-language text-4xl spotify-green mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Inglês Fluente</h3>
+                        <p class="text-gray-400 mb-6">Domine o inglês e abra portas para oportunidades internacionais.</p>
+                        <a href="https://pay.kiwify.com.br/IBPRz5k" class="bg-spotify-green text-black font-bold px-6 py-3 rounded hover-bg-spotify-green-darker transition shadow-lg">Comprar Curso</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#181818] text-center py-6">
+        <p class="text-sm text-gray-400">Exemplo de página de vendas - Todos os direitos reservados.</p>
+    </footer>
+    <button id="scrollTopBtn" aria-label="Voltar ao topo" class="scroll-to-top">&#8679;</button>
+    <script>
+      const scrollBtn = document.getElementById('scrollTopBtn');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          scrollBtn.classList.add('show');
+        } else {
+          scrollBtn.classList.remove('show');
+        }
+      });
+      scrollBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    </script>
+</body>
+</html>
