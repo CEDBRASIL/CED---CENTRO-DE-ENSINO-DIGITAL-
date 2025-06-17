@@ -288,7 +288,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             let BASIC_B64 = '';
             // Simulação da busca do .env, pode ser removido se não for usado.
-            const API_BASE = window.API_BASE || `${window.location.protocol}//${window.location.host}`;
+            const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
             // fetch('../get.env').then(r => r.text()).then(t => {
             //     const m = t.match(/^BASIC_B64=(.*)$/m);
             //     if (m) BASIC_B64 = m[1].trim();
