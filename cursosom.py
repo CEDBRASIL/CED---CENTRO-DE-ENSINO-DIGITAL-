@@ -18,6 +18,8 @@ def _load_cursos() -> dict:
     return _cached_data
 
 
+# Aceita /cursosom e /cursosom/
+@router.get("", summary="Lista de todos os cursos da Ouro Moderno")
 @router.get("/", summary="Lista de todos os cursos da Ouro Moderno")
 async def listar_cursos_om():
     """Retorna o conteúdo do arquivo de cursos da Ouro Moderno."""
