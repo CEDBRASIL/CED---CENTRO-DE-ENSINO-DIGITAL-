@@ -162,6 +162,18 @@
                             <input type="tel" id="matricular-whatsapp" class="form-control w-full p-3 rounded-lg text-white" placeholder="(XX) XXXXX-XXXX" required />
                         </div>
                         <div class="mb-4">
+                            <label for="matricular-email" class="block mb-2 text-sm font-semibold text-gray-300">E-mail</label>
+                            <input type="email" id="matricular-email" class="form-control w-full p-3 rounded-lg text-white" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="matricular-cpf" class="block mb-2 text-sm font-semibold text-gray-300">CPF</label>
+                            <input type="text" id="matricular-cpf" class="form-control w-full p-3 rounded-lg text-white" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="matricular-nasc" class="block mb-2 text-sm font-semibold text-gray-300">Data de Nascimento</label>
+                            <input type="date" id="matricular-nasc" class="form-control w-full p-3 rounded-lg text-white" />
+                        </div>
+                        <div class="mb-4">
                             <label for="pacote-select" class="block mb-2 text-sm font-semibold text-gray-300">Selecionar Pacote do curso</label>
                             <select id="pacote-select" class="form-control w-full p-3 rounded-lg text-white"></select>
                         </div>
@@ -197,6 +209,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Número</th>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Vencimento</th>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Valor</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Situação</th>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Ações</th>
                                 </tr>
                             </thead>
@@ -372,12 +385,17 @@
                 try {
                     const res = await fetch(`${API_BASE}/cursosom`);
                     const data = await res.json();
-                    const cursos = data.cursos || [];
+                    const cursos = data.data || data.cursos || [];
                     cursoSelect.innerHTML = '<option value="">Selecione</option>';
                     cursos.forEach(c => {
                         const opt = document.createElement('option');
-                        opt.value = c;
-                        opt.textContent = c;
+                        if (typeof c === 'string') {
+                            opt.value = c;
+                            opt.textContent = c;
+                        } else {
+                            opt.value = c.id;
+                            opt.textContent = c.nome;
+                        }
                         cursoSelect.appendChild(opt);
                     });
                 } catch (err) {
@@ -497,6 +515,9 @@
                 const login = document.getElementById('matricular-login').value.trim();
                 const nome = document.getElementById('matricular-nome').value.trim();
                 const whatsapp = normalizarNumero(document.getElementById('matricular-whatsapp').value);
+                const email = document.getElementById('matricular-email').value.trim();
+                const cpf = document.getElementById('matricular-cpf').value.replace(/\D/g, '');
+                const nascimento = document.getElementById('matricular-nasc').value;
                 const pacote = pacoteSelect.value;
                 const curso = cursoSelect.value;
                 const mensagem = document.getElementById('matricular-msg').value.trim();
@@ -513,9 +534,16 @@
                     const resp = await fetch(`${API_BASE}/matricular`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ login, nome, whatsapp, pacote, curso, mensagem })
+                        body: JSON.stringify({ login, nome, whatsapp, email, cpf, nascimento, pacote, curso, mensagem })
                     });
                     if (!resp.ok) throw new Error('Falha ao cadastrar');
+                    try {
+                        await fetch(`${API_BASE}/asaas/assinatura`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ nome, cpf, whatsapp, email, nascimento, descricao: curso, valor: 59.9 })
+                        });
+                    } catch (err) {}
                     matricularFeedback.textContent = 'Aluno matriculado com sucesso!';
                     matricularFeedback.className = 'mt-4 text-green-400 text-center';
                     matricularForm.reset();
@@ -918,20 +946,23 @@
                     if (assinantes.length === 0) {
                         assinantesTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="6">Nenhum assinante.</td></tr>`;
                     } else {
-                        assinantesTabela.innerHTML = assinantes.map(a => `
+                        assinantesTabela.innerHTML = assinantes.map(a => {
+                            const statusClass = a.situacao === 'Em dia' ? 'text-green-400' : 'text-red-500';
+                            return `
                             <tr class="hover:bg-gray-700 transition-colors">
                                 <td class="px-6 py-4"><input type="checkbox" class="select-assinante form-control" data-id="${a.id}"></td>
                                 <td class="px-6 py-4 font-medium">${a.nome}</td>
                                 <td class="px-6 py-4 text-gray-400">${a.numero || ''}</td>
                                 <td class="px-6 py-4 text-gray-400">${a.dataVencimento || ''}</td>
                                 <td class="px-6 py-4 text-gray-400">${a.valor || ''}</td>
+                                <td class="px-6 py-4 ${statusClass}">${a.situacao || ''}</td>
                                 <td class="px-6 py-4 text-sm space-x-2">
                                     <button data-id="${a.id}" data-customer="${a.customer}" data-nome="${a.nome}" data-numero="${a.numero}" data-valor="${a.valor}" data-curso="${a.curso}" class="charge-assinante bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors"><i class="fas fa-money-bill-wave"></i></button>
                                     <button data-id="${a.id}" class="edit-assinante bg-yellow-600 text-white px-3 py-1 rounded-md hover:bg-yellow-700 transition-colors"><i class="fas fa-edit"></i></button>
                                     <button data-id="${a.id}" class="delete-assinante bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition-colors"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
-                        `).join('');
+                        `}).join('');
                         document.querySelectorAll('.edit-assinante').forEach(b => b.addEventListener('click', () => editAssinante(b.dataset.id)));
                         document.querySelectorAll('.delete-assinante').forEach(b => b.addEventListener('click', () => deleteAssinante(b.dataset.id)));
                         document.querySelectorAll('.charge-assinante').forEach(b => b.addEventListener('click', () => cobrarAssinante(b.dataset)));
