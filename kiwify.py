@@ -26,6 +26,9 @@ WHATSAPP_LOG_NUM = os.getenv("WHATSAPP_LOG_NUM", "556186660241")
 UNIDADE_ID = os.getenv("UNIDADE_ID")
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
 
+# Se definido como "1", desativa a atualização de cursos na inicialização
+SKIP_CACHE_UPDATE_ON_STARTUP = os.getenv("SKIP_CACHE_UPDATE_ON_STARTUP", "0") in ("1", "true", "True")
+
 # Variáveis para credenciais do Google
 GOOGLE_CREDENTIALS_JSON = os.getenv("GOOGLE_CREDENTIALS_JSON")  # Para segredos em texto
 GOOGLE_SHEETS_CREDENTIALS_PATH = os.getenv(
@@ -508,4 +511,5 @@ async def secure_refresh_all():
 async def startup_event():
     """Executa na inicialização da aplicação."""
     obter_token_unidade()
-    atualizar_cache_cursos_om()
+    if not SKIP_CACHE_UPDATE_ON_STARTUP:
+        atualizar_cache_cursos_om()
