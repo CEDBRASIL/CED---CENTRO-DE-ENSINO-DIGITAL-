@@ -626,11 +626,20 @@
             }
 
             async function criarAssinante(dados) {
+                const payload = {
+                    nome: dados.nome,
+                    cpf: dados.cpf,
+                    whatsapp: dados.numero,
+                    valor: dados.valor,
+                    descricao: 'Assinatura',
+                    ciclo: 'MONTHLY',
+                    dueDate: dados.vencimento
+                };
                 try {
-                    const resp = await fetch(`${API_BASE}/assinantes`, {
+                    const resp = await fetch(`${API_BASE}/asaas/assinatura`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(dados)
+                        body: JSON.stringify(payload)
                     });
                     if (!resp.ok) throw new Error('Falha ao criar assinatura');
                     return await resp.json();
