@@ -888,6 +888,28 @@
                 }
             }
 
+            async function cobrarAssinante(data) {
+                if (!confirm('Enviar cobrança para este assinante?')) return;
+                const payload = {
+                    nome: data.nome,
+                    whatsapp: data.numero,
+                    customer: data.customer,
+                    valor: parseFloat(data.valor || 0),
+                    descricao: data.curso
+                };
+                try {
+                    const resp = await fetch(`${API_BASE}/msgasaas`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!resp.ok) throw new Error();
+                    alert('Cobrança enviada com sucesso!');
+                } catch (err) {
+                    alert('Falha ao enviar cobrança.');
+                }
+            }
+
             async function fetchAssinantes() {
                 assinantesTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="6"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
                 try {
@@ -904,6 +926,7 @@
                                 <td class="px-6 py-4 text-gray-400">${a.dataVencimento || ''}</td>
                                 <td class="px-6 py-4 text-gray-400">${a.valor || ''}</td>
                                 <td class="px-6 py-4 text-sm space-x-2">
+                                    <button data-id="${a.id}" data-customer="${a.customer}" data-nome="${a.nome}" data-numero="${a.numero}" data-valor="${a.valor}" data-curso="${a.curso}" class="charge-assinante bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors"><i class="fas fa-money-bill-wave"></i></button>
                                     <button data-id="${a.id}" class="edit-assinante bg-yellow-600 text-white px-3 py-1 rounded-md hover:bg-yellow-700 transition-colors"><i class="fas fa-edit"></i></button>
                                     <button data-id="${a.id}" class="delete-assinante bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition-colors"><i class="fas fa-trash"></i></button>
                                 </td>
@@ -911,6 +934,7 @@
                         `).join('');
                         document.querySelectorAll('.edit-assinante').forEach(b => b.addEventListener('click', () => editAssinante(b.dataset.id)));
                         document.querySelectorAll('.delete-assinante').forEach(b => b.addEventListener('click', () => deleteAssinante(b.dataset.id)));
+                        document.querySelectorAll('.charge-assinante').forEach(b => b.addEventListener('click', () => cobrarAssinante(b.dataset)));
                         document.querySelectorAll('.select-assinante').forEach(cb => cb.addEventListener('change', updateAssinantesDrawer));
                         assinantesSelectAll.checked = false;
                         updateAssinantesDrawer();
