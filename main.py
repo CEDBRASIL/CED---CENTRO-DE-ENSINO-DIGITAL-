@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 import cursos
 import cursosom
@@ -68,14 +69,16 @@ app.include_router(mensagemdecobranca.router)
 app.include_router(site_page.router)
 
 
-
 # ──────────────────────────────────────────────────────────
 # Health-check
 # ──────────────────────────────────────────────────────────
-@app.get("/", tags=["Status"])
+@app.get("/status", tags=["Status"])
 def health():
     """Verifica se o serviço está operacional."""
     return {"status": "online", "version": app.version}
+
+static_dir = os.path.dirname(os.path.abspath(__file__))
+app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
 # ──────────────────────────────────────────────────────────
 # Execução local / Render
