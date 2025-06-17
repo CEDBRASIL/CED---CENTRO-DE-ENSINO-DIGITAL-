@@ -106,6 +106,9 @@ gera a fatura no ASAAS e envia o link via WhatsApp para o aluno.
 
 A rota `/assinantes` permite consultar e alterar assinaturas no ASAAS.
 
+Ao consultar (`GET /assinantes`) cada item possui os campos `id`, `customer`,
+`nome`, `numero`, `valor`, `curso` e `vencimento`.
+
 ### Exemplo de criação
 
 ```bash
