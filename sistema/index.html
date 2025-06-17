@@ -288,6 +288,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             let BASIC_B64 = '';
             // Simulação da busca do .env, pode ser removido se não for usado.
+            const API_BASE = window.API_BASE || `${window.location.protocol}//${window.location.host}`;
             // fetch('../get.env').then(r => r.text()).then(t => {
             //     const m = t.match(/^BASIC_B64=(.*)$/m);
             //     if (m) BASIC_B64 = m[1].trim();
@@ -352,7 +353,7 @@
 
             async function carregarPacotes() {
                 try {
-                    const res = await fetch('https://api.cedbrasilia.com.br/cursos');
+                    const res = await fetch('${API_BASE}/cursos');
                     const data = await res.json();
                     const pacotes = Object.keys(data.cursos || {});
                     pacoteSelect.innerHTML = '<option value="">Selecione</option>';
@@ -369,7 +370,7 @@
 
             async function carregarCursos() {
                 try {
-                    const res = await fetch('https://api.cedbrasilia.com.br/cursosom');
+                    const res = await fetch('${API_BASE}/cursosom');
                     const data = await res.json();
                     const cursos = data.cursos || [];
                     cursoSelect.innerHTML = '<option value="">Selecione</option>';
@@ -509,7 +510,7 @@
                 matricularFeedback.textContent = 'Enviando...';
                 matricularFeedback.className = 'mt-4 text-gray-300 text-center';
                 try {
-                    const resp = await fetch('https://api.cedbrasilia.com.br/matricular', {
+                    const resp = await fetch('${API_BASE}/matricular', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ login, nome, whatsapp, pacote, curso, mensagem })
@@ -588,7 +589,7 @@
             // ======== Funções da API de Assinantes ========
             async function listarAssinantes() {
                 try {
-                    const resp = await fetch('https://api.cedbrasilia.com.br/assinantes');
+                    const resp = await fetch('${API_BASE}/assinantes');
                     if (!resp.ok) throw new Error('Falha na requisição');
                     return await resp.json();
                 } catch (err) {
@@ -598,7 +599,7 @@
 
             async function criarAssinante(dados) {
                 try {
-                    const resp = await fetch('https://api.cedbrasilia.com.br/assinantes', {
+                    const resp = await fetch('${API_BASE}/assinantes', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(dados)
@@ -612,7 +613,7 @@
 
             async function editarAssinanteAPI(id, dados) {
                 try {
-                    const resp = await fetch(`https://api.cedbrasilia.com.br/assinantes/${id}`, {
+                    const resp = await fetch(`${API_BASE}/assinantes/${id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(dados)
@@ -626,7 +627,7 @@
 
             async function excluirAssinanteAPI(id) {
                 try {
-                    const resp = await fetch(`https://api.cedbrasilia.com.br/assinantes/${id}`, { method: 'DELETE' });
+                    const resp = await fetch(`${API_BASE}/assinantes/${id}`, { method: 'DELETE' });
                     if (!resp.ok) throw new Error('Falha ao remover assinatura');
                     return true;
                 } catch (err) {
@@ -637,7 +638,7 @@
             async function fetchAlunos() {
                 alunosTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="6"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
                 try {
-                    const response = await fetch('https://api.cedbrasilia.com.br/alunos');
+                    const response = await fetch('${API_BASE}/alunos');
                     const data = await response.json();
                     const filtro = filtroInput.value.toLowerCase();
                     const alunosApi = Array.isArray(data) ? data : data.alunos || [];
@@ -677,7 +678,7 @@
             async function deleteAluno(id) {
                 if (!confirm(`Deseja realmente deletar o aluno com ID ${id}?`)) return;
                 try {
-                    const resp = await fetch(`https://api.cedbrasilia.com.br/deletar/${id}`, { method: 'DELETE' });
+                    const resp = await fetch(`${API_BASE}/deletar/${id}`, { method: 'DELETE' });
                     if (!resp.ok) throw new Error('Falha ao excluir');
                     fetchAlunos();
                 } catch (err) { alert('Erro ao deletar aluno.'); }
@@ -687,7 +688,7 @@
                  const action = status === 1 ? 'bloquear' : 'desbloquear';
                 if (!confirm(`Deseja realmente ${action} o aluno com ID ${id}?`)) return;
                 try {
-                    const resp = await fetch(`https://api.cedbrasilia.com.br/bloquear/${id}?status=${status}`, { method: 'POST' });
+                    const resp = await fetch(`${API_BASE}/bloquear/${id}?status=${status}`, { method: 'POST' });
                     if (!resp.ok) throw new Error('Falha ao atualizar');
                     fetchAlunos();
                 } catch (err) { alert('Erro ao atualizar aluno.'); }
@@ -702,7 +703,7 @@
                 if (selecionados.length === 0) return;
                 if (!confirm(`Deseja realmente deletar os ${selecionados.length} alunos selecionados?`)) return;
                 try {
-                    await Promise.all(selecionados.map(id => fetch(`https://api.cedbrasilia.com.br/deletar/${id}`, { method: 'DELETE' })));
+                    await Promise.all(selecionados.map(id => fetch(`${API_BASE}/deletar/${id}`, { method: 'DELETE' })));
                     fetchAlunos();
                 } catch (err) { alert('Erro ao deletar alunos selecionados.'); }
             }
@@ -713,7 +714,7 @@
                 if (selecionados.length === 0) return;
                  if (!confirm(`Deseja realmente ${action} os ${selecionados.length} alunos selecionados?`)) return;
                 try {
-                    await Promise.all(selecionados.map(id => fetch(`https://api.cedbrasilia.com.br/bloquear/${id}?status=${status}`, { method: 'POST' })));
+                    await Promise.all(selecionados.map(id => fetch(`${API_BASE}/bloquear/${id}?status=${status}`, { method: 'POST' })));
                     fetchAlunos();
                 } catch (err) { alert(`Erro ao ${action} alunos selecionados.`); }
             }
