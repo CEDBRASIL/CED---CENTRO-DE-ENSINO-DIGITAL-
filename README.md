@@ -12,6 +12,7 @@ python main.py
 ```
 
 A API ficará disponível em `http://localhost:8000` (ou na porta definida pela variável `PORT`).
+Defina `SKIP_CACHE_UPDATE_ON_STARTUP=1` para evitar a tentativa de atualizar o cache de cursos ao iniciar o servidor.
 
 ## Principais rotas
 
