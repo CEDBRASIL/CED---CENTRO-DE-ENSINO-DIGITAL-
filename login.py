@@ -36,6 +36,8 @@ def _gera_url_redirecionamento(usuario: str, senha: str) -> str:
     raise HTTPException(401, detail="Usuário ou senha inválidos.")
 
 
+# Aceita /login e /login/
+@router.post("", summary="Realiza login do aluno na OM e redireciona para o EAD")
 @router.post("/", summary="Realiza login do aluno na OM e redireciona para o EAD")
 def login(dados: LoginData):
     """Recebe usuário e senha por POST e redireciona para o EAD."""
@@ -43,6 +45,7 @@ def login(dados: LoginData):
     return RedirectResponse(url=redirect_url, status_code=302)
 
 
+@router.get("", summary="Realiza login do aluno na OM e redireciona para o EAD")
 @router.get("/", summary="Realiza login do aluno na OM e redireciona para o EAD")
 def login_get(usuario: str, senha: str):
     """Recebe usuário e senha por GET e redireciona para o EAD."""

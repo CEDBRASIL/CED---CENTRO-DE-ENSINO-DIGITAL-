@@ -35,6 +35,8 @@ def _obter_todos_alunos() -> list:
     return alunos
 
 
+# Aceita /alunos e /alunos/
+@router.get("", summary="Lista todos os alunos da unidade")
 @router.get("/", summary="Lista todos os alunos da unidade")
 def listar_alunos_endpoint():
     try:

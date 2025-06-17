@@ -12,6 +12,8 @@ ASAAS_KEY = os.getenv("ASAAS_KEY")
 ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
 
 
+# Aceita /assinantes e /assinantes/
+@router.get("")
 @router.get("/")
 def listar_assinantes():
     """Retorna uma lista formatada com os assinantes cadastrados."""
