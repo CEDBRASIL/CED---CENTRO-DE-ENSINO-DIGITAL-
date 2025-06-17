@@ -96,10 +96,6 @@
                         <i class="fas fa-user-plus"></i>
                         Matricular Aluno
                     </button>
-                    <button id="menu-cobrancas" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-3">
-                        <i class="fas fa-money-bill-wave"></i>
-                        Cobranças
-                    </button>
                     <button id="menu-assinantes" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-3">
                         <i class="fas fa-address-book"></i>
                         Assinantes
@@ -181,23 +177,6 @@
                     <p id="matricular-feedback" class="mt-4 text-center text-sm"></p>
                 </form>
                 </section>
-                <section id="cobrancas-section" class="hidden">
-                    <h2 class="text-3xl font-bold mb-6">Cobranças</h2>
-                    <div class="overflow-x-auto bg-[#181818] rounded-lg border border-gray-800">
-                        <table class="min-w-full">
-                            <thead>
-                                <tr class="border-b border-gray-700">
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">ID</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Nome</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Telefone</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Vencimento</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cobrancas-tabela" class="divide-y divide-gray-800"></tbody>
-                        </table>
-                    </div>
-                </section>
                 <section id="assinantes-section" class="hidden">
                     <h2 class="text-3xl font-bold mb-6">Assinantes</h2>
                     <form id="assinante-form" class="bg-[#181818] p-6 rounded-lg border border-gray-800 mb-6 flex flex-col gap-4 max-w-md">
@@ -277,7 +256,6 @@
                         <div id="acessos-opcoes" class="flex flex-wrap gap-2 text-sm">
                             <label><input type="checkbox" value="alunos" class="mr-1" checked>Alunos</label>
                             <label><input type="checkbox" value="matricular" class="mr-1" checked>Matricular</label>
-                            <label><input type="checkbox" value="cobrancas" class="mr-1" checked>Cobranças</label>
                             <label><input type="checkbox" value="whatsapp" class="mr-1" checked>Whatsapp</label>
                             <label><input type="checkbox" value="tarefas" class="mr-1" checked>Tarefas</label>
                         </div>
@@ -323,19 +301,16 @@
 
             const menuAlunos = document.getElementById('menu-alunos');
             const menuMatricular = document.getElementById('menu-matricular');
-            const menuCobrancas = document.getElementById('menu-cobrancas');
             const menuAssinantes = document.getElementById('menu-assinantes');
             const menuWhatsapp = document.getElementById('menu-whatsapp');
             const menuTarefas = document.getElementById('menu-tarefas');
             const menuUsuarios = document.getElementById('menu-usuarios');
             const alunosSection = document.getElementById('alunos-section');
             const matricularSection = document.getElementById('matricular-section');
-            const cobrancasSection = document.getElementById('cobrancas-section');
             const assinantesSection = document.getElementById('assinantes-section');
             const whatsappSection = document.getElementById('whatsapp-section');
             const tarefasSection = document.getElementById('tarefas-section');
             const usuariosSection = document.getElementById('usuarios-section');
-            const cobrancasTabela = document.getElementById('cobrancas-tabela');
             const matricularForm = document.getElementById('matricular-form');
             const matricularFeedback = document.getElementById('matricular-feedback');
             const matricularWhatsapp = document.getElementById('matricular-whatsapp');
@@ -412,16 +387,25 @@
             carregarPacotes();
             carregarCursos();
 
-            loginForm.addEventListener('submit', function(e) {
+            loginForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const user = document.getElementById('username').value;
                 const pass = document.getElementById('password').value;
-                // Credenciais hardcoded para demonstração
-                if ((user === 'Yuri' && pass === '$Mdwy06151931') || (user === 'danielmtdc' && pass === '0264789')) {
-                    loginSection.classList.add('hidden');
-                    systemSection.classList.remove('hidden');
-                    systemSection.style.display = 'flex'; // Garante o display flex
-                } else {
+                loginError.classList.add('hidden');
+                try {
+                    const resp = await fetch('/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ usuario: user, senha: pass })
+                    });
+                    if (resp.ok) {
+                        loginSection.classList.add('hidden');
+                        systemSection.classList.remove('hidden');
+                        systemSection.style.display = 'flex';
+                    } else {
+                        loginError.classList.remove('hidden');
+                    }
+                } catch (err) {
                     loginError.classList.remove('hidden');
                 }
             });
@@ -440,7 +424,6 @@
             function mostrar(sec) {
                 alunosSection.classList.add('hidden');
                 matricularSection.classList.add('hidden');
-                cobrancasSection.classList.add('hidden');
                 assinantesSection.classList.add('hidden');
                 whatsappSection.classList.add('hidden');
                 tarefasSection.classList.add('hidden');
@@ -454,10 +437,6 @@
                 mostrar(matricularSection);
             });
 
-            menuCobrancas.addEventListener('click', () => {
-                mostrar(cobrancasSection);
-                carregarCobrancas();
-            });
 
             menuAssinantes.addEventListener('click', () => {
                 mostrar(assinantesSection);
@@ -739,38 +718,6 @@
                 } catch (err) { alert(`Erro ao ${action} alunos selecionados.`); }
             }
 
-            async function carregarCobrancas() {
-                cobrancasTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="5"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
-                try {
-                    const resp = await fetch('https://api.cedbrasilia.com.br/alunos/');
-                    const data = await resp.json();
-                    const alunos = Array.isArray(data) ? data : data.alunos || [];
-                    cobrancasTabela.innerHTML = alunos.map(a => `
-                        <tr>
-                            <td class="px-6 py-4 text-sm text-gray-400">${a.id}</td>
-                            <td class="px-6 py-4 font-medium">${a.nome}</td>
-                            <td class="px-6 py-4 text-gray-400">${a.telefone || '-'}</td>
-                            <td class="px-6 py-4"><input type="date" class="form-control data-venc" /></td>
-                            <td class="px-6 py-4"><button class="enviar-cobranca bg-spotify-green text-black px-3 py-1 rounded-md hover-bg-spotify-green-darker transition-colors" data-num="${(a.telefone || '').replace(/\D/g,'')}"><i class='fas fa-paper-plane'></i></button></td>
-                        </tr>
-                    `).join('');
-                    document.querySelectorAll('.enviar-cobranca').forEach(btn => btn.addEventListener('click', () => enviarCobranca(btn.dataset.num, btn.parentElement.parentElement.querySelector('.data-venc').value)));
-                } catch (err) {
-                    cobrancasTabela.innerHTML = `<tr><td class="px-6 py-4 text-center text-red-500" colspan="5">Erro ao carregar alunos.</td></tr>`;
-                }
-            }
-
-            async function enviarCobranca(numero, data) {
-                if (!numero) return alert('Número inválido');
-                const mensagem = `Olá! Sua cobrança vence em ${data}.`;
-                try {
-                    const numFmt = normalizarNumero(numero);
-                    await fetch(`https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/send?para=${numFmt}&mensagem=${encodeURIComponent(mensagem)}`);
-                    alert('Cobrança enviada!');
-                } catch (err) {
-                    alert('Erro ao enviar cobrança.');
-                }
-            }
 
             async function checkWpStatus() {
                 try {
