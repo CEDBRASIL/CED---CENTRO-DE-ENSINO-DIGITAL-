@@ -13,10 +13,9 @@ import kiwify
 import asaas
 import assinantes
 import msgasaas
-import cobrar
 import bloquear
 import login
-import mensagemdecobranca
+import auth
 import site_page
 from app import whatsapp
 
@@ -60,12 +59,11 @@ app.include_router(kiwify.router,     prefix="/kiwify", tags=["Kiwify"])
 app.include_router(asaas.router,  tags=["Matrícula Assas"])
 app.include_router(assinantes.router)
 app.include_router(msgasaas.router)
-app.include_router(cobrar.router)
 app.include_router(deletar.router,    tags=["Excluir Aluno"])
 app.include_router(bloquear.router,   tags=["Bloqueio"])
 app.include_router(login.router,      prefix="/login",     tags=["Login"])
+app.include_router(auth.router)
 app.include_router(whatsapp.router)
-app.include_router(mensagemdecobranca.router)
 app.include_router(site_page.router)
 
 

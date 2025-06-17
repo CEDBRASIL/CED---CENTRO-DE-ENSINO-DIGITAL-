@@ -56,6 +56,7 @@ def listar_assinantes():
 
         assinantes.append(
             {
+                "id": sub.get("id"),
                 "nome": nome,
                 "numero": telefone,
                 "valor": valor,
