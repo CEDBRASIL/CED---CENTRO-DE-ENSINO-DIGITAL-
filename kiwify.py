@@ -41,8 +41,12 @@ CURSOS_OM_CACHE: dict = {}  # Cache para os cursos carregados da API
 
 
 def enviar_log_whatsapp(mensagem: str) -> None:
-    """Envia mensagem de log via WhatsApp, ignorando tokens renovados."""
-    if "Token de unidade atualizado" in mensagem:
+    """Envia mensagem de log via WhatsApp, ignorando mensagens de rotina."""
+    if (
+        "Token de unidade atualizado" in mensagem
+        or "Atualizando cache de cursos" in mensagem
+        or "Falha ao buscar cursos da API" in mensagem
+    ):
         return
     numero = formatar_numero_whatsapp(WHATSAPP_LOG_NUM)
     if not numero:
