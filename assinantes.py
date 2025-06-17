@@ -5,6 +5,8 @@ from fastapi import APIRouter, HTTPException
 
 from asaas import _criar_ou_obter_cliente, _headers
 from utils import parse_valor
+from matricular import _buscar_aluno_id_por_cpf
+from bloquear import _alterar_bloqueio
 
 router = APIRouter(prefix="/assinantes", tags=["Assinantes"])
 
@@ -42,6 +44,7 @@ def listar_assinantes():
 
         nome = None
         telefone = None
+        cpf_cli = None
         if cid:
             try:
                 c = requests.get(
@@ -53,9 +56,28 @@ def listar_assinantes():
                     cust = c.json()
                     nome = cust.get("name")
                     telefone = cust.get("mobilePhone") or cust.get("phone")
+                    cpf_cli = cust.get("cpfCnpj")
             except requests.RequestException:
                 pass
 
+        situacao = ""
+        if vencimento:
+            try:
+                venc = date.fromisoformat(vencimento)
+                dias = (venc - date.today()).days
+                if dias < 0:
+                    situacao = "Aguardando pagamento"
+                    if dias <= -6 and cpf_cli:
+                        aid = _buscar_aluno_id_por_cpf(cpf_cli)
+                        if aid:
+                            try:
+                                _alterar_bloqueio(aid, 1)
+                            except Exception:
+                                pass
+                else:
+                    situacao = "Em dia"
+            except Exception:
+                situacao = ""
         assinantes.append(
             {
                 "id": sub.get("id"),
@@ -65,12 +87,15 @@ def listar_assinantes():
                 "valor": valor,
                 "curso": curso,
                 "vencimento": vencimento,
+                "cpf": cpf_cli,
+                "situacao": situacao,
             }
         )
 
     return {"assinantes": assinantes}
 
 
+@router.post("")
 @router.post("/")
 def adicionar_assinante(dados: dict):
     """Cria uma nova assinatura no ASAAS."""
@@ -89,7 +114,13 @@ def adicionar_assinante(dados: dict):
     if valor <= 0:
         raise HTTPException(400, "Valor inválido")
 
-    cid = _criar_ou_obter_cliente(nome, cpf, phone)
+    cid = _criar_ou_obter_cliente(
+        nome,
+        cpf,
+        phone,
+        dados.get("email"),
+        dados.get("nascimento") or dados.get("data_nascimento"),
+    )
 
     payload = {
         "customer": cid,

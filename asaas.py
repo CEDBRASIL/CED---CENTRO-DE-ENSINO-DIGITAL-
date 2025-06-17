@@ -34,8 +34,18 @@ def _headers() -> dict:
     return {"Content-Type": "application/json", "access_token": ASAAS_KEY}
 
 
-def _criar_ou_obter_cliente(nome: str, cpf: str, phone: str) -> str:
+def _criar_ou_obter_cliente(
+    nome: str,
+    cpf: str,
+    phone: str,
+    email: str | None = None,
+    nascimento: str | None = None,
+) -> str:
     payload = {"name": nome, "cpfCnpj": cpf, "mobilePhone": phone}
+    if email:
+        payload["email"] = email
+    if nascimento:
+        payload["birthDate"] = nascimento
     try:
         r = requests.post(
             f"{ASAAS_BASE_URL}/customers", json=payload, headers=_headers(), timeout=10
@@ -174,6 +184,8 @@ def _criar_checkout(
     cpf: str,
     phone: str,
     valor: float,
+    email: str | None = None,
+    nascimento: str | None = None,
     descricao: str = "Curso",
     cursos_ids: List[int] | None = None,
     billing_type: str | None = None,
@@ -196,7 +208,7 @@ def _criar_checkout(
     if valor <= 0:
         raise HTTPException(400, "Valor inválido")
 
-    customer_id = _criar_ou_obter_cliente(nome, cpf, phone)
+    customer_id = _criar_ou_obter_cliente(nome, cpf, phone, email, nascimento)
 
     payload = {
         "customer": customer_id,
@@ -318,7 +330,7 @@ def criar_assinatura_recorrente(dados: dict, enviar_whatsapp: bool = True):
     if valor <= 0:
         raise HTTPException(400, "Valor inválido")
 
-    customer_id = _criar_ou_obter_cliente(nome, cpf, phone)
+    customer_id = _criar_ou_obter_cliente(nome, cpf, phone, dados.get("email"), dados.get("nascimento"))
     logger.info("Cliente ASAAS %s criado/obtido para %s", customer_id, phone)
 
     payload = {
