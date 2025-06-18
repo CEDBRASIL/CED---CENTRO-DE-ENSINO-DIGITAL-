@@ -3,6 +3,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from log_config import setup_logging, send_startup_message
+
+setup_logging()
+
 import cursos
 import cursosom
 import secure
@@ -64,6 +68,11 @@ app.include_router(login.router, prefix="/login", tags=["Login"])
 app.include_router(auth.router)
 app.include_router(whatsapp.router)
 app.include_router(testegratuito.router)
+
+@app.on_event("startup")
+async def _on_startup() -> None:
+    """Dispara aviso de inicialização via WhatsApp."""
+    send_startup_message()
 
 
 # ──────────────────────────────────────────────────────────
