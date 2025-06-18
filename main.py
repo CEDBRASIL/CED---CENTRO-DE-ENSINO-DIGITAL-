@@ -16,10 +16,8 @@ import msgasaas
 import bloquear
 import login
 import auth
-import site_page
 import testegratuito
 from app import whatsapp
-
 
 # ──────────────────────────────────────────────────────────
 # Instância da aplicação FastAPI
@@ -64,7 +62,6 @@ app.include_router(login.router, prefix="/login", tags=["Login"])
 app.include_router(auth.router)
 app.include_router(whatsapp.router)
 app.include_router(testegratuito.router)
-app.include_router(site_page.router)
 
 
 # ──────────────────────────────────────────────────────────

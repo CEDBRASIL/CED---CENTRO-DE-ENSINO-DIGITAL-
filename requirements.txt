@@ -1,7 +1,6 @@
 fastapi
 uvicorn[standard]
 requests
-mercadopago
 flask
 gspread
 google-auth-oauthlib
