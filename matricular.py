@@ -1,6 +1,7 @@
 import os
 import threading
 from typing import List, Tuple, Optional
+import logging
 import requests
 from fastapi import APIRouter, HTTPException
 from utils import formatar_numero_whatsapp
@@ -27,9 +28,9 @@ DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1377838283975036928/IgVv
 CPF_PREFIXO = "20254158"
 cpf_lock = threading.Lock()
 
-def _log(msg: str):
-    agora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{agora}] {msg}")
+def _log(msg: str) -> None:
+    """Registra mensagem no log padrão."""
+    logging.info(msg)
 
 def _obter_token_unidade() -> str:
     """
