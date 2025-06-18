@@ -100,6 +100,10 @@
                         <i class="fas fa-address-book"></i>
                         Assinantes
                     </button>
+                    <button id="menu-cobrancas" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-3">
+                        <i class="fas fa-receipt"></i>
+                        Cobranças
+                    </button>
                     <button id="menu-whatsapp" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-3">
                         <i class="fab fa-whatsapp"></i>
                         Whatsapp
@@ -217,6 +221,24 @@
                         </table>
                     </div>
                 </section>
+                <section id="cobrancas-section" class="hidden">
+                    <h2 class="text-3xl font-bold mb-6">Cobranças</h2>
+                    <div class="overflow-x-auto bg-[#181818] rounded-lg border border-gray-800">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="border-b border-gray-700">
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Nome</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Valor</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Curso</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Vencimento</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Situação</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cobrancas-tabela" class="divide-y divide-gray-800"></tbody>
+                        </table>
+                    </div>
+                </section>
                 <section id="whatsapp-section" class="hidden">
                     <h2 class="text-3xl font-bold mb-6">Whatsapp</h2>
                     <div class="bg-[#181818] p-6 rounded-lg border border-gray-800 mb-6">
@@ -316,12 +338,14 @@
             const menuAlunos = document.getElementById('menu-alunos');
             const menuMatricular = document.getElementById('menu-matricular');
             const menuAssinantes = document.getElementById('menu-assinantes');
+            const menuCobrancas = document.getElementById('menu-cobrancas');
             const menuWhatsapp = document.getElementById('menu-whatsapp');
             const menuTarefas = document.getElementById('menu-tarefas');
             const menuUsuarios = document.getElementById('menu-usuarios');
             const alunosSection = document.getElementById('alunos-section');
             const matricularSection = document.getElementById('matricular-section');
             const assinantesSection = document.getElementById('assinantes-section');
+            const cobrancasSection = document.getElementById('cobrancas-section');
             const whatsappSection = document.getElementById('whatsapp-section');
             const tarefasSection = document.getElementById('tarefas-section');
             const usuariosSection = document.getElementById('usuarios-section');
@@ -341,6 +365,7 @@
             const desbloquearSelecionadosBtn = document.getElementById('desbloquear-selecionados');
             const excluirSelecionadosBtn = document.getElementById('excluir-selecionados');
             const assinantesTabela = document.getElementById('assinantes-tabela');
+            const cobrancasTabela = document.getElementById('cobrancas-tabela');
             const assinantesSelectAll = document.getElementById('assinantes-select-all');
             const assinantesDrawer = document.getElementById('assinantes-drawer');
             const assinantesContador = document.getElementById('assinantes-contador');
@@ -444,6 +469,7 @@
                 alunosSection.classList.add('hidden');
                 matricularSection.classList.add('hidden');
                 assinantesSection.classList.add('hidden');
+                cobrancasSection.classList.add('hidden');
                 whatsappSection.classList.add('hidden');
                 tarefasSection.classList.add('hidden');
                 usuariosSection.classList.add('hidden');
@@ -460,6 +486,11 @@
             menuAssinantes.addEventListener('click', () => {
                 mostrar(assinantesSection);
                 fetchAssinantes();
+            });
+
+            menuCobrancas.addEventListener('click', () => {
+                mostrar(cobrancasSection);
+                fetchCobrancas();
             });
 
             menuWhatsapp.addEventListener('click', () => {
@@ -981,6 +1012,102 @@
                     }
                 } catch (err) {
                     assinantesTabela.innerHTML = `<tr><td class="px-6 py-4 text-center text-red-500" colspan="6">Erro ao buscar assinantes.</td></tr>`;
+                }
+            }
+
+            async function listarCobrancas() {
+                try {
+                    const resp = await fetch(`${API_BASE}/cobrancas`);
+                    if (!resp.ok) throw new Error();
+                    return await resp.json();
+                } catch (err) {
+                    throw new Error('Erro ao listar cobranças');
+                }
+            }
+
+            async function fetchCobrancas() {
+                cobrancasTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="6"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
+                try {
+                    const data = await listarCobrancas();
+                    const cobrancas = Array.isArray(data) ? data : data.cobrancas || [];
+                    if (cobrancas.length === 0) {
+                        cobrancasTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="6">Nenhuma cobrança.</td></tr>`;
+                    } else {
+                        cobrancasTabela.innerHTML = cobrancas.map(c => {
+                            const pago = c.status === 'RECEIVED' || c.status === 'CONFIRMED';
+                            const statusClass = pago ? 'text-green-400' : 'text-red-500';
+                            return `
+                            <tr class="hover:bg-gray-700 transition-colors">
+                                <td class="px-6 py-4 font-medium">${c.nome || ''}</td>
+                                <td class="px-6 py-4 text-gray-400">${c.valor || ''}</td>
+                                <td class="px-6 py-4 text-gray-400">${c.descricao || ''}</td>
+                                <td class="px-6 py-4 text-gray-400">${c.vencimento || ''}</td>
+                                <td class="px-6 py-4 ${statusClass}">${pago ? 'Pago' : 'Não pago'}</td>
+                                <td class="px-6 py-4 text-sm space-x-2">
+                                    <button data-id="${c.id}" data-customer="${c.customer}" data-nome="${c.nome}" data-numero="${c.telefone}" data-valor="${c.valor}" data-descricao="${c.descricao}" class="msg-cobranca bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors"><i class="fas fa-comment"></i></button>
+                                    <button data-id="${c.id}" class="edit-cobranca bg-yellow-600 text-white px-3 py-1 rounded-md hover:bg-yellow-700 transition-colors"><i class="fas fa-edit"></i></button>
+                                    <button data-id="${c.id}" class="delete-cobranca bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition-colors"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        `}).join('');
+                        document.querySelectorAll('.delete-cobranca').forEach(b => b.addEventListener('click', () => deleteCobranca(b.dataset.id)));
+                        document.querySelectorAll('.edit-cobranca').forEach(b => b.addEventListener('click', () => editCobranca(b.dataset.id)));
+                        document.querySelectorAll('.msg-cobranca').forEach(b => b.addEventListener('click', () => enviarMsgCobranca(b.dataset)));
+                    }
+                } catch (err) {
+                    cobrancasTabela.innerHTML = `<tr><td class="px-6 py-4 text-center text-red-500" colspan="6">Erro ao buscar cobranças.</td></tr>`;
+                }
+            }
+
+            async function deleteCobranca(id) {
+                if (!confirm('Deseja remover esta cobrança?')) return;
+                try {
+                    await fetch(`${API_BASE}/cobrancas/${id}`, { method: 'DELETE' });
+                    fetchCobrancas();
+                } catch (err) {
+                    alert('Erro ao remover cobrança.');
+                }
+            }
+
+            async function editCobranca(id) {
+                const row = document.querySelector(`.edit-cobranca[data-id="${id}"]`).closest('tr');
+                const valor = prompt('Valor:', row.children[1].textContent);
+                if (valor === null) return;
+                const descricao = prompt('Descrição:', row.children[2].textContent);
+                if (descricao === null) return;
+                const venc = prompt('Data de Vencimento:', row.children[3].textContent);
+                if (venc === null) return;
+                try {
+                    await fetch(`${API_BASE}/cobrancas/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ valor, descricao, vencimento: venc })
+                    });
+                    fetchCobrancas();
+                } catch (err) {
+                    alert('Erro ao atualizar cobrança.');
+                }
+            }
+
+            async function enviarMsgCobranca(data) {
+                if (!confirm('Enviar mensagem de cobrança?')) return;
+                const payload = {
+                    nome: data.nome,
+                    whatsapp: data.numero,
+                    customer: data.customer,
+                    valor: parseFloat(data.valor || 0),
+                    descricao: data.descricao
+                };
+                try {
+                    const resp = await fetch(`${API_BASE}/msgasaas`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!resp.ok) throw new Error();
+                    alert('Mensagem enviada com sucesso!');
+                } catch (err) {
+                    alert('Falha ao enviar mensagem.');
                 }
             }
 

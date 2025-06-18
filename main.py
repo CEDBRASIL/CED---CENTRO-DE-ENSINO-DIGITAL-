@@ -13,6 +13,7 @@ import kiwify
 import asaas
 import assinantes
 import msgasaas
+import cobrancas
 import bloquear
 import login
 import auth
@@ -56,6 +57,7 @@ app.include_router(kiwify.router, prefix="/kiwify", tags=["Kiwify"])
 app.include_router(asaas.router, tags=["Matrícula Assas"])
 app.include_router(assinantes.router)
 app.include_router(msgasaas.router)
+app.include_router(cobrancas.router)
 app.include_router(deletar.router, tags=["Excluir Aluno"])
 app.include_router(bloquear.router, tags=["Bloqueio"])
 app.include_router(login.router, prefix="/login", tags=["Login"])
