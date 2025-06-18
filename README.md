@@ -128,8 +128,8 @@ POST /assinantes
 
 1. Acesse <https://www.cedbrasilia.com.br> e clique na aba **Cursos**.
 2. Escolha a opção **Iniciar teste gratuito** no curso desejado.
-3. Preencha nome completo, CPF e WhatsApp no formulário e confirme.
-4. Você será automaticamente matriculado para um período de 3 dias sem custos.
+3. Preencha nome completo, CPF e WhatsApp no formulário e confirme. O preço do curso é enviado automaticamente para a API.
+4. Você será automaticamente matriculado para um período de 3 dias sem custos, com a cobrança criada no valor do curso escolhido.
 5. Você receberá um WhatsApp de boas-vindas com seu login e a data de vencimento.
 6. A cobrança é criada no ASAAS com vencimento em 3 dias e o link é enviado normalmente.
 7. Caso o pagamento não seja reconhecido, sua conta poderá ser bloqueada automaticamente.
