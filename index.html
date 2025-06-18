@@ -807,6 +807,7 @@
                 const courseCard = document.createElement('div');
                 let badge = '';
                 if (course.name === 'Pacote Office') {
+                    courseCard.id = 'office';
                     courseCard.className = 'card card-glow p-6 flex flex-col justify-between items-start border-2 border-green-500';
                     badge = '<span class="bg-green-500 text-black px-2 py-1 rounded text-sm mb-2 inline-block">Recomendado</span>';
                 } else {
@@ -1340,17 +1341,33 @@
             });
 
             showSection('hero');
-            fetchCourses();
+            const coursesPromise = fetchCourses();
             renderTestimonials();
             loadAfiliadosProducts();
 
-            if (window.location.hash === '#cursos') {
+            if (window.location.hash === '#cursos' || window.location.hash === '#office') {
                 showSection('cursos');
                 const cursosSection = document.getElementById('cursos');
                 if (cursosSection) {
                     cursosSection.scrollIntoView({ behavior: 'smooth' });
                 }
             }
+
+            coursesPromise.then(() => {
+                if (window.location.hash === '#office') {
+                    const officeCourse = availableCourses.find(c => c.name === 'Pacote Office');
+                    if (officeCourse) {
+                        selectedCourse = officeCourse;
+                        const selectedCourseInput = document.getElementById('selected-course');
+                        const selectedCourseNameEl = document.getElementById('selected-course-name');
+                        if (selectedCourseInput) selectedCourseInput.value = officeCourse.name;
+                        if (selectedCourseNameEl) selectedCourseNameEl.textContent = `Curso: ${officeCourse.name} (R$ ${officeCourse.price.toFixed(2).replace('.', ',')}/mês)`;
+                        openCheckout();
+                    }
+                    const officeEl = document.getElementById('office');
+                    if (officeEl) officeEl.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
 
             const enrollNow = document.getElementById('enroll-now');
             if (enrollNow) {
