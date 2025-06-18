@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ nome, cpf, phone, cursos })
       });
       if (!res.ok) throw new Error('Falha ao conectar');
-      const msg = `Olá ${nome} tudo bem?\nAcabamos de te enviar um SMS com o link da sua assinatura!\nVamos te matricular assim que confirmarmos o pagamento!\nQualquer duvida, estou aqui!`;
+      const msg = `Olá ${nome} tudo bem?\nAcabamos de te enviar o link da sua assinatura no WhatsApp!\nVamos te matricular assim que confirmarmos o pagamento!\nQualquer duvida, estou aqui!`;
       fetch(`https://whatsapptest-stij.onrender.com/send?para=${phone}&mensagem=${encodeURIComponent(msg)}`)
         .catch(() => {});
       formMessage.textContent = `Sua matrícula foi gerada, ${nome}! Enviamos os dados da assinatura no seu whatsapp!`;
