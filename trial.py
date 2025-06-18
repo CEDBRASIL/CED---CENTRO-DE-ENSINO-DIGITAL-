@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException
 from matricular import _cadastrar_aluno_om, _obter_token_unidade
 from bloquear import _alterar_bloqueio
 from asaas import obter_cliente_por_cpf
+from utils import formatar_numero_whatsapp
 
 router = APIRouter(prefix="/teste-gratis", tags=["Teste Gratuito"])
 
@@ -49,10 +50,11 @@ def _send_mensagem_teste(
         "🤖 APP Android: https://play.google.com/store/apps/datasafety?id=br.com.om.app&hl=pt_BR\n"
         "🍎 APP iOS: https://apps.apple.com/br/app/meu-app-de-cursos/id1581898914"
     )
+    numero = formatar_numero_whatsapp(whatsapp)
     try:
         requests.get(
             "https://whatsapptest-stij.onrender.com/send",
-            params={"para": whatsapp, "mensagem": msg},
+            params={"para": numero, "mensagem": msg},
             timeout=10,
         )
     except Exception:
@@ -123,11 +125,15 @@ def verificar_testes():
 
 
 def _enviar_cobranca(t: Dict) -> None:
-    msg = f"Olá {t['nome']}, seu teste gratuito encerrou. Para continuar estudando, entre em contato e regularize o pagamento."
+    msg = (
+        f"Olá {t['nome']}, seu teste gratuito encerrou. "
+        "Para continuar estudando, entre em contato e regularize o pagamento."
+    )
+    numero = formatar_numero_whatsapp(t["whatsapp"])
     try:
         requests.get(
             "https://whatsapptest-stij.onrender.com/send",
-            params={"para": t["whatsapp"], "mensagem": msg},
+            params={"para": numero, "mensagem": msg},
             timeout=10,
         )
     except Exception:
