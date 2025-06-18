@@ -78,6 +78,8 @@
         .bg-spotify-green { background-color: var(--accent-color); }
         .hover-bg-spotify-green-darker:hover { background-color: #1aa34a; }
         .border-spotify-green { border-color: var(--accent-color); }
+        .preco-antigo { text-decoration: line-through; color: var(--text-muted-color); margin-right: 0.25rem; }
+        .preco-novo { color: var(--accent-color); font-weight: 700; }
         .card-glow:hover { transform: translateY(-5px); box-shadow: 0 0 25px 5px var(--accent-glow-color); border-color: var(--accent-color); }
         .button-glow { transition: all 0.3s ease-in-out; box-shadow: 0 0 15px 2px var(--accent-glow-color); }
         .button-glow:hover { transform: translateY(-2px); box-shadow: 0 0 25px 5px var(--accent-glow-hover-color); }
