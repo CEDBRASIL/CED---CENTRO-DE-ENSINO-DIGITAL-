@@ -1204,10 +1204,11 @@
                 trialSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
 
                 try {
+                    const price = COURSE_PRICES[curso] || 0;
                     const resposta = await fetch('https://api.cedbrasilia.com.br/teste-gratis', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nome, cpf, whatsapp, curso })
+                        body: JSON.stringify({ nome, cpf, whatsapp, curso, valor: price })
                     });
 
                     if (!resposta.ok) {

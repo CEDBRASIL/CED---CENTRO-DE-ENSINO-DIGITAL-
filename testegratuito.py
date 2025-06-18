@@ -32,6 +32,7 @@ def iniciar_teste(dados: dict):
     whatsapp = dados.get("whatsapp")
     cpf = dados.get("cpf")
     curso = dados.get("curso") or (dados.get("cursos") or [None])[0]
+    valor = parse_valor(dados.get("valor"))
 
     if not nome or not whatsapp or not curso:
         raise HTTPException(400, "Campos obrigatórios ausentes")
@@ -54,10 +55,11 @@ def iniciar_teste(dados: dict):
 
         customer_id = _criar_ou_obter_cliente(nome, cpf_res, whatsapp)
         venc_iso = _calc_vencimento()
+        valor_cobrado = valor if valor is not None else VALOR_PADRAO
         payload = {
             "customer": customer_id,
             "billingType": BILLING_TYPE,
-            "value": VALOR_PADRAO,
+            "value": valor_cobrado,
             "cycle": "MONTHLY",
             "nextDueDate": venc_iso,
             "description": curso,
