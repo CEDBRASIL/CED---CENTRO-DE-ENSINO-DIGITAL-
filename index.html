@@ -843,7 +843,11 @@
                     <h3 class="text-2xl font-bold mb-2">${course.name}</h3>
                     <p class="text-muted text-sm mb-4">${course.description}</p>
                     <div class="flex items-center justify-between w-full mt-auto gap-2">
-                        <span class="text-xl font-bold spotify-green">R$ ${course.price.toFixed(2).replace('.', ',')} /mês</span>
+                        <div>
+                            <span class="preco-antigo">R$ ${course.price.toFixed(2).replace('.', ',')}</span>
+                            <span class="preco-novo">R$ 0,00</span>
+                            <span class="text-muted text-xs block">3 dias de teste</span>
+                        </div>
                         <button class="trial-course button-glow bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition-all duration-300" data-course-name="${course.name}">Teste grátis</button>
                     </div>
                 `;
