@@ -820,27 +820,13 @@
                     <div class="flex items-center justify-between w-full mt-auto gap-2">
                         <span class="text-xl font-bold spotify-green">R$ ${course.price.toFixed(2).replace('.', ',')} /mês</span>
                         <button class="trial-course button-glow bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition-all duration-300" data-course-name="${course.name}">Teste grátis</button>
-                        <button class="enroll-course button-glow bg-spotify-green text-black font-semibold py-2 px-4 rounded-full transition-all duration-300 transform" data-course-name="${course.name}">Assinar</button>
                     </div>
                 `;
                 courseList.appendChild(courseCard);
             });
 
 
-            document.querySelectorAll(".enroll-course").forEach(button => {
-                button.addEventListener("click", e => {
-                    const courseName = e.currentTarget.dataset.courseName;
-                    selectedCourse = availableCourses.find(c => c.name === courseName);
-                    
-                    const selectedCourseInput = document.getElementById("selected-course");
-                    const selectedCourseNameEl = document.getElementById("selected-course-name");
-                    
-                    if (selectedCourseInput) selectedCourseInput.value = courseName;
-                    if (selectedCourseNameEl) selectedCourseNameEl.textContent = `Curso: ${courseName} (R$ ${selectedCourse.price.toFixed(2).replace('.',',')}/mês)`;
 
-                    window.openCheckout();
-                });
-            });
 
             document.querySelectorAll(".trial-course").forEach(button => {
                 button.addEventListener("click", e => {
@@ -870,6 +856,9 @@
 
 
         document.addEventListener('DOMContentLoaded', () => {
+            if (!window.location.hash) {
+                window.location.hash = '#cursos';
+            }
             document.getElementById('currentYear').textContent = new Date().getFullYear();
 
             const mobileMenuButton = document.getElementById('mobileMenuButton');
