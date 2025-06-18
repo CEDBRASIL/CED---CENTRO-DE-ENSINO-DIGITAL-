@@ -558,9 +558,9 @@
                 const nome = document.getElementById('assinante-nome').value.trim();
                 const cpf = document.getElementById('assinante-cpf').value.replace(/\D/g, '');
                 const numero = normalizarNumero(document.getElementById('assinante-numero').value);
-                const dataVencimento = document.getElementById('assinante-venc').value;
+                const vencimento = document.getElementById('assinante-venc').value;
                 const valor = document.getElementById('assinante-valor').value;
-                if (!nome || !cpf || !numero || !dataVencimento || !valor) {
+                if (!nome || !cpf || !numero || !vencimento || !valor) {
                     assinanteFormFeedback.textContent = 'Preencha todos os campos.';
                     assinanteFormFeedback.className = 'text-red-500 text-center';
                     return;
@@ -568,7 +568,7 @@
                 assinanteFormFeedback.textContent = 'Enviando...';
                 assinanteFormFeedback.className = 'text-gray-300 text-center';
                 try {
-                    await criarAssinante({ nome, cpf, numero, valor, vencimento: dataVencimento });
+                    await criarAssinante({ nome, cpf, numero, valor, vencimento });
                     assinanteFormFeedback.textContent = 'Assinatura criada!';
                     assinanteFormFeedback.className = 'text-green-400 text-center';
                     assinanteForm.reset();
@@ -917,7 +917,7 @@
                 const valor = prompt('Valor:', row.children[4].textContent);
                 if (valor === null) return;
                 try {
-                    await editarAssinanteAPI(id, { nome, numero: normalizarNumero(numero), dataVencimento: venc, valor });
+                    await editarAssinanteAPI(id, { nome, numero: normalizarNumero(numero), vencimento: venc, valor });
                     alert('Assinatura atualizada com sucesso!');
                     fetchAssinantes();
                 } catch (err) {
@@ -962,7 +962,7 @@
                                 <td class="px-6 py-4"><input type="checkbox" class="select-assinante form-control" data-id="${a.id}"></td>
                                 <td class="px-6 py-4 font-medium">${a.nome}</td>
                                 <td class="px-6 py-4 text-gray-400">${a.numero || ''}</td>
-                                <td class="px-6 py-4 text-gray-400">${a.dataVencimento || ''}</td>
+                                <td class="px-6 py-4 text-gray-400">${a.vencimento || ''}</td>
                                 <td class="px-6 py-4 text-gray-400">${a.valor || ''}</td>
                                 <td class="px-6 py-4 ${statusClass}">${a.situacao || ''}</td>
                                 <td class="px-6 py-4 text-sm space-x-2">
