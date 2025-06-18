@@ -53,17 +53,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         badge = '<span class="bg-green-500 text-black px-2 py-1 rounded text-sm mb-2 inline-block">Recomendado</span>';
       }
       const priceVal = getCoursePrice(name);
-      const price = `R$ ${priceVal.toFixed(2).replace('.', ',')}`;
       card.innerHTML = `
         <div>
           ${badge}
           <h3 class="text-xl font-bold mb-2">${name}</h3>
           <p class="text-gray-400 mb-4">${desc}</p>
-          <p class="text-gray-400 mb-4">Valor: ${price}</p>
         </div>
-        <div class="flex gap-2 mt-auto">
-          <button class="details button-glow bg-spotify-green text-black font-bold px-4 py-2 rounded" data-name="${name}">Detalhes</button>
-          <button class="enroll button-glow bg-blue-600 text-white font-bold px-4 py-2 rounded" data-name="${name}">Me matricular agora!</button>
+        <div class="flex items-center justify-between gap-2 mt-auto">
+          <div>
+            <span class="preco-antigo">R$ ${priceVal.toFixed(2).replace('.', ',')}</span>
+            <span class="preco-novo">R$ 0,00</span>
+            <span class="text-gray-400 text-xs block">3 dias de teste</span>
+          </div>
+          <div class="flex gap-2">
+            <button class="details button-glow bg-spotify-green text-black font-bold px-4 py-2 rounded" data-name="${name}">Detalhes</button>
+            <button class="enroll button-glow bg-blue-600 text-white font-bold px-4 py-2 rounded" data-name="${name}">Me matricular agora!</button>
+          </div>
         </div>
       `;
       const addBtn = card.querySelector('.enroll');
