@@ -123,3 +123,14 @@ POST /assinantes
 }
 ```
 
+
+## Passo a passo para o teste gratuito
+
+1. Acesse <https://www.cedbrasilia.com.br> e clique na aba **Cursos**.
+2. Escolha a opção **Iniciar teste gratuito** no curso desejado.
+3. Preencha nome completo, CPF e WhatsApp no formulário e confirme.
+4. Você será automaticamente matriculado para um período de 3 dias sem custos.
+5. Um WhatsApp de boas-vindas será enviado informando a data de término do teste.
+6. No dia do fim do teste, às 7h, você receberá uma mensagem de cobrança para manter o acesso.
+7. Caso o pagamento não seja reconhecido, sua conta será bloqueada automaticamente.
+
