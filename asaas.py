@@ -163,8 +163,7 @@ def _enviar_whatsapp_checkout(nome: str, phone: str, url: str) -> None:
     mensagem = (
         f"👋 Olá {nome}, tudo bem?\n\n"
         f"Segue o link para pagamento do seu curso: {url}\n"
-        "Também enviamos este link via SMS.\n"
-        "Assim que o pagamento for confirmado, enviaremos seus dados de acesso.\n\n"
+        "Assim que o pagamento for confirmado, enviaremos seus dados de acesso via WhatsApp.\n\n"
         "Qualquer dúvida, estou à disposição para ajudar!"
     )
     try:

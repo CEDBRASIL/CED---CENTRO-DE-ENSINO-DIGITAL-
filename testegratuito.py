@@ -64,6 +64,7 @@ def iniciar_teste(dados: dict):
             "nextDueDate": venc_iso,
             "description": curso,
             "externalReference": ",".join(map(str, cursos_ids)),
+            "notifyCustomer": False,
         }
         resp = requests.post(
             f"{ASAAS_BASE_URL}/subscriptions",
