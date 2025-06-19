@@ -203,11 +203,9 @@ def save_history(hist):
 
 
 def is_on_whatsapp(numero: str) -> bool:
-    try:
-        parsed = phonenumbers.parse('+' + numero, None)
-        if not phonenumbers.is_possible_number(parsed):
-            return False
-    except Exception:
+    """Verifica o formato e simula checagem no WhatsApp."""
+    digitos = "".join(filter(str.isdigit, numero or ""))
+    if not digitos.startswith("55") or len(digitos) != 12:
         return False
     return random.random() > 0.05
 
