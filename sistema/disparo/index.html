@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disparos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {font-family: 'Inter', sans-serif; background:#121212; color:#E5E7EB;}
+        h1,h2,h3,h4{font-family:'Poppins', sans-serif;}
+        .form-control{background:#282828;border:1px solid #333;transition:all .3s ease;}
+        .form-control:focus{background:#333;border-color:#1db954;outline:none;box-shadow:0 0 0 3px rgba(29,185,84,.3);}
+        .spotify-green{color:#1db954;}
+        .bg-spotify-green{background-color:#1db954;}
+        .hover-bg-spotify-green-darker:hover{background-color:#1aa34a;}
+    </style>
+</head>
+<body class="min-h-screen p-4">
+    <a href="../index.html" class="text-sm text-gray-400 hover:underline block mb-4"><i class="fas fa-arrow-left"></i> Voltar</a>
+    <h1 class="text-3xl font-bold mb-6">Disparos</h1>
+    <div class="space-y-8">
+        <section id="arquivos" class="bg-[#181818] p-6 rounded-lg border border-gray-800">
+            <h2 class="text-xl font-bold mb-4">Meus arquivos</h2>
+            <input id="img-upload" type="file" accept="image/*" multiple class="form-control p-3 rounded w-full">
+            <ul id="img-list" class="mt-4 space-y-2"></ul>
+        </section>
+        <section id="listas" class="bg-[#181818] p-6 rounded-lg border border-gray-800">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Listas de contatos</h2>
+                <button id="add-lista" class="bg-spotify-green text-black px-3 py-1 rounded hover-bg-spotify-green-darker"><i class="fas fa-plus"></i></button>
+            </div>
+            <ul id="listas-container" class="space-y-2"></ul>
+        </section>
+        <section id="mensagens" class="bg-[#181818] p-6 rounded-lg border border-gray-800">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Mensagens</h2>
+                <button id="add-msg" class="bg-spotify-green text-black px-3 py-1 rounded hover-bg-spotify-green-darker"><i class="fas fa-plus"></i></button>
+            </div>
+            <ul id="msgs-container" class="space-y-2"></ul>
+        </section>
+        <section id="disparo" class="bg-[#181818] p-6 rounded-lg border border-gray-800">
+            <h2 class="text-xl font-bold mb-4">Disparo de Mensagem</h2>
+            <div class="mb-4">
+                <label class="block mb-1">Lista</label>
+                <select id="disparo-lista" class="form-control p-2 rounded w-full"></select>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-1">Mensagem</label>
+                <select id="disparo-msg" class="form-control p-2 rounded w-full"></select>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-1">Agendar Disparo (opcional)</label>
+                <input type="datetime-local" id="disparo-agendar" class="form-control p-2 rounded w-full">
+            </div>
+            <button id="criar-disparo" class="bg-spotify-green text-black px-4 py-2 rounded hover-bg-spotify-green-darker">Criar</button>
+            <p id="disparo-feedback" class="mt-2 text-sm"></p>
+        </section>
+    </div>
+
+<!-- Modais -->
+<div id="modal-bg" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+    <div id="modal" class="bg-[#181818] p-6 rounded-lg border border-gray-700 w-full max-w-md"></div>
+</div>
+
+<script>
+const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
+
+function fecharModal(){document.getElementById('modal-bg').classList.add('hidden');}
+function abrirModal(html){const bg=document.getElementById('modal-bg');const box=document.getElementById('modal');box.innerHTML=html;bg.classList.remove('hidden');}
+
+async function carregarListas(){
+    const r=await fetch(`${API_BASE}/listas`);const d=await r.json();
+    const c=document.getElementById('listas-container');
+    c.innerHTML=d.map(l=>`<li class='flex justify-between items-center bg-gray-900 p-2 rounded'><span>${l.nome} (${l.total})</span><span><button data-id='${l.id}' class='mais mr-2'>➕</button><button data-id='${l.id}' class='del'>🗑️</button></span></li>`).join('')||'<li class="text-gray-400">Nenhuma lista</li>';
+    c.querySelectorAll('.del').forEach(b=>b.addEventListener('click',async()=>{await fetch(`${API_BASE}/listas/${b.dataset.id}`,{method:'DELETE'});carregarListas();}));
+    c.querySelectorAll('.mais').forEach(b=>b.addEventListener('click',()=>abrirFormContato(b.dataset.id))); 
+    atualizarSelects();
+}
+
+function abrirFormLista(){
+    abrirModal(`<h3 class='text-xl mb-4 font-bold'>Nova Lista</h3><input id='lista-nome' type='text' placeholder='Nome' class='form-control w-full p-2 mb-2 rounded'><input id='lista-desc' type='text' placeholder='Descrição (opcional)' class='form-control w-full p-2 mb-4 rounded'><button id='salvar-lista' class='bg-spotify-green text-black px-4 py-2 rounded w-full'>Salvar</button>`);
+    document.getElementById('salvar-lista').onclick=async()=>{const nome=document.getElementById('lista-nome').value.trim();const desc=document.getElementById('lista-desc').value.trim();if(!nome)return;await fetch(`${API_BASE}/listas`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,descricao:desc})});fecharModal();carregarListas();};
+}
+
+function abrirFormContato(id){
+    abrirModal(`<h3 class='text-xl mb-4 font-bold'>Adicionar Contato</h3><input id='contato-nome' type='text' placeholder='Nome' class='form-control w-full p-2 mb-2 rounded'><input id='contato-num' type='text' placeholder='Número com DDD' class='form-control w-full p-2 mb-4 rounded'><button id='salvar-contato' class='bg-spotify-green text-black px-4 py-2 rounded w-full'>Adicionar</button>`);
+    document.getElementById('salvar-contato').onclick=async()=>{const nome=document.getElementById('contato-nome').value.trim();const numero=document.getElementById('contato-num').value.trim();if(!numero)return;await fetch(`${API_BASE}/listas/${id}/contatos`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contatos:[{nome,numero}]})});fecharModal();};
+}
+
+async function carregarMensagens(){
+    const r=await fetch(`${API_BASE}/mensagens`);const d=await r.json();
+    const c=document.getElementById('msgs-container');
+    c.innerHTML=d.map(m=>`<li class='flex justify-between items-center bg-gray-900 p-2 rounded'><span>${m.titulo||'Mensagem'} </span><button data-id='${m.id}' class='del'>🗑️</button></li>`).join('')||'<li class="text-gray-400">Nenhuma mensagem</li>';
+    c.querySelectorAll('.del').forEach(b=>b.addEventListener('click',async()=>{await fetch(`${API_BASE}/mensagens/${b.dataset.id}`,{method:'DELETE'});carregarMensagens();}));
+    atualizarSelects();
+}
+
+function abrirFormMensagem(){
+    abrirModal(`<h3 class='text-xl mb-4 font-bold'>Nova Mensagem</h3><input id='msg-titulo' type='text' placeholder='Identificador' class='form-control w-full p-2 mb-2 rounded'><select id='msg-tipo' class='form-control w-full p-2 mb-2 rounded'><option value='texto'>Texto</option><option value='imagem'>Imagem</option></select><textarea id='msg-conteudo' rows='3' class='form-control w-full p-2 mb-2 rounded' placeholder='Mensagem'></textarea><button id='salvar-msg' class='bg-spotify-green text-black px-4 py-2 rounded w-full'>Salvar</button>`);
+    document.getElementById('salvar-msg').onclick=async()=>{const titulo=document.getElementById('msg-titulo').value.trim();const tipo=document.getElementById('msg-tipo').value;const conteudo=document.getElementById('msg-conteudo').value.trim();if(!conteudo)return;await fetch(`${API_BASE}/mensagens`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,conteudo,tipo})});fecharModal();carregarMensagens();};
+}
+
+function atualizarSelects(){
+    fetch(`${API_BASE}/listas`).then(r=>r.json()).then(d=>{const sel=document.getElementById('disparo-lista');sel.innerHTML=d.map(l=>`<option value='${l.id}'>${l.nome}</option>`).join('')});
+    fetch(`${API_BASE}/mensagens`).then(r=>r.json()).then(d=>{const sel=document.getElementById('disparo-msg');sel.innerHTML=d.map(m=>`<option value='${m.id}'>${m.titulo||m.id}</option>`).join('')});
+}
+
+async function criarDisparo(){
+    const lista=document.getElementById('disparo-lista').value;const msg=document.getElementById('disparo-msg').value;const ag=document.getElementById('disparo-agendar').value;const body={lista_id:lista,msg_id:msg,agendar:ag};const fb=document.getElementById('disparo-feedback');fb.textContent='Enviando...';
+    const r=await fetch(`${API_BASE}/enviar`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    fb.textContent=r.ok?'Disparo criado':'Erro ao criar';
+}
+
+document.getElementById('add-lista').onclick=abrirFormLista;
+document.getElementById('add-msg').onclick=abrirFormMensagem;
+document.getElementById('criar-disparo').onclick=criarDisparo;
+document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')fecharModal();});
+
+carregarListas();
+carregarMensagens();
+</script>
+</body>
+</html>

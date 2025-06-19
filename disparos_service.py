@@ -34,6 +34,48 @@ def get_conn():
     )
 
 
+def ensure_tables() -> None:
+    """Cria tabelas necessárias caso não existam."""
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS listas (
+                id SERIAL PRIMARY KEY,
+                nome TEXT NOT NULL,
+                descricao TEXT
+            )
+            """
+        )
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS contatos (
+                id SERIAL PRIMARY KEY,
+                nome TEXT,
+                numero TEXT UNIQUE,
+                grupo TEXT,
+                lista_id INTEGER REFERENCES listas(id)
+            )
+            """
+        )
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS mensagens (
+                id SERIAL PRIMARY KEY,
+                titulo TEXT,
+                conteudo TEXT NOT NULL,
+                tipo TEXT DEFAULT 'texto',
+                ativa BOOLEAN DEFAULT TRUE
+            )
+            """
+        )
+        cur.execute("ALTER TABLE contatos ADD COLUMN IF NOT EXISTS lista_id INTEGER REFERENCES listas(id)")
+        cur.execute("ALTER TABLE mensagens ADD COLUMN IF NOT EXISTS titulo TEXT")
+        conn.commit()
+
+
+ensure_tables()
+
+
 def buscar_numeros_do_grupo(nome: str) -> list[str]:
     """Obtém os números participantes de um grupo via API externa."""
     try:
@@ -63,6 +105,64 @@ def grupos():
         )
         grupos = [r[0] for r in cur.fetchall()]
     return jsonify({'grupos': grupos})
+
+
+@app.route('/listas', methods=['GET', 'POST'])
+def listas():
+    if request.method == 'POST':
+        data = request.get_json()
+        nome = data.get('nome')
+        if not nome:
+            return jsonify({'error': 'Nome obrigatorio'}), 400
+        desc = data.get('descricao')
+        with get_conn() as conn, conn.cursor() as cur:
+            cur.execute(
+                'INSERT INTO listas (nome, descricao) VALUES (%s,%s) RETURNING id',
+                (nome, desc)
+            )
+            lid = cur.fetchone()[0]
+            conn.commit()
+        return jsonify({'id': lid})
+    else:
+        with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                'SELECT l.*, COUNT(c.id) AS total FROM listas l '
+                'LEFT JOIN contatos c ON c.lista_id=l.id GROUP BY l.id ORDER BY l.id'
+            )
+            return jsonify(cur.fetchall())
+
+
+@app.route('/listas/<int:lid>', methods=['DELETE'])
+def delete_lista(lid):
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute('DELETE FROM contatos WHERE lista_id=%s', (lid,))
+        cur.execute('DELETE FROM listas WHERE id=%s', (lid,))
+        conn.commit()
+    return jsonify({'ok': True})
+
+
+@app.route('/listas/<int:lid>/contatos', methods=['GET', 'POST'])
+def contatos_lista(lid):
+    if request.method == 'POST':
+        contatos = request.get_json().get('contatos', [])
+        if not contatos:
+            return jsonify({'error': 'Contatos obrigatorios'}), 400
+        with get_conn() as conn, conn.cursor() as cur:
+            for c in contatos:
+                cur.execute(
+                    'INSERT INTO contatos (nome, numero, grupo, lista_id) '
+                    'VALUES (%s,%s,%s,%s) ON CONFLICT (numero) DO NOTHING',
+                    (c.get('nome'), c.get('numero'), c.get('grupo'), lid)
+                )
+            conn.commit()
+        return jsonify({'adicionados': len(contatos)})
+    else:
+        with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                'SELECT id, nome, numero FROM contatos WHERE lista_id=%s ORDER BY id',
+                (lid,)
+            )
+            return jsonify(cur.fetchall())
 
 
 @app.route('/mensagens', methods=['GET', 'POST'])
