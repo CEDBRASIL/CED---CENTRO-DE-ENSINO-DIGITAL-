@@ -10,6 +10,7 @@ from matricular import (
     _obter_token_unidade,
     _cadastrar_aluno_om,
     _send_whatsapp_chatpro,
+    _buscar_aluno_id_por_cpf,
 )
 from asaas import _criar_ou_obter_cliente, ASAAS_BASE_URL, _headers
 from utils import parse_valor
@@ -40,6 +41,9 @@ def iniciar_teste(dados: dict):
     cursos_ids: List[int] | None = CURSOS_OM.get(curso)
     if not cursos_ids:
         raise HTTPException(404, "Curso não encontrado")
+
+    if cpf and _buscar_aluno_id_por_cpf(cpf):
+        raise HTTPException(409, "CPF já matriculado")
 
     try:
         token = _obter_token_unidade()

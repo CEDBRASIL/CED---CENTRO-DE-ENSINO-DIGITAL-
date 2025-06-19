@@ -5,7 +5,7 @@ from typing import List, Dict
 import requests
 from fastapi import APIRouter, HTTPException
 
-from matricular import _cadastrar_aluno_om, _obter_token_unidade
+from matricular import _cadastrar_aluno_om, _obter_token_unidade, _buscar_aluno_id_por_cpf
 from bloquear import _alterar_bloqueio
 from asaas import obter_cliente_por_cpf
 
@@ -67,6 +67,8 @@ def iniciar_teste(dados: dict):
     cpf = dados.get("cpf")
     if not nome or not whatsapp or not curso:
         raise HTTPException(400, "Campos obrigatórios ausentes")
+    if cpf and _buscar_aluno_id_por_cpf(cpf):
+        raise HTTPException(409, "CPF já matriculado")
     try:
         token = _obter_token_unidade()
         aluno_id, cpf_res = _cadastrar_aluno_om(
