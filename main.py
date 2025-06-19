@@ -22,6 +22,7 @@ import bloquear
 import login
 import auth
 import testegratuito
+import disparos
 from app import whatsapp
 
 # ──────────────────────────────────────────────────────────
@@ -68,6 +69,7 @@ app.include_router(login.router, prefix="/login", tags=["Login"])
 app.include_router(auth.router)
 app.include_router(whatsapp.router)
 app.include_router(testegratuito.router)
+app.include_router(disparos.router)
 
 @app.on_event("startup")
 async def _on_startup() -> None:
