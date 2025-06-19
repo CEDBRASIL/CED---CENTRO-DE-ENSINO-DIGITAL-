@@ -43,21 +43,11 @@ def ensure_tables() -> None:
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(
             """
-            CREATE TABLE IF NOT EXISTS listas (
-                id SERIAL PRIMARY KEY,
-                nome TEXT NOT NULL,
-                descricao TEXT
-            )
-            """
-        )
-        cur.execute(
-            """
             CREATE TABLE IF NOT EXISTS contatos (
                 id SERIAL PRIMARY KEY,
                 nome TEXT,
                 numero TEXT UNIQUE,
-                grupo TEXT,
-                lista_id INTEGER REFERENCES listas(id)
+                grupo TEXT
             )
             """
         )
@@ -65,16 +55,12 @@ def ensure_tables() -> None:
             """
             CREATE TABLE IF NOT EXISTS mensagens (
                 id SERIAL PRIMARY KEY,
-                titulo TEXT,
                 conteudo TEXT NOT NULL,
                 tipo TEXT DEFAULT 'texto',
                 ativa BOOLEAN DEFAULT TRUE
             )
             """
         )
-        # colunas extras caso a base exista sem as novas modificações
-        cur.execute("ALTER TABLE contatos ADD COLUMN IF NOT EXISTS lista_id INTEGER REFERENCES listas(id)")
-        cur.execute("ALTER TABLE mensagens ADD COLUMN IF NOT EXISTS titulo TEXT")
         conn.commit()
 
 
@@ -114,67 +100,6 @@ def grupos():
     return {'grupos': grupos}
 
 
-@router.get('/listas')
-def listar_listas():
-    """Retorna todas as listas de contatos."""
-    with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute(
-            'SELECT l.*, COUNT(c.id) AS total FROM listas l '
-            'LEFT JOIN contatos c ON c.lista_id=l.id GROUP BY l.id ORDER BY l.id'
-        )
-        return cur.fetchall()
-
-
-@router.post('/listas')
-def criar_lista(data: dict):
-    nome = data.get('nome')
-    if not nome:
-        raise HTTPException(400, 'Nome obrigatorio')
-    desc = data.get('descricao')
-    with get_conn() as conn, conn.cursor() as cur:
-        cur.execute(
-            'INSERT INTO listas (nome, descricao) VALUES (%s,%s) RETURNING id',
-            (nome, desc)
-        )
-        lid = cur.fetchone()[0]
-        conn.commit()
-    return {'id': lid}
-
-
-@router.delete('/listas/{lid}')
-def deletar_lista(lid: int):
-    with get_conn() as conn, conn.cursor() as cur:
-        cur.execute('DELETE FROM contatos WHERE lista_id=%s', (lid,))
-        cur.execute('DELETE FROM listas WHERE id=%s', (lid,))
-        conn.commit()
-    return {'ok': True}
-
-
-@router.get('/listas/{lid}/contatos')
-def listar_contatos(lid: int):
-    with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute(
-            'SELECT id, nome, numero FROM contatos WHERE lista_id=%s ORDER BY id',
-            (lid,)
-        )
-        return cur.fetchall()
-
-
-@router.post('/listas/{lid}/contatos')
-def adicionar_contatos(lid: int, contatos: list[dict]):
-    if not contatos:
-        raise HTTPException(400, 'Contatos obrigatorios')
-    with get_conn() as conn, conn.cursor() as cur:
-        for c in contatos:
-            cur.execute(
-                'INSERT INTO contatos (nome, numero, grupo, lista_id) '
-                'VALUES (%s,%s,%s,%s) ON CONFLICT (numero) DO NOTHING',
-                (c.get('nome'), c.get('numero'), c.get('grupo'), lid)
-            )
-        conn.commit()
-    return {'adicionados': len(contatos)}
-
-
 @router.get('/mensagens')
 def listar_mensagens():
     with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -188,11 +113,10 @@ def criar_mensagem(data: dict):
     if not conteudo:
         raise HTTPException(400, 'Conteudo obrigatório')
     tipo = data.get('tipo', 'texto')
-    titulo = data.get('titulo')
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(
-            'INSERT INTO mensagens (titulo, conteudo, tipo, ativa) VALUES (%s,%s,%s,true) RETURNING id',
-            (titulo, conteudo, tipo),
+            'INSERT INTO mensagens (conteudo, tipo, ativa) VALUES (%s,%s,true) RETURNING id',
+            (conteudo, tipo),
         )
         new_id = cur.fetchone()[0]
         conn.commit()
