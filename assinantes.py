@@ -124,6 +124,9 @@ def adicionar_assinante(dados: dict):
     if valor <= 0:
         raise HTTPException(400, "Valor inválido")
 
+    if cpf and _buscar_aluno_id_por_cpf(cpf):
+        raise HTTPException(409, "CPF já matriculado")
+
     cid = _criar_ou_obter_cliente(
         nome,
         cpf,

@@ -8,7 +8,7 @@ import requests
 from fastapi import APIRouter, HTTPException, Request
 
 from utils import formatar_numero_whatsapp, parse_valor
-from matricular import realizar_matricula
+from matricular import realizar_matricula, _buscar_aluno_id_por_cpf
 from cursos import CURSOS_OM
 import msgasaas
 
@@ -207,6 +207,9 @@ def _criar_checkout(
     if valor <= 0:
         raise HTTPException(400, "Valor inválido")
 
+    if cpf and _buscar_aluno_id_por_cpf(cpf):
+        raise HTTPException(409, "CPF já matriculado")
+
     customer_id = _criar_ou_obter_cliente(nome, cpf, phone, email, nascimento)
 
     payload = {
@@ -328,6 +331,9 @@ def criar_assinatura_recorrente(dados: dict, enviar_whatsapp: bool = True):
         raise HTTPException(400, "Campos obrigatórios ausentes")
     if valor <= 0:
         raise HTTPException(400, "Valor inválido")
+
+    if cpf and _buscar_aluno_id_por_cpf(cpf):
+        raise HTTPException(409, "CPF já matriculado")
 
     customer_id = _criar_ou_obter_cliente(nome, cpf, phone, dados.get("email"), dados.get("nascimento"))
     logger.info("Cliente ASAAS %s criado/obtido para %s", customer_id, phone)
