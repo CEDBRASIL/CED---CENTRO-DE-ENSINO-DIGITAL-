@@ -24,6 +24,9 @@ import auth
 import testegratuito
 import disparos
 from app import whatsapp
+from backend.app import models as disparo_models
+from backend.app.worker import worker_loop
+from backend.app.routers import arquivos as arq_r, listas as listas_r, contatos as cont_r, mensagens as msg_r, disparos as disp_r
 
 # ──────────────────────────────────────────────────────────
 # Instância da aplicação FastAPI
@@ -70,11 +73,19 @@ app.include_router(auth.router)
 app.include_router(whatsapp.router)
 app.include_router(testegratuito.router)
 app.include_router(disparos.router)
+app.include_router(arq_r.router)
+app.include_router(listas_r.router)
+app.include_router(cont_r.router)
+app.include_router(msg_r.router)
+app.include_router(disp_r.router)
 
 @app.on_event("startup")
 async def _on_startup() -> None:
-    """Dispara aviso de inicialização via WhatsApp."""
+    """Dispara aviso de inicialização e prepara módulo de disparos."""
     send_startup_message()
+    await disparo_models.init_db()
+    import asyncio
+    asyncio.create_task(worker_loop())
 
 
 # ──────────────────────────────────────────────────────────
@@ -88,6 +99,8 @@ def health():
 
 static_dir = os.path.dirname(os.path.abspath(__file__))
 app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
+disparo_frontend = os.path.join(static_dir, "frontend")
+app.mount("/sistema/disparo", StaticFiles(directory=disparo_frontend, html=True), name="disparo")
 
 # ──────────────────────────────────────────────────────────
 # Execução local / Render
