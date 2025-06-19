@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="icon" href="https://placehold.co/32x32/1DB954/FFFFFF?text=C" type="image/png" />
+    <link rel="icon" href="../favicon.jpg" type="image/jpeg" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
@@ -589,67 +589,6 @@
                  loginForm.reset();
             });
 
-            menuAlunos.addEventListener('click', () => {
-                mostrar(alunosSection);
-                fetchAlunos();
-            });
-
-            function mostrar(sec) {
-                alunosSection.classList.add('hidden');
-                matricularSection.classList.add('hidden');
-                assinantesSection.classList.add('hidden');
-                cobrancasSection.classList.add('hidden');
-                whatsappSection.classList.add('hidden');
-                disparosSection.classList.add('hidden');
-                leadsSection.classList.add('hidden');
-                tarefasSection.classList.add('hidden');
-                usuariosSection.classList.add('hidden');
-                welcomeSection.classList.add('hidden');
-                assinantesDrawer.classList.add('hidden');
-                sec.classList.remove('hidden');
-            }
-
-            menuMatricular.addEventListener('click', () => {
-                mostrar(matricularSection);
-            });
-
-
-            menuAssinantes.addEventListener('click', () => {
-                mostrar(assinantesSection);
-                fetchAssinantes();
-            });
-
-            menuCobrancas.addEventListener('click', () => {
-                mostrar(cobrancasSection);
-                fetchCobrancas();
-            });
-
-            menuWhatsapp.addEventListener('click', () => {
-                mostrar(whatsappSection);
-                checkWpStatus();
-            });
-
-            menuDisparos.addEventListener('click', () => {
-                mostrar(disparosSection);
-                carregarGruposDisparos();
-                carregarMensagens();
-                carregarHistorico();
-            });
-
-            menuLeads.addEventListener('click', () => {
-                mostrar(leadsSection);
-                fetchGrupos();
-            });
-
-            menuTarefas.addEventListener('click', () => {
-                mostrar(tarefasSection);
-                renderTarefas();
-            });
-
-            menuUsuarios.addEventListener('click', () => {
-                mostrar(usuariosSection);
-                renderUsuarios();
-            });
 
             buscarAlunosBtn.addEventListener('click', fetchAlunos);
             filtroInput.addEventListener('keypress', (e) => {
