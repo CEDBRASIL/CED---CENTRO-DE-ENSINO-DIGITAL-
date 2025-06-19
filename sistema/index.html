@@ -1316,9 +1316,9 @@
 
             async function carregarGruposDisparos() {
                 try {
-                    const resp = await fetch(`${API_BASE}/grupos`);
-                    const data = await resp.json();
-                    dispGrupos.innerHTML = data.grupos.map(g => `<option value="${g}">${g}</option>`).join('');
+                    const resp = await fetch('https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/grupos');
+                    const grupos = await resp.json();
+                    dispGrupos.innerHTML = grupos.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
                 } catch (err) {
                     dispGrupos.innerHTML = '<option>Erro ao carregar</option>';
                 }
