@@ -12,13 +12,19 @@ def formatar_numero_whatsapp(numero: str) -> str:
     # Extrai apenas os dígitos informados
     digitos = "".join(filter(str.isdigit, numero or ""))
 
-    # Remove prefixo Brasil caso já esteja presente
-    if digitos.startswith("55"):
-        digitos = digitos[2:]
+    if not digitos:
+        return ""
 
-    # Remove o nono dígito (ex.: 61912345678 -> 6112345678)
-    if len(digitos) >= 11 and digitos[2] == "9":
-        digitos = digitos[:2] + digitos[3:]
+    if digitos.startswith("55"):
+        # Remove prefixo Brasil caso já esteja presente
+        digitos = digitos[2:]
+        # Remove o nono dígito após o DDD, se houver
+        if len(digitos) >= 10 and digitos[2] == "9":
+            digitos = digitos[:2] + digitos[3:]
+    else:
+        # Números locais devem conter o nono dígito
+        if len(digitos) == 10:
+            digitos = digitos[:2] + "9" + digitos[2:]
 
     return "55" + digitos
 
