@@ -108,6 +108,10 @@
                         <i class="fab fa-whatsapp"></i>
                         Whatsapp
                     </button>
+                    <button id="menu-disparos" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-3">
+                        <i class="fas fa-bullhorn"></i>
+                        Disparos
+                    </button>
                     <button id="menu-leads" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-3">
                         <i class="fas fa-address-card"></i>
                         Gerador de Leads
@@ -280,6 +284,10 @@
                     <p id="wp-send-status" class="mt-4 text-sm"></p>
                 </div>
                 </section>
+                <section id="disparos-section" class="hidden">
+                    <h2 class="text-3xl font-bold mb-6">Disparos</h2>
+                    <p>Gerencie o envio de mensagens pelo novo serviço.</p>
+                </section>
                 <section id="leads-section" class="hidden">
                     <h2 class="text-3xl font-bold mb-6">Gerador de Leads</h2>
                     <div class="mb-4 max-w-sm">
@@ -371,6 +379,7 @@
             const menuAssinantes = document.getElementById('menu-assinantes');
             const menuCobrancas = document.getElementById('menu-cobrancas');
             const menuWhatsapp = document.getElementById('menu-whatsapp');
+            const menuDisparos = document.getElementById('menu-disparos');
             const menuTarefas = document.getElementById('menu-tarefas');
             const menuUsuarios = document.getElementById('menu-usuarios');
             const menuLeads = document.getElementById('menu-leads');
@@ -379,6 +388,7 @@
             const assinantesSection = document.getElementById('assinantes-section');
             const cobrancasSection = document.getElementById('cobrancas-section');
             const whatsappSection = document.getElementById('whatsapp-section');
+            const disparosSection = document.getElementById('disparos-section');
             const leadsSection = document.getElementById('leads-section');
             const tarefasSection = document.getElementById('tarefas-section');
             const usuariosSection = document.getElementById('usuarios-section');
@@ -513,6 +523,7 @@
                 assinantesSection.classList.add('hidden');
                 cobrancasSection.classList.add('hidden');
                 whatsappSection.classList.add('hidden');
+                disparosSection.classList.add('hidden');
                 leadsSection.classList.add('hidden');
                 tarefasSection.classList.add('hidden');
                 usuariosSection.classList.add('hidden');
@@ -539,6 +550,10 @@
             menuWhatsapp.addEventListener('click', () => {
                 mostrar(whatsappSection);
                 checkWpStatus();
+            });
+
+            menuDisparos.addEventListener('click', () => {
+                mostrar(disparosSection);
             });
 
             menuLeads.addEventListener('click', () => {
