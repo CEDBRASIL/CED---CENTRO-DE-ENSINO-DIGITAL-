@@ -1,0 +1,1 @@
+PR inicial adicionando módulo de disparos completo com FastAPI async, SQLAlchemy e frontend básico. Inclui Dockerfile e docker-compose, worker assíncrono e tabelas. Arquivos de frontend simples.
