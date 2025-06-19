@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="icon" href="/favicon.jpg" type="image/jpeg" />
+    <link rel="icon" href="../favicon.jpg" type="image/jpeg" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
@@ -453,6 +453,38 @@
             const selectAllCheckbox = getEl('select-all');
             
             // --- CORE LOGIC (UNCHANGED, BUT WITH MODALS) ---
+             loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const user = getEl('username').value;
+                const pass = getEl('password').value;
+                loginError.classList.add('hidden');
+                try {
+                    // This fetch is a placeholder for your actual auth logic.
+                    // Replace with your real fetch call. For the demo, it will succeed.
+                    const isSuccess = (user === 'admin' && pass === 'admin') || user.length > 0; // Simplified mock logic
+                    if (isSuccess) {
+                        loginSection.classList.add('opacity-0');
+                        setTimeout(() => {
+                           loginSection.classList.add('hidden');
+                           systemSection.classList.remove('hidden');
+                           systemSection.style.display = 'flex';
+                           // Trigger default section load
+                           document.querySelector('.nav-link').click(); 
+                        }, 500);
+                    } else {
+                        loginError.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    loginError.classList.remove('hidden');
+                }
+            });
+            
+            logoutButton.addEventListener('click', () => {
+                 loginSection.classList.remove('hidden');
+                 setTimeout(() => loginSection.classList.remove('opacity-0'), 10);
+                 systemSection.classList.add('hidden');
+                 loginForm.reset();
+            });
             
             // Example of adapting a function
             async function deleteAluno(id) {
@@ -540,13 +572,9 @@
                         body: JSON.stringify({ usuario: user, senha: pass })
                     });
                     if (resp.ok) {
-                        loginSection.classList.add('opacity-0');
-                        setTimeout(() => {
-                            loginSection.classList.add('hidden');
-                            systemSection.classList.remove('hidden');
-                            systemSection.style.display = 'flex';
-                            document.querySelector('.nav-link').click();
-                        }, 500);
+                        loginSection.classList.add('hidden');
+                        systemSection.classList.remove('hidden');
+                        systemSection.style.display = 'flex';
                     } else {
                         loginError.classList.remove('hidden');
                     }
