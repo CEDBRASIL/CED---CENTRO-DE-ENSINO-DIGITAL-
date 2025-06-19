@@ -1048,8 +1048,9 @@
             async function fetchGrupos() {
                 grupoSelect.innerHTML = '<option value="">Carregando...</option>';
                 try {
-                    const resp = await fetch('https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/grupos');
+                    const resp = await fetch(`${API_BASE}/grupos`);
                     const data = await resp.json();
+                    data.sort((a, b) => a.nome.localeCompare(b.nome));
                     grupoSelect.innerHTML = '<option value="">Selecione</option>';
                     data.forEach(g => {
                         const opt = document.createElement('option');
@@ -1069,7 +1070,7 @@
                 if (!nome) { leadsTabela.innerHTML = ''; return; }
                 leadsTabela.innerHTML = `<tr><td colspan="2" class="px-6 py-4 text-center"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
                 try {
-                    const resp = await fetch(`https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/grupos/${encodeURIComponent(nome)}`);
+                    const resp = await fetch(`${API_BASE}/grupos/${encodeURIComponent(nome)}`);
                     const data = await resp.json();
                     leadsGrupo = data.nome;
                     leadsDados = data.participantes || [];
@@ -1333,15 +1334,18 @@
 
             async function carregarGruposDisparos() {
                 try {
-                    const resp = await fetch('https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/grupos');
+                    const resp = await fetch(`${API_BASE}/grupos`);
                     const grupos = await resp.json();
-                    dispGrupos.innerHTML = grupos.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
+                    grupos.sort((a, b) => a.nome.localeCompare(b.nome));
+                    dispGrupos.innerHTML = '<option value="" disabled>Selecione os grupos</option>' +
+                        grupos.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
                 } catch (err) {
                     dispGrupos.innerHTML = '<option>Erro ao carregar</option>';
                 }
             }
 
             async function carregarMensagens() {
+                dispMsgList.innerHTML = '<li>Carregando...</li>';
                 try {
                     const resp = await fetch(`${API_BASE}/mensagens`);
                     const msgs = await resp.json();
