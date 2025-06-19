@@ -38,18 +38,22 @@ def listar_assinantes():
 
     def _status_assinatura(sub_id: str) -> str:
         """Retorna 'Em dia' ou 'Aguardando pagamento' baseado nas cobranças."""
-        try:
-            r = requests.get(
-                f"{ASAAS_BASE_URL}/payments",
-                params={"subscription": sub_id, "limit": 1, "status": "PENDING,OVERDUE"},
-                headers=headers,
-                timeout=10,
-            )
-            r.raise_for_status()
-            if r.json().get("data"):
-                return "Aguardando pagamento"
-        except requests.RequestException:
-            pass
+
+        def _tem_pagamentos(status: str) -> bool:
+            try:
+                r = requests.get(
+                    f"{ASAAS_BASE_URL}/payments",
+                    params={"subscription": sub_id, "limit": 1, "status": status},
+                    headers=headers,
+                    timeout=10,
+                )
+                r.raise_for_status()
+                return bool(r.json().get("data"))
+            except requests.RequestException:
+                return False
+
+        if _tem_pagamentos("OVERDUE") or _tem_pagamentos("PENDING"):
+            return "Aguardando pagamento"
         return "Em dia"
 
     for sub in dados:
