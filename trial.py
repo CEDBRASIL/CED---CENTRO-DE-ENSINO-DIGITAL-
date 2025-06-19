@@ -13,7 +13,7 @@ router = APIRouter(prefix="/teste-gratis", tags=["Teste Gratuito"])
 
 TRIAL_DAYS = 3
 TRIALS_FILE = os.getenv("TRIALS_FILE", "trials.json")
-SENHA_PADRAO = os.getenv("SENHA_PADRAO", "1234567")
+SENHA_PADRAO = os.getenv("SENHA_PADRAO", "123456")
 
 
 def _load_trials() -> List[Dict]:

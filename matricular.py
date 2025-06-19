@@ -120,7 +120,7 @@ def _cadastrar_somente_aluno(
     whatsapp: str,
     email: Optional[str],
     token_key: str,
-    senha_padrao: str = "1234567",
+    senha_padrao: str = "123456",
     cpf: Optional[str] = None,
 ) -> Tuple[str, str]:
     """
@@ -209,7 +209,7 @@ def _cadastrar_aluno_om(
     email: Optional[str],
     cursos_ids: List[int],
     token_key: str,
-    senha_padrao: str = "1234567",
+    senha_padrao: str = "123456",
     cpf: Optional[str] = None,
 ) -> Tuple[str, str]:
     """
@@ -236,7 +236,7 @@ def _send_whatsapp_chatpro(
     whatsapp: str,
     cursos_nomes: List[str],
     cpf: str,
-    senha_padrao: str = "1234567",
+    senha_padrao: str = "123456",
     vencimento: str | None = None,
 ) -> None:
     """

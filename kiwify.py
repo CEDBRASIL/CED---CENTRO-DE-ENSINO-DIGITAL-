@@ -152,7 +152,7 @@ def enviar_whatsapp_chatpro(
     celular: str,
     plano: str,
     cpf: str,
-    senha_padrao: str = "1234567",
+    senha_padrao: str = "123456",
     vencimento: str | None = None,
 ) -> None:
     """Envia uma mensagem de boas-vindas via WhatsApp."""
@@ -385,7 +385,7 @@ async def _process_webhook(payload: dict):
             "data_nascimento": "2000-01-01",
             "email": email,
             "fone": celular,
-            "senha": "1234567",
+            "senha": "123456",
             "celular": celular,
             "doc_cpf": cpf,
             "doc_rg": "0",
