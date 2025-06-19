@@ -15,3 +15,5 @@ PR #3 - Correção de quebra do site
 - Restaurado Dockerfile apontando para main.py original
 - Restaurado docker-compose simples
 - Recuperado .env.example completo e README antigo
+=======
+
