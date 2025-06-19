@@ -10,3 +10,5 @@ python-dateutil
 psycopg2-binary
 pandas
 openpyxl
+SQLAlchemy
+asyncpg
