@@ -300,6 +300,8 @@
                             <input id="disp-msg-text" type="text" class="form-control w-full p-3 rounded-lg text-white mb-2" />
                             <label for="disp-msg-img" class="block mb-2 mt-4">Imagem (URL)</label>
                             <input id="disp-msg-img" type="text" class="form-control w-full p-3 rounded-lg text-white mb-2" />
+                            <label for="disp-msg-file" class="block mb-2 mt-4">Upload de Imagem</label>
+                            <input id="disp-msg-file" type="file" accept="image/*" class="form-control w-full p-3 rounded-lg text-white mb-2" />
                             <div id="disp-preview" class="bg-gray-900 p-3 rounded-lg text-sm mb-2"></div>
                             <button id="disp-msg-add" class="bg-spotify-green text-black px-4 py-2 rounded-lg hover-bg-spotify-green-darker button-glow">Adicionar</button>
                         </div>
@@ -466,6 +468,7 @@
             const dispNumeros = document.getElementById('disp-numeros');
             const dispMsgText = document.getElementById('disp-msg-text');
             const dispMsgImg = document.getElementById('disp-msg-img');
+            const dispMsgFile = document.getElementById('disp-msg-file');
             const dispPreview = document.getElementById('disp-preview');
             const dispMsgAdd = document.getElementById('disp-msg-add');
             const dispMsgList = document.getElementById('disp-mensagens');
@@ -1336,7 +1339,7 @@
 
             async function carregarGruposDisparos() {
                 try {
-                    const resp = await fetch(`${API_BASE}/grupos`);
+                    const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`${WP_API}/grupos`)}`);
                     const grupos = await resp.json();
                     grupos.sort((a, b) => a.nome.localeCompare(b.nome));
                     dispGrupos.innerHTML = '<option value="" disabled>Selecione os grupos</option>' +
@@ -1377,6 +1380,16 @@
 
             dispMsgText.addEventListener('input', atualizarPreview);
             dispMsgImg.addEventListener('input', atualizarPreview);
+            dispMsgFile.addEventListener('change', () => {
+                const file = dispMsgFile.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    dispMsgImg.value = reader.result;
+                    atualizarPreview();
+                };
+                reader.readAsDataURL(file);
+            });
 
             dispMsgAdd.addEventListener('click', async () => {
                 const txt = dispMsgText.value.trim();
