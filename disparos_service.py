@@ -31,8 +31,11 @@ def get_conn():
 @app.route('/grupos')
 def grupos():
     with get_conn() as conn, conn.cursor() as cur:
-        cur.execute('SELECT DISTINCT grupo FROM contatos')
-        grupos = [r[0] for r in cur.fetchall() if r[0]]
+        cur.execute(
+            "SELECT DISTINCT TRIM(grupo) AS grupo "
+            "FROM contatos WHERE grupo IS NOT NULL ORDER BY 1"
+        )
+        grupos = [r[0] for r in cur.fetchall()]
     return jsonify({'grupos': grupos})
 
 
