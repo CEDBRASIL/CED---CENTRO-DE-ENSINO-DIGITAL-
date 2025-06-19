@@ -36,6 +36,22 @@ def listar_assinantes():
     dados = resp.json().get("data") or []
     assinantes = []
 
+    def _status_assinatura(sub_id: str) -> str:
+        """Retorna 'Em dia' ou 'Aguardando pagamento' baseado nas cobranças."""
+        try:
+            r = requests.get(
+                f"{ASAAS_BASE_URL}/payments",
+                params={"subscription": sub_id, "limit": 1, "status": "PENDING,OVERDUE"},
+                headers=headers,
+                timeout=10,
+            )
+            r.raise_for_status()
+            if r.json().get("data"):
+                return "Aguardando pagamento"
+        except requests.RequestException:
+            pass
+        return "Em dia"
+
     for sub in dados:
         cid = sub.get("customer")
         valor = sub.get("value")
@@ -60,24 +76,14 @@ def listar_assinantes():
             except requests.RequestException:
                 pass
 
-        situacao = ""
-        if vencimento:
+        situacao = _status_assinatura(sub.get("id"))
+        if situacao == "Aguardando pagamento" and cpf_cli:
             try:
-                venc = date.fromisoformat(vencimento)
-                dias = (venc - date.today()).days
-                if dias < 0:
-                    situacao = "Aguardando pagamento"
-                    if dias <= -6 and cpf_cli:
-                        aid = _buscar_aluno_id_por_cpf(cpf_cli)
-                        if aid:
-                            try:
-                                _alterar_bloqueio(aid, 1)
-                            except Exception:
-                                pass
-                else:
-                    situacao = "Em dia"
+                aid = _buscar_aluno_id_por_cpf(cpf_cli)
+                if aid:
+                    _alterar_bloqueio(aid, 1)
             except Exception:
-                situacao = ""
+                pass
         assinantes.append(
             {
                 "id": sub.get("id"),
