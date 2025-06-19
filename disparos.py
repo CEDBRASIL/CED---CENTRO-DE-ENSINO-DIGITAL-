@@ -29,6 +29,39 @@ def get_conn():
     )
 
 
+# ─────────────────────────────────────────────────────────────
+# Função utilitária para garantir que as tabelas existam
+# ─────────────────────────────────────────────────────────────
+def ensure_tables() -> None:
+    """Cria as tabelas necessárias caso não existam."""
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS contatos (
+                id SERIAL PRIMARY KEY,
+                nome TEXT,
+                numero TEXT UNIQUE,
+                grupo TEXT
+            )
+            """
+        )
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS mensagens (
+                id SERIAL PRIMARY KEY,
+                conteudo TEXT NOT NULL,
+                tipo TEXT DEFAULT 'texto',
+                ativa BOOLEAN DEFAULT TRUE
+            )
+            """
+        )
+        conn.commit()
+
+
+# Garante que as tabelas sejam criadas quando o módulo é importado
+ensure_tables()
+
+
 @router.get('/grupos')
 def grupos():
     with get_conn() as conn, conn.cursor() as cur:
