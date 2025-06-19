@@ -41,4 +41,4 @@ def setup_logging() -> None:
 
 def send_startup_message() -> None:
     """Envia uma mensagem informando que o servidor iniciou."""
-    logging.info("🚀 Servidor iniciado com sucesso.")
+    logging.info("<SERVER ON/>")
