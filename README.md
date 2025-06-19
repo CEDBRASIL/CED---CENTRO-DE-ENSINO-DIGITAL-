@@ -14,6 +14,17 @@ python main.py
 A API ficará disponível em `http://localhost:8000` (ou na porta definida pela variável `PORT`).
 Defina `SKIP_CACHE_UPDATE_ON_STARTUP=1` para evitar a tentativa de atualizar o cache de cursos ao iniciar o servidor.
 
+## Executando com Docker
+Para subir o projeto em um contêiner basta construir a imagem e executá-la:
+```bash
+docker build -t ced-app .
+docker run --env-file .env -p 8000:8000 ced-app
+```
+Também é possível utilizar o `docker-compose`:
+```bash
+docker-compose up --build
+```
+
 ## Principais rotas
 
 - `POST /matricular`: realiza matrícula de alunos.

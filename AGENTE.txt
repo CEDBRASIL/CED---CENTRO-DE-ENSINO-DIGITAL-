@@ -1,0 +1,6 @@
+PR #1 - Dockerização inicial
+- Adicionado Dockerfile para executar a API com Uvicorn
+- Adicionado .dockerignore para reduzir o contexto
+- Criado docker-compose.yml simples
+- Criado .env.example com variáveis usadas no projeto
+- Atualizado README com instruções de uso em Docker
