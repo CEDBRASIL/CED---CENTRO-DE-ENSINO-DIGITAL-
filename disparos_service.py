@@ -125,7 +125,7 @@ LOG_FILE = 'log.json'
 HISTORY_FILE = 'history.json'
 
 PROGRESS = {
-    'status': 'parado',  # parado | disparando | concluido | abortado
+    'status': 'parado',  # parado | disparando | pausado | concluido | abortado
     'total': 0,
     'enviados': 0,
     'grupos': [],
@@ -134,6 +134,8 @@ PROGRESS = {
 }
 
 ABORTAR = False
+PAUSAR = False
+LIMITE_DIARIO = int(os.getenv('LIMITE_DIARIO', '0'))
 
 def load_log():
     if os.path.exists(LOG_FILE):
@@ -180,7 +182,7 @@ def enviar_mensagem(numero: str, mensagem: str):
 
 async def envio_async(grupos: Iterable[str] | None = None, numeros: Iterable[str] | None = None):
     """Realiza o envio sequencial de mensagens com controle de progresso."""
-    global PROGRESS, ABORTAR
+    global PROGRESS, ABORTAR, PAUSAR
     grupos = list(grupos or [])
     numeros = list(numeros or [])
     contatos = []
@@ -203,6 +205,9 @@ async def envio_async(grupos: Iterable[str] | None = None, numeros: Iterable[str
     total = len(log)
     primeira = True
     for c in contatos:
+        while PAUSAR and not ABORTAR:
+            PROGRESS.update(status='pausado')
+            await asyncio.sleep(1)
         if ABORTAR:
             PROGRESS.update(status='abortado', fim=datetime.utcnow().isoformat())
             break
@@ -219,6 +224,10 @@ async def envio_async(grupos: Iterable[str] | None = None, numeros: Iterable[str
         save_log(log)
         total += 1
         PROGRESS['enviados'] += 1
+        if LIMITE_DIARIO and PROGRESS['enviados'] >= LIMITE_DIARIO:
+            PAUSAR = True
+            PROGRESS.update(status='pausado')
+            break
         if primeira:
             primeira = False
         else:
@@ -228,13 +237,14 @@ async def envio_async(grupos: Iterable[str] | None = None, numeros: Iterable[str
                 print(f'{numero} - msg "{mensagem[:10]}..." aguardando {i}s - total {total}', end='\r')
                 await asyncio.sleep(1)
             print()
-    if PROGRESS['status'] != 'abortado':
+    if PROGRESS['status'] not in ('abortado', 'pausado'):
         PROGRESS.update(status='concluido', fim=datetime.utcnow().isoformat())
 
 
 def iniciar_envio(grupos, numeros):
-    global ABORTAR
+    global ABORTAR, PAUSAR
     ABORTAR = False
+    PAUSAR = False
     asyncio.run(envio_async(grupos, numeros))
     hist = load_history()
     hist.append({
@@ -274,6 +284,25 @@ def abortar():
     """Solicita a interrupção do disparo em andamento."""
     global ABORTAR
     ABORTAR = True
+    return jsonify({'ok': True})
+
+
+@app.post('/pause')
+def pausar():
+    """Pausa temporariamente o disparo."""
+    global PAUSAR
+    PAUSAR = True
+    PROGRESS.update(status='pausado')
+    return jsonify({'ok': True})
+
+
+@app.post('/resume')
+def continuar():
+    """Continua um disparo pausado."""
+    global PAUSAR
+    PAUSAR = False
+    if PROGRESS['status'] == 'pausado':
+        PROGRESS['status'] = 'disparando'
     return jsonify({'ok': True})
 
 

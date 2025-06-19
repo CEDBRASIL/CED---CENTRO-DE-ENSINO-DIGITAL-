@@ -289,7 +289,7 @@
                     <div class="bg-[#181818] p-6 rounded-lg border border-gray-800 space-y-4">
                         <div>
                             <label for="disp-grupos" class="block mb-2">Grupos</label>
-                            <select id="disp-grupos" class="form-control w-full p-3 rounded-lg text-white" multiple></select>
+                            <div id="disp-grupos" class="space-y-1"></div>
                         </div>
                         <div>
                             <label for="disp-numeros" class="block mb-2">Números adicionais</label>
@@ -306,8 +306,10 @@
                             <button id="disp-msg-add" class="bg-spotify-green text-black px-4 py-2 rounded-lg hover-bg-spotify-green-darker button-glow">Adicionar</button>
                         </div>
                         <ul id="disp-mensagens" class="space-y-1 text-sm"></ul>
-                        <div class="flex gap-4">
+                        <div class="flex flex-wrap gap-4">
                             <button id="disp-enviar" class="bg-spotify-green text-black px-4 py-2 rounded-lg hover-bg-spotify-green-darker button-glow">Enviar</button>
+                            <button id="disp-pausar" class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">Pausar</button>
+                            <button id="disp-continuar" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Continuar</button>
                             <button id="disp-abortar" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Abortar</button>
                         </div>
                         <p id="disp-progresso" class="text-sm mt-2"></p>
@@ -473,6 +475,8 @@
             const dispMsgAdd = document.getElementById('disp-msg-add');
             const dispMsgList = document.getElementById('disp-mensagens');
             const dispEnviar = document.getElementById('disp-enviar');
+            const dispPausar = document.getElementById('disp-pausar');
+            const dispContinuar = document.getElementById('disp-continuar');
             const dispAbortar = document.getElementById('disp-abortar');
             const dispProgresso = document.getElementById('disp-progresso');
             const dispHistorico = document.getElementById('disp-historico');
@@ -1342,10 +1346,9 @@
                     const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`${WP_API}/grupos`)}`);
                     const grupos = await resp.json();
                     grupos.sort((a, b) => a.nome.localeCompare(b.nome));
-                    dispGrupos.innerHTML = '<option value="" disabled>Selecione os grupos</option>' +
-                        grupos.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
+                    dispGrupos.innerHTML = grupos.map(g => `<label class="flex items-center gap-2"><input type="checkbox" value="${g.nome}" class="disp-grupo">${g.nome}</label>`).join('');
                 } catch (err) {
-                    dispGrupos.innerHTML = '<option>Erro ao carregar</option>';
+                    dispGrupos.innerHTML = '<p>Erro ao carregar</p>';
                 }
             }
 
@@ -1407,7 +1410,7 @@
             });
 
             dispEnviar.addEventListener('click', async () => {
-                const grupos = Array.from(dispGrupos.selectedOptions).map(o => o.value);
+                const grupos = Array.from(document.querySelectorAll('.disp-grupo:checked')).map(cb => cb.value);
                 const numeros = dispNumeros.value.split(/\n+/).map(n => normalizarNumero(n)).filter(Boolean);
                 dispLog.textContent = 'Enviando...';
                 await fetch(`${API_BASE}/enviar`, {
@@ -1424,11 +1427,24 @@
                 await fetch(`${API_BASE}/abort`, { method: 'POST' });
             });
 
+            dispPausar.addEventListener('click', async () => {
+                await fetch(`${API_BASE}/pause`, { method: 'POST' });
+                verificarStatus();
+            });
+
+            dispContinuar.addEventListener('click', async () => {
+                await fetch(`${API_BASE}/resume`, { method: 'POST' });
+                verificarStatus();
+            });
+
             async function verificarStatus() {
                 try {
                     const r = await fetch(`${API_BASE}/status`);
                     const d = await r.json();
                     dispProgresso.textContent = `Status: ${d.status} - ${d.enviados}/${d.total}`;
+                    const logResp = await fetch(`${API_BASE}/log`);
+                    const logs = await logResp.json();
+                    dispLog.textContent = logs.map(l => `Disparo ${l.numero} ${l.status}`).join('\n');
                     if (d.status === 'disparando') setTimeout(verificarStatus, 2000);
                 } catch {}
             }
