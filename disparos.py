@@ -256,6 +256,13 @@ def enviar(payload: dict):
     return {'ok': True}
 
 
+# Rota mantida por compatibilidade com a versão antiga do sistema
+@router.post('/disparo')
+def disparo(payload: dict):
+    """Alias para ``/enviar``."""
+    return enviar(payload)
+
+
 @router.get('/status')
 def status():
     return JSONResponse(PROGRESS)
