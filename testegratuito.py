@@ -17,7 +17,7 @@ from utils import parse_valor
 router = APIRouter(prefix="/teste-gratis", tags=["Teste Gratuito"])
 
 TRIAL_DIAS = 3
-SENHA_PADRAO = os.getenv("SENHA_PADRAO", "1234567")
+SENHA_PADRAO = os.getenv("SENHA_PADRAO", "123456")
 VALOR_PADRAO = parse_valor(os.getenv("ASSINATURA_VALOR_PADRAO", "0")) or 0.0
 BILLING_TYPE = os.getenv("ASAAS_BILLING_TYPE", "UNDEFINED")
 
