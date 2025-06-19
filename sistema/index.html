@@ -32,20 +32,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-image:
-                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: -2;
-            pointer-events: none;
-        }
+        /* Removido fundo em grade */
 
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Poppins', sans-serif;
@@ -85,6 +72,14 @@
         }
         .button-glow:hover {
             box-shadow: 0 0 20px 4px rgba(29, 185, 84, 0.5);
+        }
+
+        /* Opções do menu lateral sempre em caixas escuras */
+        .nav-link {
+            background-color: var(--surface-1);
+        }
+        .nav-link:hover {
+            background-color: var(--surface-2);
         }
         
         .section-content {
@@ -519,56 +514,1033 @@
             // --- LOAD FUNCTIONS FOR SECTIONS ---
             window.load_alunos = function() { fetchAlunos(); }
             window.load_matricular = function() { carregarPacotes(); carregarCursos(); }
-            // Add other load functions as needed...
+            // as demais funções de carregamento permanecem iguais
 
-            // The rest of your original JS functions (fetchAlunos, carregarPacotes, etc.)
-            // would go here, adapted to use showAlert, showConfirm, showPrompt.
-            // For brevity, I'm providing a mock fetchAlunos.
-            
-            async function fetchAlunos() {
-                alunosTabela.innerHTML = `<tr><td data-label="Status" class="px-6 py-10 text-center" colspan="6"><i class="fas fa-spinner fa-spin text-3xl spotify-green"></i></td></tr>`;
+            // ===== Funções originais =====
+
+            async function carregarPacotes() {
                 try {
-                    // const response = await fetch(`${API_BASE}/alunos`);
-                    // const data = await response.json();
-                    const mockData = { alunos: [
-                        {id: 101, nome: 'Ana Carolina', email: 'ana.c@example.com', whatsapp: '(11) 98765-4321'},
-                        {id: 102, nome: 'Bruno Mars', email: 'bruno.m@example.com', whatsapp: '(21) 91234-5678'},
-                        {id: 103, nome: 'Carla Dias', email: 'carla.d@example.com', whatsapp: '(31) 95555-8888'},
-                    ]};
-                    const data = mockData; // Using mock data
-                    
+                    const res = await fetch(`${API_BASE}/cursos`);
+                    const data = await res.json();
+                    const pacotes = Object.keys(data.cursos || {});
+                    pacoteSelect.innerHTML = '<option value="">Selecione</option>';
+                    pacotes.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p;
+                        opt.textContent = p;
+                        pacoteSelect.appendChild(opt);
+                    });
+                } catch (err) {
+                    pacoteSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+                }
+            }
+
+            async function carregarCursos() {
+                try {
+                    const res = await fetch(`${API_BASE}/cursosom`);
+                    const data = await res.json();
+                    const cursos = data.data || data.cursos || [];
+                    cursoSelect.innerHTML = '<option value="">Selecione</option>';
+                    cursos.forEach(c => {
+                        const opt = document.createElement('option');
+                        if (typeof c === 'string') {
+                            opt.value = c;
+                            opt.textContent = c;
+                        } else {
+                            opt.value = c.id;
+                            opt.textContent = c.nome;
+                        }
+                        cursoSelect.appendChild(opt);
+                    });
+                } catch (err) {
+                    cursoSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+                }
+            }
+
+            carregarPacotes();
+            carregarCursos();
+
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const user = document.getElementById('username').value;
+                const pass = document.getElementById('password').value;
+                loginError.classList.add('hidden');
+                try {
+                    const resp = await fetch('/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ usuario: user, senha: pass })
+                    });
+                    if (resp.ok) {
+                        loginSection.classList.add('hidden');
+                        systemSection.classList.remove('hidden');
+                        systemSection.style.display = 'flex';
+                    } else {
+                        loginError.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    loginError.classList.remove('hidden');
+                }
+            });
+
+            logoutButton.addEventListener('click', () => {
+                 loginSection.classList.remove('hidden');
+                 systemSection.classList.add('hidden');
+                 loginForm.reset();
+            });
+
+            menuAlunos.addEventListener('click', () => {
+                mostrar(alunosSection);
+                fetchAlunos();
+            });
+
+            function mostrar(sec) {
+                alunosSection.classList.add('hidden');
+                matricularSection.classList.add('hidden');
+                assinantesSection.classList.add('hidden');
+                cobrancasSection.classList.add('hidden');
+                whatsappSection.classList.add('hidden');
+                disparosSection.classList.add('hidden');
+                leadsSection.classList.add('hidden');
+                tarefasSection.classList.add('hidden');
+                usuariosSection.classList.add('hidden');
+                welcomeSection.classList.add('hidden');
+                assinantesDrawer.classList.add('hidden');
+                sec.classList.remove('hidden');
+            }
+
+            menuMatricular.addEventListener('click', () => {
+                mostrar(matricularSection);
+            });
+
+
+            menuAssinantes.addEventListener('click', () => {
+                mostrar(assinantesSection);
+                fetchAssinantes();
+            });
+
+            menuCobrancas.addEventListener('click', () => {
+                mostrar(cobrancasSection);
+                fetchCobrancas();
+            });
+
+            menuWhatsapp.addEventListener('click', () => {
+                mostrar(whatsappSection);
+                checkWpStatus();
+            });
+
+            menuDisparos.addEventListener('click', () => {
+                mostrar(disparosSection);
+                carregarGruposDisparos();
+                carregarMensagens();
+                carregarHistorico();
+            });
+
+            menuLeads.addEventListener('click', () => {
+                mostrar(leadsSection);
+                fetchGrupos();
+            });
+
+            menuTarefas.addEventListener('click', () => {
+                mostrar(tarefasSection);
+                renderTarefas();
+            });
+
+            menuUsuarios.addEventListener('click', () => {
+                mostrar(usuariosSection);
+                renderUsuarios();
+            });
+
+            buscarAlunosBtn.addEventListener('click', fetchAlunos);
+            filtroInput.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') fetchAlunos();
+            });
+
+            excluirSelecionadosBtn.addEventListener('click', deleteSelecionados);
+            bloquearSelecionadosBtn.addEventListener('click', () => updateSelecionados(1));
+            desbloquearSelecionadosBtn.addEventListener('click', () => updateSelecionados(0));
+
+            assinantesExcluirBtn.addEventListener('click', deleteAssinantesSelecionados);
+
+            assinantesSelectAll.addEventListener('change', () => {
+                document.querySelectorAll('.select-assinante').forEach(cb => cb.checked = assinantesSelectAll.checked);
+                updateAssinantesDrawer();
+            });
+
+            cobrancasExcluirBtn.addEventListener('click', deleteCobrancasSelecionadas);
+
+            cobrancasSelectAll.addEventListener('change', () => {
+                document.querySelectorAll('.select-cobranca').forEach(cb => cb.checked = cobrancasSelectAll.checked);
+                updateCobrancasDrawer();
+            });
+
+            grupoSelect.addEventListener('change', () => fetchParticipantes(grupoSelect.value));
+            exportCsvBtn.addEventListener('click', exportCSV);
+            exportXlsxBtn.addEventListener('click', exportXLSX);
+
+            selectAllCheckbox.addEventListener('change', () => {
+                document.querySelectorAll('.select-aluno').forEach(cb => cb.checked = selectAllCheckbox.checked);
+                updateDrawer();
+            });
+
+            matricularWhatsapp.addEventListener('input', e => {
+                e.target.value = applyWhatsappMask(e.target.value);
+            });
+
+            document.getElementById('assinante-numero').addEventListener('input', e => {
+                e.target.value = applyWhatsappMask(e.target.value);
+            });
+
+            document.getElementById('assinante-cpf').addEventListener('input', e => {
+                e.target.value = applyCPFMask(e.target.value);
+            });
+
+            matricularForm.addEventListener('submit', async e => {
+                e.preventDefault();
+                const login = document.getElementById('matricular-login').value.trim();
+                const nome = document.getElementById('matricular-nome').value.trim();
+                const whatsapp = normalizarNumero(document.getElementById('matricular-whatsapp').value);
+                const email = document.getElementById('matricular-email').value.trim();
+                const cpf = document.getElementById('matricular-cpf').value.replace(/\D/g, '');
+                const nascimento = document.getElementById('matricular-nasc').value;
+                const pacote = pacoteSelect.value;
+                const curso = cursoSelect.value;
+                const mensagem = document.getElementById('matricular-msg').value.trim();
+
+                if (!login || !nome || !whatsapp || !pacote || !curso) {
+                    matricularFeedback.textContent = 'Preencha todos os campos.';
+                    matricularFeedback.className = 'mt-4 text-red-500 text-center';
+                    return;
+                }
+
+                matricularFeedback.textContent = 'Enviando...';
+                matricularFeedback.className = 'mt-4 text-gray-300 text-center';
+                try {
+                    const resp = await fetch(`${API_BASE}/matricular`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ login, nome, whatsapp, email, cpf, nascimento, pacote, curso, mensagem })
+                    });
+                    if (!resp.ok) throw new Error('Falha ao cadastrar');
+                    try {
+                        await fetch(`${API_BASE}/asaas/assinatura`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ nome, cpf, whatsapp, email, nascimento, descricao: curso, valor: 59.9 })
+                        });
+                    } catch (err) {}
+                    matricularFeedback.textContent = 'Aluno matriculado com sucesso!';
+                    matricularFeedback.className = 'mt-4 text-green-400 text-center';
+                    matricularForm.reset();
+                } catch (err) {
+                    matricularFeedback.textContent = 'Falha ao cadastrar aluno.';
+                    matricularFeedback.className = 'mt-4 text-red-500 text-center';
+                }
+            });
+
+            assinanteForm.addEventListener('submit', async e => {
+                e.preventDefault();
+                const nome = document.getElementById('assinante-nome').value.trim();
+                const cpf = document.getElementById('assinante-cpf').value.replace(/\D/g, '');
+                const numero = normalizarNumero(document.getElementById('assinante-numero').value);
+                const vencimento = document.getElementById('assinante-venc').value;
+                const valor = document.getElementById('assinante-valor').value;
+                if (!nome || !cpf || !numero || !vencimento || !valor) {
+                    assinanteFormFeedback.textContent = 'Preencha todos os campos.';
+                    assinanteFormFeedback.className = 'text-red-500 text-center';
+                    return;
+                }
+                assinanteFormFeedback.textContent = 'Enviando...';
+                assinanteFormFeedback.className = 'text-gray-300 text-center';
+                try {
+                    await criarAssinante({ nome, cpf, numero, valor, vencimento });
+                    assinanteFormFeedback.textContent = 'Assinatura criada!';
+                    assinanteFormFeedback.className = 'text-green-400 text-center';
+                    assinanteForm.reset();
+                    fetchAssinantes();
+                } catch (err) {
+                    assinanteFormFeedback.textContent = err.message || 'Erro ao criar assinatura.';
+                    assinanteFormFeedback.className = 'text-red-500 text-center';
+                }
+            });
+
+            function applyWhatsappMask(value) {
+                value = value.replace(/\D/g, '');
+                if (value.length > 11) {
+                    value = value.slice(0, 11);
+                }
+                if (value.length > 10) {
+                    return `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
+                } else if (value.length > 6) {
+                    return `(${value.slice(0, 2)}) ${value.slice(2, 6)}-${value.slice(6)}`;
+                } else if (value.length > 2) {
+                    return `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                } else {
+                    return value;
+                }
+            }
+
+            function applyCPFMask(v) {
+                v = v.replace(/\D/g, '').slice(0,11);
+                v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                return v;
+            }
+
+            function normalizarNumero(num) {
+                num = String(num || '').replace(/\D/g, '');
+                if (!num.startsWith('55')) {
+                    num = '55' + num;
+                }
+                if (num.startsWith('55') && num[4] === '9') {
+                    num = num.slice(0, 4) + num.slice(5);
+                }
+                return num;
+            }
+
+            // ======== Funções da API de Assinantes ========
+            async function listarAssinantes() {
+                try {
+                    const resp = await fetch(`${API_BASE}/assinantes`);
+                    if (!resp.ok) throw new Error('Falha na requisição');
+                    return await resp.json();
+                } catch (err) {
+                    throw new Error('Erro ao buscar assinantes');
+                }
+            }
+
+            async function criarAssinante(dados) {
+                const payload = {
+                    nome: dados.nome,
+                    cpf: dados.cpf,
+                    whatsapp: dados.numero,
+                    valor: dados.valor,
+                    descricao: 'Assinatura',
+                    ciclo: 'MONTHLY',
+                    dueDate: dados.vencimento
+                };
+                try {
+                    const resp = await fetch(`${API_BASE}/asaas/assinatura`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!resp.ok) throw new Error('Falha ao criar assinatura');
+                    return await resp.json();
+                } catch (err) {
+                    throw new Error('Erro de rede ao criar assinatura');
+                }
+            }
+
+            async function editarAssinanteAPI(id, dados) {
+                try {
+                    const resp = await fetch(`${API_BASE}/assinantes/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(dados)
+                    });
+                    if (!resp.ok) throw new Error('Falha ao atualizar assinatura');
+                    return await resp.json();
+                } catch (err) {
+                    throw new Error('Erro de rede ao atualizar assinatura');
+                }
+            }
+
+            async function excluirAssinanteAPI(id) {
+                try {
+                    const resp = await fetch(`${API_BASE}/assinantes/${id}`, { method: 'DELETE' });
+                    if (!resp.ok) throw new Error('Falha ao remover assinatura');
+                    return true;
+                } catch (err) {
+                    throw new Error('Erro de rede ao remover assinatura');
+                }
+            }
+
+            async function fetchAlunos() {
+                alunosTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="6"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
+                try {
+                    const response = await fetch(`${API_BASE}/alunos`);
+                    const data = await response.json();
                     const filtro = filtroInput.value.toLowerCase();
                     const alunosApi = Array.isArray(data) ? data : data.alunos || [];
                     const alunos = alunosApi.filter(a => a.nome.toLowerCase().includes(filtro));
 
                     if (alunos.length === 0) {
-                         alunosTabela.innerHTML = `<tr><td data-label="Status" class="px-6 py-4 text-center" colspan="6">Nenhum aluno encontrado.</td></tr>`;
+                        alunosTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="6">Nenhum aluno encontrado.</td></tr>`;
                     } else {
                         alunosTabela.innerHTML = alunos.map(aluno => `
-                            <tr>
-                                <td data-label="Selec" class="px-6 py-4"><input type="checkbox" class="select-aluno form-control" data-id="${aluno.id}"></td>
-                                <td data-label="ID" class="px-6 py-4 text-sm text-text-secondary">${aluno.id}</td>
-                                <td data-label="Nome" class="px-6 py-4 font-medium">${aluno.nome}</td>
-                                <td data-label="Email" class="px-6 py-4 text-text-secondary">${aluno.email}</td>
-                                <td data-label="Whatsapp" class="px-6 py-4 text-text-secondary">${aluno.whatsapp || ""}</td>
-                                <td data-label="Ações" class="px-6 py-4 text-sm">
-                                    <div class="flex items-center gap-2">
-                                        <button data-id="${aluno.id}" class="block-aluno btn bg-yellow-600/80 text-white w-9 h-9 rounded-md hover:bg-yellow-600"><i class="fas fa-lock"></i></button>
-                                        <button data-id="${aluno.id}" class="unblock-aluno btn bg-green-600/80 text-white w-9 h-9 rounded-md hover:bg-green-600"><i class="fas fa-unlock"></i></button>
-                                        <button data-id="${aluno.id}" class="delete-aluno btn bg-red-600/80 text-white w-9 h-9 rounded-md hover:bg-red-600"><i class="fas fa-trash"></i></button>
-                                    </div>
+                            <tr class="hover:bg-gray-700 transition-colors">
+                                <td class="px-6 py-4"><input type="checkbox" class="select-aluno form-control" data-id="${aluno.id}"></td>
+                                <td class="px-6 py-4 text-sm text-gray-400">${aluno.id}</td>
+                                <td class="px-6 py-4 font-medium">${aluno.nome}</td>
+                                <td class="px-6 py-4 text-gray-400">${aluno.email}</td>
+                                <td class="px-6 py-4 text-gray-400">${aluno.telefone || aluno.whatsapp || aluno.celular || ""}</td>
+                                <td class="px-6 py-4 text-sm space-x-2">
+                                    <button data-id="${aluno.id}" class="block-aluno bg-yellow-600 text-white px-3 py-1 rounded-md hover:bg-yellow-700 transition-colors"><i class="fas fa-lock"></i></button>
+                                    <button data-id="${aluno.id}" class="unblock-aluno bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 transition-colors"><i class="fas fa-unlock"></i></button>
+                                    <button data-id="${aluno.id}" class="delete-aluno bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition-colors"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
                         `).join('');
 
                         document.querySelectorAll('.delete-aluno').forEach(btn => btn.addEventListener('click', () => deleteAluno(btn.dataset.id)));
+                        document.querySelectorAll('.block-aluno').forEach(btn => btn.addEventListener('click', () => updateAluno(btn.dataset.id, 1)));
+                        document.querySelectorAll('.unblock-aluno').forEach(btn => btn.addEventListener('click', () => updateAluno(btn.dataset.id, 0)));
+                        document.querySelectorAll('.select-aluno').forEach(cb => cb.addEventListener('change', updateDrawer));
+
+                        selectAllCheckbox.checked = false;
+                        updateDrawer();
                     }
                 } catch (err) {
-                    alunosTabela.innerHTML = `<tr><td data-label="Status" class="px-6 py-4 text-center text-red-400" colspan="6">Erro ao buscar alunos.</td></tr>`;
+                    alunosTabela.innerHTML = `<tr><td class="px-6 py-4 text-center text-red-500" colspan="6">Erro ao buscar alunos.</td></tr>`;
                 }
             }
-             // Add all other original JS functions here, adapted as needed.
-             // This is crucial for the full functionality.
+
+            async function deleteAluno(id) {
+                if (!confirm(`Deseja realmente deletar o aluno com ID ${id}?`)) return;
+                try {
+                    const resp = await fetch(`${API_BASE}/deletar/${id}`, { method: 'DELETE' });
+                    if (!resp.ok) throw new Error('Falha ao excluir');
+                    fetchAlunos();
+                } catch (err) { alert('Erro ao deletar aluno.'); }
+            }
+
+            async function updateAluno(id, status) {
+                 const action = status === 1 ? 'bloquear' : 'desbloquear';
+                if (!confirm(`Deseja realmente ${action} o aluno com ID ${id}?`)) return;
+                try {
+                    const resp = await fetch(`${API_BASE}/bloquear/${id}?status=${status}`, { method: 'POST' });
+                    if (!resp.ok) throw new Error('Falha ao atualizar');
+                    fetchAlunos();
+                } catch (err) { alert('Erro ao atualizar aluno.'); }
+            }
+
+            function getSelectedIds() {
+                return Array.from(document.querySelectorAll('.select-aluno:checked')).map(cb => cb.dataset.id);
+            }
+
+            async function deleteSelecionados() {
+                const selecionados = getSelectedIds();
+                if (selecionados.length === 0) return;
+                if (!confirm(`Deseja realmente deletar os ${selecionados.length} alunos selecionados?`)) return;
+                try {
+                    await Promise.all(selecionados.map(id => fetch(`${API_BASE}/deletar/${id}`, { method: 'DELETE' })));
+                    fetchAlunos();
+                } catch (err) { alert('Erro ao deletar alunos selecionados.'); }
+            }
+
+            async function updateSelecionados(status) {
+                const selecionados = getSelectedIds();
+                 const action = status === 1 ? 'bloquear' : 'desbloquear';
+                if (selecionados.length === 0) return;
+                 if (!confirm(`Deseja realmente ${action} os ${selecionados.length} alunos selecionados?`)) return;
+                try {
+                    await Promise.all(selecionados.map(id => fetch(`${API_BASE}/bloquear/${id}?status=${status}`, { method: 'POST' })));
+                    fetchAlunos();
+                } catch (err) { alert(`Erro ao ${action} alunos selecionados.`); }
+            }
+
+            async function checkWpStatus() {
+                try {
+                    const resp = await fetch('https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/status');
+                    const data = await resp.json();
+                    const conectado = data.connected ?? data.conectado;
+                    if (conectado) {
+                        wpStatusSpan.textContent = 'Conectado';
+                        wpNumber.textContent = `Número: ${data.numero || data.number || ''}`;
+                        wpQrDiv.innerHTML = '';
+                    } else {
+                        wpStatusSpan.textContent = 'Desconectado';
+                        wpNumber.textContent = '';
+                    }
+                } catch (err) {
+                    wpStatusSpan.textContent = 'Erro ao verificar';
+                }
+            }
+
+            wpConnectBtn.addEventListener("click", async () => {
+                wpQrDiv.innerHTML = "Carregando...";
+                try {
+                    const resp = await fetch("https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/qr");
+                    const html = await resp.text();
+                    wpQrDiv.innerHTML = html;
+                } catch (err) {
+                    wpQrDiv.textContent = "Erro ao obter QR code";
+                }
+            });
+            wpPingBtn.addEventListener("click", async () => {
+                try {
+                    await fetch("https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/send?para=61986660241&mensagem=PONG");
+                    alert("Ping enviado!");
+                } catch (err) {
+                    alert("Falha ao enviar ping.");
+                }
+            });
+            wpSendBtn.addEventListener('click', async () => {
+                const file = wpFile.files[0];
+                const mensagem = wpMsg.value.trim();
+                const manualNums = wpNumeros.value.split(/[\n,;]+/).map(n => normalizarNumero(n)).filter(Boolean);
+                let numeros = manualNums;
+                if (file) {
+                    try { numeros = numeros.concat(await parseFile(file)); } catch(e) {}
+                }
+                if (numeros.length === 0 || !mensagem) {
+                    wpSendStatus.textContent = 'Adicione números e mensagem.';
+                    wpSendStatus.className = 'mt-4 text-red-500';
+                    return;
+                }
+                wpSendStatus.textContent = 'Processando...';
+                wpSendStatus.className = 'mt-4 text-gray-300';
+                try {
+                    const intervalo = parseInt(wpInterval.value, 10) * 1000;
+                    for (let i = 0; i < numeros.length; i++) {
+                        await fetch(`https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/send?para=${numeros[i]}&mensagem=${encodeURIComponent(mensagem)}`);
+                        wpSendStatus.textContent = `Enviando (${i + 1}/${numeros.length})`;
+                        if (i < numeros.length - 1) await new Promise(r => setTimeout(r, intervalo));
+                    }
+                    wpSendStatus.textContent = 'Mensagens enviadas!';
+                    wpSendStatus.className = 'mt-4 text-green-400';
+                } catch (err) {
+                    wpSendStatus.textContent = 'Erro no envio.';
+                    wpSendStatus.className = 'mt-4 text-red-500';
+                }
+            });
+
+            function parseFile(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    if (file.name.endsWith('.csv')) {
+                        reader.onload = e => {
+                            const lines = e.target.result.split(/\r?\n/).filter(Boolean);
+                            const nums = lines.map(l => normalizarNumero(l.split(/[,;]/)[0]));
+                            resolve(nums.filter(n => n));
+                        };
+                        reader.onerror = reject;
+                        reader.readAsText(file);
+                    } else {
+                        reader.onload = e => {
+                            const data = new Uint8Array(e.target.result);
+                            const wb = XLSX.read(data, {type: 'array'});
+                            const sheet = wb.Sheets[wb.SheetNames[0]];
+                            const json = XLSX.utils.sheet_to_json(sheet, {header:1});
+                            const nums = json.map(r => normalizarNumero(String(r[0] || '')));
+                            resolve(nums.filter(n => n));
+                        };
+                        reader.onerror = reject;
+                        reader.readAsArrayBuffer(file);
+                    }
+                });
+            }
+
+            async function updateNumberCount() {
+                let count = wpNumeros.value.split(/[\n,;]+/).map(n => normalizarNumero(n)).filter(Boolean).length;
+                const file = wpFile.files[0];
+                if (file) {
+                    try { const nums = await parseFile(file); count += nums.length; } catch(e) {}
+                }
+                wpNumCount.textContent = `${count} número(s)`;
+            }
+
+            function updateDrawer() {
+                const count = document.querySelectorAll('.select-aluno:checked').length;
+                if (count > 0) {
+                    acoesDrawer.classList.remove('hidden');
+                    contadorSelecionados.textContent = `${count} selecionado(s)`;
+                } else {
+                    acoesDrawer.classList.add('hidden');
+                }
+            }
+
+            function updateAssinantesDrawer() {
+                const count = document.querySelectorAll('.select-assinante:checked').length;
+                if (count > 0) {
+                    assinantesDrawer.classList.remove('hidden');
+                    assinantesContador.textContent = `${count} selecionado(s)`;
+                } else {
+                    assinantesDrawer.classList.add('hidden');
+                }
+            }
+
+            function getAssinantesSelecionados() {
+                return Array.from(document.querySelectorAll('.select-assinante:checked')).map(cb => cb.dataset.id);
+            }
+
+            function updateCobrancasDrawer() {
+                const count = document.querySelectorAll('.select-cobranca:checked').length;
+                if (count > 0) {
+                    cobrancasDrawer.classList.remove('hidden');
+                    cobrancasContador.textContent = `${count} selecionado(s)`;
+                } else {
+                    cobrancasDrawer.classList.add('hidden');
+                }
+            }
+
+            function getCobrancasSelecionadas() {
+                return Array.from(document.querySelectorAll('.select-cobranca:checked')).map(cb => cb.dataset.id);
+            }
+
+            async function fetchGrupos() {
+                grupoSelect.innerHTML = '<option value="">Carregando...</option>';
+                try {
+                    const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`${WP_API}/grupos`)}`);
+                    const data = await resp.json();
+                    data.sort((a, b) => a.nome.localeCompare(b.nome));
+                    grupoSelect.innerHTML = '<option value="">Selecione</option>';
+                    data.forEach(g => {
+                        const opt = document.createElement('option');
+                        opt.value = g.nome;
+                        opt.textContent = g.nome;
+                        grupoSelect.appendChild(opt);
+                    });
+                } catch (err) {
+                    grupoSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+                }
+            }
+
+            let leadsGrupo = '';
+            let leadsDados = [];
+
+            async function fetchParticipantes(nome) {
+                if (!nome) { leadsTabela.innerHTML = ''; return; }
+                leadsTabela.innerHTML = `<tr><td colspan="2" class="px-6 py-4 text-center"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
+                try {
+                    const url = `${WP_API}/grupos/${encodeURIComponent(nome)}`;
+                    const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+                    const data = await resp.json();
+                    leadsGrupo = data.nome;
+                    leadsDados = data.participantes || [];
+                    if (leadsDados.length === 0) {
+                        leadsTabela.innerHTML = `<tr><td colspan="2" class="px-6 py-4 text-center">Nenhum número.</td></tr>`;
+                    } else {
+                        leadsTabela.innerHTML = leadsDados.map(p => `
+                            <tr class="hover:bg-gray-700 transition-colors">
+                                <td class="px-6 py-4 text-gray-400">${p.numero}</td>
+                                <td class="px-6 py-4">${p.admin ? 'Sim' : 'Não'}</td>
+                            </tr>
+                        `).join('');
+                    }
+                } catch (err) {
+                    leadsTabela.innerHTML = `<tr><td colspan="2" class="px-6 py-4 text-center text-red-500">Erro ao carregar</td></tr>`;
+                }
+            }
+
+            function exportCSV() {
+                if (leadsDados.length === 0) return;
+                const header = 'NOME,NUMERO,ADMIN\n';
+                const rows = leadsDados.map(p => `${leadsGrupo},${p.numero},${p.admin ? 'Sim' : 'Não'}`).join('\n');
+                const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'leads.csv';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            function exportXLSX() {
+                if (leadsDados.length === 0) return;
+                const ws = XLSX.utils.json_to_sheet(leadsDados.map(p => ({ NOME: leadsGrupo, NUMERO: p.numero, ADMIN: p.admin ? 'Sim' : 'Não' })));
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Leads');
+                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'leads.xlsx';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            async function deleteAssinantesSelecionados() {
+                const selecionados = getAssinantesSelecionados();
+                if (selecionados.length === 0) return;
+                if (!confirm(`Deseja realmente deletar os ${selecionados.length} assinantes selecionados?`)) return;
+                try {
+                    await Promise.all(selecionados.map(id => excluirAssinanteAPI(id)));
+                    alert('Assinantes removidos com sucesso!');
+                    fetchAssinantes();
+                } catch (err) {
+                    alert(err.message || 'Erro ao deletar assinantes.');
+                }
+            }
+
+            async function deleteCobrancasSelecionadas() {
+                const selecionadas = getCobrancasSelecionadas();
+                if (selecionadas.length === 0) return;
+                if (!confirm(`Deseja realmente deletar as ${selecionadas.length} cobranças selecionadas?`)) return;
+                try {
+                    await Promise.all(selecionadas.map(id => fetch(`${API_BASE}/cobrancas/${id}`, { method: 'DELETE' })));
+                    alert('Cobranças removidas com sucesso!');
+                    fetchCobrancas();
+                } catch (err) {
+                    alert('Erro ao deletar cobranças.');
+                }
+            }
+
+            async function deleteAssinante(id) {
+                if (!confirm('Deseja remover esta assinatura?')) return;
+                try {
+                    await excluirAssinanteAPI(id);
+                    alert('Assinatura removida com sucesso!');
+                    fetchAssinantes();
+                } catch (err) {
+                    alert(err.message || 'Erro ao remover assinatura.');
+                }
+            }
+
+            async function editAssinante(id) {
+                const row = document.querySelector(`.edit-assinante[data-id="${id}"]`).closest('tr');
+                const nome = prompt('Nome:', row.children[1].textContent);
+                if (nome === null) return;
+                const numero = prompt('Número:', row.children[2].textContent);
+                if (numero === null) return;
+                const venc = prompt('Data de Vencimento:', row.children[3].textContent);
+                if (venc === null) return;
+                const valor = prompt('Valor:', row.children[4].textContent);
+                if (valor === null) return;
+                try {
+                    await editarAssinanteAPI(id, { nome, numero: normalizarNumero(numero), vencimento: venc, valor });
+                    alert('Assinatura atualizada com sucesso!');
+                    fetchAssinantes();
+                } catch (err) {
+                    alert(err.message || 'Erro ao atualizar assinatura.');
+                }
+            }
+
+            async function cobrarAssinante(data) {
+                if (!confirm('Enviar cobrança para este assinante?')) return;
+                const payload = {
+                    nome: data.nome,
+                    whatsapp: data.numero,
+                    customer: data.customer,
+                    valor: parseFloat(data.valor || 0),
+                    descricao: data.curso
+                };
+                try {
+                    const resp = await fetch(`${API_BASE}/msgasaas`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!resp.ok) throw new Error();
+                    alert('Cobrança enviada com sucesso!');
+                } catch (err) {
+                    alert('Falha ao enviar cobrança.');
+                }
+            }
+
+            async function fetchAssinantes() {
+                assinantesTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="6"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
+                try {
+                    const data = await listarAssinantes();
+                    const assinantes = Array.isArray(data) ? data : data.assinantes || [];
+                    if (assinantes.length === 0) {
+                        assinantesTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="6">Nenhum assinante.</td></tr>`;
+                    } else {
+                        assinantesTabela.innerHTML = assinantes.map(a => {
+                            const statusClass = a.situacao === 'Em dia' ? 'text-green-400' : 'text-red-500';
+                            return `
+                            <tr class="hover:bg-gray-700 transition-colors">
+                                <td class="px-6 py-4"><input type="checkbox" class="select-assinante form-control" data-id="${a.id}"></td>
+                                <td class="px-6 py-4 font-medium">${a.nome}</td>
+                                <td class="px-6 py-4 text-gray-400">${a.numero || ''}</td>
+                                <td class="px-6 py-4 text-gray-400">${a.vencimento || ''}</td>
+                                <td class="px-6 py-4 text-gray-400">${a.valor || ''}</td>
+                                <td class="px-6 py-4 ${statusClass}">${a.situacao || ''}</td>
+                                <td class="px-6 py-4 text-sm space-x-2">
+                                    <button data-id="${a.id}" data-customer="${a.customer}" data-nome="${a.nome}" data-numero="${a.numero}" data-valor="${a.valor}" data-curso="${a.curso}" class="charge-assinante bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors"><i class="fas fa-money-bill-wave"></i></button>
+                                    <button data-id="${a.id}" class="edit-assinante bg-yellow-600 text-white px-3 py-1 rounded-md hover:bg-yellow-700 transition-colors"><i class="fas fa-edit"></i></button>
+                                    <button data-id="${a.id}" class="delete-assinante bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition-colors"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        `}).join('');
+                        document.querySelectorAll('.edit-assinante').forEach(b => b.addEventListener('click', () => editAssinante(b.dataset.id)));
+                        document.querySelectorAll('.delete-assinante').forEach(b => b.addEventListener('click', () => deleteAssinante(b.dataset.id)));
+                        document.querySelectorAll('.charge-assinante').forEach(b => b.addEventListener('click', () => cobrarAssinante(b.dataset)));
+                        document.querySelectorAll('.select-assinante').forEach(cb => cb.addEventListener('change', updateAssinantesDrawer));
+                        assinantesSelectAll.checked = false;
+                        updateAssinantesDrawer();
+                    }
+                } catch (err) {
+                    assinantesTabela.innerHTML = `<tr><td class="px-6 py-4 text-center text-red-500" colspan="6">Erro ao buscar assinantes.</td></tr>`;
+                }
+            }
+
+            async function listarCobrancas() {
+                try {
+                    const resp = await fetch(`${API_BASE}/cobrancas`);
+                    if (!resp.ok) throw new Error();
+                    return await resp.json();
+                } catch (err) {
+                    throw new Error('Erro ao listar cobranças');
+                }
+            }
+
+            async function fetchCobrancas() {
+                cobrancasTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="7"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
+                try {
+                    const data = await listarCobrancas();
+                    const cobrancas = Array.isArray(data) ? data : data.cobrancas || [];
+                    if (cobrancas.length === 0) {
+                        cobrancasTabela.innerHTML = `<tr><td class="px-6 py-4 text-center" colspan="7">Nenhuma cobrança.</td></tr>`;
+                    } else {
+                        cobrancasTabela.innerHTML = cobrancas.map(c => {
+                            const pago = c.status === 'RECEIVED' || c.status === 'CONFIRMED';
+                            const statusClass = pago ? 'text-green-400' : 'text-red-500';
+                            return `
+                            <tr class="hover:bg-gray-700 transition-colors">
+                                <td class="px-6 py-4"><input type="checkbox" class="select-cobranca form-control" data-id="${c.id}"></td>
+                                <td class="px-6 py-4 font-medium">${c.nome || ''}</td>
+                                <td class="px-6 py-4 text-gray-400">${c.valor || ''}</td>
+                                <td class="px-6 py-4 text-gray-400">${c.descricao || ''}</td>
+                                <td class="px-6 py-4 text-gray-400">${c.vencimento || ''}</td>
+                                <td class="px-6 py-4 ${statusClass}">${pago ? 'Pago' : 'Não pago'}</td>
+                                <td class="px-6 py-4 text-sm space-x-2">
+                                    <button data-id="${c.id}" data-customer="${c.customer}" data-nome="${c.nome}" data-numero="${c.telefone}" data-valor="${c.valor}" data-descricao="${c.descricao}" class="msg-cobranca bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors"><i class="fas fa-comment"></i></button>
+                                    <button data-id="${c.id}" class="edit-cobranca bg-yellow-600 text-white px-3 py-1 rounded-md hover:bg-yellow-700 transition-colors"><i class="fas fa-edit"></i></button>
+                                    <button data-id="${c.id}" class="delete-cobranca bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition-colors"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        `}).join('');
+                        document.querySelectorAll('.delete-cobranca').forEach(b => b.addEventListener('click', () => deleteCobranca(b.dataset.id)));
+                        document.querySelectorAll('.edit-cobranca').forEach(b => b.addEventListener('click', () => editCobranca(b.dataset.id)));
+                        document.querySelectorAll('.msg-cobranca').forEach(b => b.addEventListener('click', () => enviarMsgCobranca(b.dataset)));
+                        document.querySelectorAll('.select-cobranca').forEach(cb => cb.addEventListener('change', updateCobrancasDrawer));
+                        cobrancasSelectAll.checked = false;
+                        updateCobrancasDrawer();
+                    }
+                } catch (err) {
+                    cobrancasTabela.innerHTML = `<tr><td class="px-6 py-4 text-center text-red-500" colspan="7">Erro ao buscar cobranças.</td></tr>`;
+                }
+            }
+
+            async function deleteCobranca(id) {
+                if (!confirm('Deseja remover esta cobrança?')) return;
+                try {
+                    await fetch(`${API_BASE}/cobrancas/${id}`, { method: 'DELETE' });
+                    fetchCobrancas();
+                } catch (err) {
+                    alert('Erro ao remover cobrança.');
+                }
+            }
+
+            async function editCobranca(id) {
+                const row = document.querySelector(`.edit-cobranca[data-id="${id}"]`).closest('tr');
+                const valor = prompt('Valor:', row.children[1].textContent);
+                if (valor === null) return;
+                const descricao = prompt('Descrição:', row.children[2].textContent);
+                if (descricao === null) return;
+                const venc = prompt('Data de Vencimento:', row.children[3].textContent);
+                if (venc === null) return;
+                try {
+                    await fetch(`${API_BASE}/cobrancas/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ valor, descricao, vencimento: venc })
+                    });
+                    fetchCobrancas();
+                } catch (err) {
+                    alert('Erro ao atualizar cobrança.');
+                }
+            }
+
+            async function enviarMsgCobranca(data) {
+                if (!confirm('Enviar mensagem de cobrança?')) return;
+                const payload = {
+                    nome: data.nome,
+                    whatsapp: data.numero,
+                    customer: data.customer,
+                    valor: parseFloat(data.valor || 0),
+                    descricao: data.descricao
+                };
+                try {
+                    const resp = await fetch(`${API_BASE}/msgasaas`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!resp.ok) throw new Error();
+                    alert('Mensagem enviada com sucesso!');
+                } catch (err) {
+                    alert('Falha ao enviar mensagem.');
+                }
+            }
+
+            async function carregarGruposDisparos() {
+                try {
+                    const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`${WP_API}/grupos`)}`);
+                    const grupos = await resp.json();
+                    grupos.sort((a, b) => a.nome.localeCompare(b.nome));
+                    dispGrupos.innerHTML = grupos.map(g => `<label class="flex items-center gap-2"><input type="checkbox" value="${g.nome}" class="disp-grupo">${g.nome}</label>`).join('');
+                } catch (err) {
+                    dispGrupos.innerHTML = '<p>Erro ao carregar</p>';
+                }
+            }
+
+            async function carregarMensagens() {
+                dispMsgList.innerHTML = '<li>Carregando...</li>';
+                try {
+                    const resp = await fetch(`${API_BASE}/mensagens`);
+                    const msgs = await resp.json();
+                    dispMsgList.innerHTML = msgs.map(m => {
+                        const conteudo = m.tipo === 'imagem'
+                            ? `<img src="${m.conteudo}" class="max-w-xs rounded">`
+                            : `<span>${m.conteudo}</span>`;
+                        return `<li data-id="${m.id}" class="flex justify-between items-center gap-2">${conteudo}<button class="rem-msg text-red-500" data-id="${m.id}">Remover</button></li>`;
+                    }).join('');
+                    dispMsgList.querySelectorAll('.rem-msg').forEach(b => b.addEventListener('click', async () => {
+                        await fetch(`${API_BASE}/mensagens/${b.dataset.id}`, { method: 'DELETE' });
+                        carregarMensagens();
+                    }));
+                } catch (err) {
+                    dispMsgList.innerHTML = '<li>Erro ao carregar mensagens</li>';
+                }
+            }
+
+            function atualizarPreview() {
+                const txt = dispMsgText.value.trim();
+                const img = dispMsgImg.value.trim();
+                let html = '';
+                if (img) html += `<img src="${img}" class="max-w-xs rounded mb-1">`;
+                if (txt) html += `<div class="bg-green-600 text-white p-2 rounded">${txt}</div>`;
+                dispPreview.innerHTML = html;
+            }
+
+            dispMsgText.addEventListener('input', atualizarPreview);
+            dispMsgImg.addEventListener('input', atualizarPreview);
+            dispMsgFile.addEventListener('change', () => {
+                const file = dispMsgFile.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    dispMsgImg.value = reader.result;
+                    atualizarPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            dispMsgAdd.addEventListener('click', async () => {
+                const txt = dispMsgText.value.trim();
+                const img = dispMsgImg.value.trim();
+                if (!txt && !img) return;
+                await fetch(`${API_BASE}/mensagens`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ conteudo: txt || img, tipo: img ? 'imagem' : 'texto' })
+                });
+                dispMsgText.value = '';
+                dispMsgImg.value = '';
+                atualizarPreview();
+                carregarMensagens();
+            });
+
+            dispEnviar.addEventListener('click', async () => {
+                const grupos = Array.from(document.querySelectorAll('.disp-grupo:checked')).map(cb => cb.value);
+                const numeros = dispNumeros.value.split(/\n+/).map(n => normalizarNumero(n)).filter(Boolean);
+                dispLog.textContent = 'Enviando...';
+                await fetch(`${API_BASE}/enviar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ grupos, numeros })
+                });
+                dispLog.textContent = 'Processo iniciado...';
+                verificarStatus();
+                carregarHistorico();
+            });
+
+            dispAbortar.addEventListener('click', async () => {
+                await fetch(`${API_BASE}/abort`, { method: 'POST' });
+            });
+
+            dispPausar.addEventListener('click', async () => {
+                await fetch(`${API_BASE}/pause`, { method: 'POST' });
+                verificarStatus();
+            });
+
+            dispContinuar.addEventListener('click', async () => {
+                await fetch(`${API_BASE}/resume`, { method: 'POST' });
+                verificarStatus();
+            });
+
+            async function verificarStatus() {
+                try {
+                    const r = await fetch(`${API_BASE}/status`);
+                    const d = await r.json();
+                    dispProgresso.textContent = `Status: ${d.status} - ${d.enviados}/${d.total}`;
+                    const logResp = await fetch(`${API_BASE}/log`);
+                    const logs = await logResp.json();
+                    dispLog.textContent = logs.map(l => `Disparo ${l.numero} ${l.status}`).join('\n');
+                    if (d.status === 'disparando') setTimeout(verificarStatus, 2000);
+                } catch {}
+            }
+
+            async function carregarHistorico() {
+                try {
+                    const r = await fetch(`${API_BASE}/historico`);
+                    const hist = await r.json();
+                    dispHistorico.innerHTML = hist.map(h => `<li>${h.inicio} - ${h.status} (${h.enviados}/${h.total})</li>`).join('') || '<li>Nenhum histórico</li>';
+                } catch {
+                    dispHistorico.innerHTML = '<li>Erro ao carregar histórico</li>';
+                }
+            }
+
+            let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+            let tarefas = JSON.parse(localStorage.getItem('tarefas') || '[]');
+
+            function salvarUsuarios() { localStorage.setItem('usuarios', JSON.stringify(usuarios)); }
+            function salvarTarefas() { localStorage.setItem('tarefas', JSON.stringify(tarefas)); }
+
+            function atualizarOpcoesUsuarios() {
+                const sel = document.getElementById('tarefa-user');
+                if (!sel) return;
+                sel.innerHTML = usuarios.map((u,i) => `<option value="${i}">${u.nome}</option>`).join('');
+            }
+
+            function renderUsuarios() {
+                const list = document.getElementById('usuarios-list');
+                list.innerHTML = usuarios.map((u,i) => `<li class="bg-[#181818] p-3 rounded flex justify-between"><span>${u.nome} (${(u.acessos||[]).join(', ')})</span><button data-i="${i}" class="rem-usuario text-red-500"><i class='fas fa-trash'></i></button></li>`).join('') || '<li class="text-gray-400">Nenhum usuário</li>';
+                list.querySelectorAll('.rem-usuario').forEach(b => b.addEventListener('click', () => { usuarios.splice(b.dataset.i,1); salvarUsuarios(); renderUsuarios(); atualizarOpcoesUsuarios(); }));
+                atualizarOpcoesUsuarios();
+            }
+
+            function renderTarefas() {
+                const list = document.getElementById('tarefas-list');
+                list.innerHTML = tarefas.map((t,i) => {
+                    const u = usuarios[t.usuario] ? usuarios[t.usuario].nome : '';
+                    return `<li class="bg-[#181818] p-3 rounded flex justify-between"><span>${t.desc} - ${u}</span><button data-i="${i}" class="rem-tarefa text-red-500"><i class='fas fa-trash'></i></button></li>`;
+                }).join('') || '<li class="text-gray-400">Nenhuma tarefa</li>';
+                list.querySelectorAll('.rem-tarefa').forEach(b => b.addEventListener('click', () => { tarefas.splice(b.dataset.i,1); salvarTarefas(); renderTarefas(); }));
+                atualizarOpcoesUsuarios();
+            }
+
+            document.getElementById('usuario-form').addEventListener('submit', e => {
+                e.preventDefault();
+                const nome = document.getElementById('usuario-nome').value.trim();
+                const acessos = Array.from(document.querySelectorAll('#acessos-opcoes input:checked')).map(c => c.value);
+                if (!nome) return;
+                usuarios.push({ nome, acessos });
+                salvarUsuarios();
+                e.target.reset();
+                renderUsuarios();
+            });
+
+            document.getElementById('tarefa-form').addEventListener('submit', e => {
+                e.preventDefault();
+                const desc = document.getElementById('tarefa-desc').value.trim();
+                const usuario = document.getElementById('tarefa-user').value;
+                if (!desc) return;
+                tarefas.push({ desc, usuario });
+                salvarTarefas();
+                e.target.reset();
+                renderTarefas();
+            });
+
+            renderUsuarios();
+            renderTarefas();
+            updateNumberCount();
+
         });
     </script>
 </body>
