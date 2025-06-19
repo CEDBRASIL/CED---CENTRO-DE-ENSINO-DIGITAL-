@@ -4,7 +4,7 @@ import random
 import asyncio
 from datetime import datetime
 from threading import Thread
-from typing import Iterable
+from typing import Iterable, Optional
 
 import phonenumbers
 from utils import formatar_numero_whatsapp
@@ -93,6 +93,18 @@ def importar():
 
 # ------------- Log helpers -------------
 LOG_FILE = 'log.json'
+HISTORY_FILE = 'history.json'
+
+PROGRESS = {
+    'status': 'parado',  # parado | disparando | concluido | abortado
+    'total': 0,
+    'enviados': 0,
+    'grupos': [],
+    'inicio': None,
+    'fim': None
+}
+
+ABORTAR = False
 
 def load_log():
     if os.path.exists(LOG_FILE):
@@ -103,6 +115,18 @@ def load_log():
 def save_log(log):
     with open(LOG_FILE, 'w') as f:
         json.dump(log, f, ensure_ascii=False, indent=2)
+
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, 'r') as f:
+            return json.load(f)
+    return []
+
+
+def save_history(hist):
+    with open(HISTORY_FILE, 'w') as f:
+        json.dump(hist, f, ensure_ascii=False, indent=2)
 
 
 def is_on_whatsapp(numero: str) -> bool:
@@ -122,7 +146,8 @@ def enviar_mensagem(numero: str, mensagem: str):
     print(f'Enviando para {numero}: {mensagem}')
 
 async def envio_async(grupos: Iterable[str] | None = None, numeros: Iterable[str] | None = None):
-    """Realiza o envio sequencial de mensagens."""
+    """Realiza o envio sequencial de mensagens com controle de progresso."""
+    global PROGRESS, ABORTAR
     grupos = list(grupos or [])
     numeros = list(numeros or [])
     with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -137,8 +162,12 @@ async def envio_async(grupos: Iterable[str] | None = None, numeros: Iterable[str
     random.shuffle(contatos)
     log = load_log()
     enviados = {e['numero'] for e in log}
+    PROGRESS.update(status='disparando', total=len(contatos), enviados=0, grupos=grupos, inicio=datetime.utcnow().isoformat(), fim=None)
     total = len(log)
     for c in contatos:
+        if ABORTAR:
+            PROGRESS.update(status='abortado', fim=datetime.utcnow().isoformat())
+            break
         numero = formatar_numero_whatsapp(c['numero'])
         if numero in enviados:
             continue
@@ -151,16 +180,31 @@ async def envio_async(grupos: Iterable[str] | None = None, numeros: Iterable[str
         log.append({'numero': numero, 'mensagem': mensagem, 'horario': datetime.utcnow().isoformat(), 'status': 'enviado'})
         save_log(log)
         total += 1
+        PROGRESS['enviados'] += 1
         delay_base = max(30, 50 + random.randint(-50, 50))
         delay = delay_base + random.randint(0, 10)
         for i in range(delay, 0, -1):
             print(f'{numero} - msg "{mensagem[:10]}..." aguardando {i}s - total {total}', end='\r')
             await asyncio.sleep(1)
         print()
+    if PROGRESS['status'] != 'abortado':
+        PROGRESS.update(status='concluido', fim=datetime.utcnow().isoformat())
 
 
 def iniciar_envio(grupos, numeros):
+    global ABORTAR
+    ABORTAR = False
     asyncio.run(envio_async(grupos, numeros))
+    hist = load_history()
+    hist.append({
+        'grupos': grupos,
+        'total': PROGRESS.get('total'),
+        'enviados': PROGRESS.get('enviados'),
+        'status': PROGRESS.get('status'),
+        'inicio': PROGRESS.get('inicio'),
+        'fim': PROGRESS.get('fim')
+    })
+    save_history(hist)
 
 
 @app.route('/enviar', methods=['POST'])
@@ -169,6 +213,25 @@ def enviar():
     numeros = request.json.get('numeros', [])
     Thread(target=iniciar_envio, args=(grupos, numeros)).start()
     return jsonify({'ok': True})
+
+
+@app.route('/status')
+def status():
+    """Retorna o progresso atual do disparo."""
+    return jsonify(PROGRESS)
+
+
+@app.post('/abort')
+def abortar():
+    """Solicita a interrupção do disparo em andamento."""
+    global ABORTAR
+    ABORTAR = True
+    return jsonify({'ok': True})
+
+
+@app.route('/historico')
+def historico():
+    return jsonify(load_history())
 
 
 @app.route('/log')

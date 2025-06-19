@@ -296,13 +296,24 @@
                             <textarea id="disp-numeros" rows="2" class="form-control w-full p-3 rounded-lg text-white" placeholder="Um por linha"></textarea>
                         </div>
                         <div>
-                            <label for="disp-msg-input" class="block mb-2">Nova mensagem</label>
-                            <input id="disp-msg-input" type="text" class="form-control w-full p-3 rounded-lg text-white mb-2" />
+                            <label for="disp-msg-text" class="block mb-2">Texto</label>
+                            <input id="disp-msg-text" type="text" class="form-control w-full p-3 rounded-lg text-white mb-2" />
+                            <label for="disp-msg-img" class="block mb-2 mt-4">Imagem (URL)</label>
+                            <input id="disp-msg-img" type="text" class="form-control w-full p-3 rounded-lg text-white mb-2" />
+                            <div id="disp-preview" class="bg-gray-900 p-3 rounded-lg text-sm mb-2"></div>
                             <button id="disp-msg-add" class="bg-spotify-green text-black px-4 py-2 rounded-lg hover-bg-spotify-green-darker button-glow">Adicionar</button>
                         </div>
                         <ul id="disp-mensagens" class="space-y-1 text-sm"></ul>
-                        <button id="disp-enviar" class="bg-spotify-green text-black px-4 py-2 rounded-lg hover-bg-spotify-green-darker button-glow">Enviar</button>
+                        <div class="flex gap-4">
+                            <button id="disp-enviar" class="bg-spotify-green text-black px-4 py-2 rounded-lg hover-bg-spotify-green-darker button-glow">Enviar</button>
+                            <button id="disp-abortar" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Abortar</button>
+                        </div>
+                        <p id="disp-progresso" class="text-sm mt-2"></p>
                         <pre id="disp-log" class="text-xs mt-4 bg-black p-2 rounded-md h-32 overflow-y-auto"></pre>
+                        <div class="mt-4">
+                            <h3 class="font-bold mb-2">Histórico</h3>
+                            <ul id="disp-historico" class="space-y-1 text-sm"></ul>
+                        </div>
                     </div>
                 </section>
                 <section id="leads-section" class="hidden">
@@ -452,10 +463,15 @@
 
             const dispGrupos = document.getElementById('disp-grupos');
             const dispNumeros = document.getElementById('disp-numeros');
-            const dispMsgInput = document.getElementById('disp-msg-input');
+            const dispMsgText = document.getElementById('disp-msg-text');
+            const dispMsgImg = document.getElementById('disp-msg-img');
+            const dispPreview = document.getElementById('disp-preview');
             const dispMsgAdd = document.getElementById('disp-msg-add');
             const dispMsgList = document.getElementById('disp-mensagens');
             const dispEnviar = document.getElementById('disp-enviar');
+            const dispAbortar = document.getElementById('disp-abortar');
+            const dispProgresso = document.getElementById('disp-progresso');
+            const dispHistorico = document.getElementById('disp-historico');
             const dispLog = document.getElementById('disp-log');
 
             const grupoSelect = document.getElementById('grupo-select');
@@ -581,6 +597,7 @@
                 mostrar(disparosSection);
                 carregarGruposDisparos();
                 carregarMensagens();
+                carregarHistorico();
             });
 
             menuLeads.addEventListener('click', () => {
@@ -1328,7 +1345,12 @@
                 try {
                     const resp = await fetch(`${API_BASE}/mensagens`);
                     const msgs = await resp.json();
-                    dispMsgList.innerHTML = msgs.map(m => `<li data-id="${m.id}" class="flex justify-between"><span>${m.conteudo}</span><button class="rem-msg text-red-500" data-id="${m.id}">Remover</button></li>`).join('');
+                    dispMsgList.innerHTML = msgs.map(m => {
+                        const conteudo = m.tipo === 'imagem'
+                            ? `<img src="${m.conteudo}" class="max-w-xs rounded">`
+                            : `<span>${m.conteudo}</span>`;
+                        return `<li data-id="${m.id}" class="flex justify-between items-center gap-2">${conteudo}<button class="rem-msg text-red-500" data-id="${m.id}">Remover</button></li>`;
+                    }).join('');
                     dispMsgList.querySelectorAll('.rem-msg').forEach(b => b.addEventListener('click', async () => {
                         await fetch(`${API_BASE}/mensagens/${b.dataset.id}`, { method: 'DELETE' });
                         carregarMensagens();
@@ -1338,15 +1360,30 @@
                 }
             }
 
+            function atualizarPreview() {
+                const txt = dispMsgText.value.trim();
+                const img = dispMsgImg.value.trim();
+                let html = '';
+                if (img) html += `<img src="${img}" class="max-w-xs rounded mb-1">`;
+                if (txt) html += `<div class="bg-green-600 text-white p-2 rounded">${txt}</div>`;
+                dispPreview.innerHTML = html;
+            }
+
+            dispMsgText.addEventListener('input', atualizarPreview);
+            dispMsgImg.addEventListener('input', atualizarPreview);
+
             dispMsgAdd.addEventListener('click', async () => {
-                const txt = dispMsgInput.value.trim();
-                if (!txt) return;
+                const txt = dispMsgText.value.trim();
+                const img = dispMsgImg.value.trim();
+                if (!txt && !img) return;
                 await fetch(`${API_BASE}/mensagens`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ conteudo: txt })
+                    body: JSON.stringify({ conteudo: txt || img, tipo: img ? 'imagem' : 'texto' })
                 });
-                dispMsgInput.value = '';
+                dispMsgText.value = '';
+                dispMsgImg.value = '';
+                atualizarPreview();
                 carregarMensagens();
             });
 
@@ -1359,8 +1396,33 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ grupos, numeros })
                 });
-                dispLog.textContent = 'Processo iniciado. Acompanhe o console do servidor.';
+                dispLog.textContent = 'Processo iniciado...';
+                verificarStatus();
+                carregarHistorico();
             });
+
+            dispAbortar.addEventListener('click', async () => {
+                await fetch(`${API_BASE}/abort`, { method: 'POST' });
+            });
+
+            async function verificarStatus() {
+                try {
+                    const r = await fetch(`${API_BASE}/status`);
+                    const d = await r.json();
+                    dispProgresso.textContent = `Status: ${d.status} - ${d.enviados}/${d.total}`;
+                    if (d.status === 'disparando') setTimeout(verificarStatus, 2000);
+                } catch {}
+            }
+
+            async function carregarHistorico() {
+                try {
+                    const r = await fetch(`${API_BASE}/historico`);
+                    const hist = await r.json();
+                    dispHistorico.innerHTML = hist.map(h => `<li>${h.inicio} - ${h.status} (${h.enviados}/${h.total})</li>`).join('') || '<li>Nenhum histórico</li>';
+                } catch {
+                    dispHistorico.innerHTML = '<li>Erro ao carregar histórico</li>';
+                }
+            }
 
 
             let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
