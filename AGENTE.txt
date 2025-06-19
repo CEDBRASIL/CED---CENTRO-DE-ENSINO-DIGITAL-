@@ -13,3 +13,8 @@ PR #2 - Módulo de disparos WhatsApp
 PR #3 - Ajuste do serviço web
 - Dockerfile agora copia todo o projeto e executa main:app
 - Isso permite servir as páginas HTML na raiz e evita erros 404
+
+PR #4 - Integracao do modulo de disparos ao sistema principal
+- Roteadores /api integrados no main.py
+- Worker e criacao de tabelas iniciados no startup
+- Pagina /sistema/disparo servida pelo app principal
