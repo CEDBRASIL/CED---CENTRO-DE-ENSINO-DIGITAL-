@@ -286,7 +286,24 @@
                 </section>
                 <section id="disparos-section" class="hidden">
                     <h2 class="text-3xl font-bold mb-6">Disparos</h2>
-                    <p>Gerencie o envio de mensagens pelo novo serviço.</p>
+                    <div class="bg-[#181818] p-6 rounded-lg border border-gray-800 space-y-4">
+                        <div>
+                            <label for="disp-grupos" class="block mb-2">Grupos</label>
+                            <select id="disp-grupos" class="form-control w-full p-3 rounded-lg text-white" multiple></select>
+                        </div>
+                        <div>
+                            <label for="disp-numeros" class="block mb-2">Números adicionais</label>
+                            <textarea id="disp-numeros" rows="2" class="form-control w-full p-3 rounded-lg text-white" placeholder="Um por linha"></textarea>
+                        </div>
+                        <div>
+                            <label for="disp-msg-input" class="block mb-2">Nova mensagem</label>
+                            <input id="disp-msg-input" type="text" class="form-control w-full p-3 rounded-lg text-white mb-2" />
+                            <button id="disp-msg-add" class="bg-spotify-green text-black px-4 py-2 rounded-lg hover-bg-spotify-green-darker button-glow">Adicionar</button>
+                        </div>
+                        <ul id="disp-mensagens" class="space-y-1 text-sm"></ul>
+                        <button id="disp-enviar" class="bg-spotify-green text-black px-4 py-2 rounded-lg hover-bg-spotify-green-darker button-glow">Enviar</button>
+                        <pre id="disp-log" class="text-xs mt-4 bg-black p-2 rounded-md h-32 overflow-y-auto"></pre>
+                    </div>
                 </section>
                 <section id="leads-section" class="hidden">
                     <h2 class="text-3xl font-bold mb-6">Gerador de Leads</h2>
@@ -433,6 +450,14 @@
             const wpSendBtn = document.getElementById('wp-send-btn');
             const wpSendStatus = document.getElementById('wp-send-status');
 
+            const dispGrupos = document.getElementById('disp-grupos');
+            const dispNumeros = document.getElementById('disp-numeros');
+            const dispMsgInput = document.getElementById('disp-msg-input');
+            const dispMsgAdd = document.getElementById('disp-msg-add');
+            const dispMsgList = document.getElementById('disp-mensagens');
+            const dispEnviar = document.getElementById('disp-enviar');
+            const dispLog = document.getElementById('disp-log');
+
             const grupoSelect = document.getElementById('grupo-select');
             const leadsTabela = document.getElementById('leads-tabela');
             const exportCsvBtn = document.getElementById('export-csv');
@@ -554,6 +579,8 @@
 
             menuDisparos.addEventListener('click', () => {
                 mostrar(disparosSection);
+                carregarGruposDisparos();
+                carregarMensagens();
             });
 
             menuLeads.addEventListener('click', () => {
@@ -1286,6 +1313,54 @@
                     alert('Falha ao enviar mensagem.');
                 }
             }
+
+            async function carregarGruposDisparos() {
+                try {
+                    const resp = await fetch(`${API_BASE}/grupos`);
+                    const data = await resp.json();
+                    dispGrupos.innerHTML = data.grupos.map(g => `<option value="${g}">${g}</option>`).join('');
+                } catch (err) {
+                    dispGrupos.innerHTML = '<option>Erro ao carregar</option>';
+                }
+            }
+
+            async function carregarMensagens() {
+                try {
+                    const resp = await fetch(`${API_BASE}/mensagens`);
+                    const msgs = await resp.json();
+                    dispMsgList.innerHTML = msgs.map(m => `<li data-id="${m.id}" class="flex justify-between"><span>${m.conteudo}</span><button class="rem-msg text-red-500" data-id="${m.id}">Remover</button></li>`).join('');
+                    dispMsgList.querySelectorAll('.rem-msg').forEach(b => b.addEventListener('click', async () => {
+                        await fetch(`${API_BASE}/mensagens/${b.dataset.id}`, { method: 'DELETE' });
+                        carregarMensagens();
+                    }));
+                } catch (err) {
+                    dispMsgList.innerHTML = '<li>Erro ao carregar mensagens</li>';
+                }
+            }
+
+            dispMsgAdd.addEventListener('click', async () => {
+                const txt = dispMsgInput.value.trim();
+                if (!txt) return;
+                await fetch(`${API_BASE}/mensagens`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ conteudo: txt })
+                });
+                dispMsgInput.value = '';
+                carregarMensagens();
+            });
+
+            dispEnviar.addEventListener('click', async () => {
+                const grupos = Array.from(dispGrupos.selectedOptions).map(o => o.value);
+                const numeros = dispNumeros.value.split(/\n+/).map(n => normalizarNumero(n)).filter(Boolean);
+                dispLog.textContent = 'Enviando...';
+                await fetch(`${API_BASE}/enviar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ grupos, numeros })
+                });
+                dispLog.textContent = 'Processo iniciado. Acompanhe o console do servidor.';
+            });
 
 
             let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');

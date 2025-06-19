@@ -4,6 +4,10 @@ import random
 import asyncio
 from datetime import datetime
 from threading import Thread
+from typing import Iterable
+
+import phonenumbers
+from utils import formatar_numero_whatsapp
 
 from flask import Flask, request, jsonify
 import psycopg2
@@ -102,14 +106,25 @@ def save_log(log):
 
 
 def is_on_whatsapp(numero: str) -> bool:
-    return random.random() > 0.1
+    """Verifica formato válido e simula checagem no WhatsApp."""
+    try:
+        parsed = phonenumbers.parse("+" + numero, None)
+        if not phonenumbers.is_possible_number(parsed):
+            return False
+    except Exception:
+        return False
+    # Simula 5% de números não encontrados no WhatsApp
+    return random.random() > 0.05
 
 
 def enviar_mensagem(numero: str, mensagem: str):
+    """Função placeholder para envio de mensagem."""
     print(f'Enviando para {numero}: {mensagem}')
 
-
-async def envio_async(grupos):
+async def envio_async(grupos: Iterable[str] | None = None, numeros: Iterable[str] | None = None):
+    """Realiza o envio sequencial de mensagens."""
+    grupos = list(grupos or [])
+    numeros = list(numeros or [])
     with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
         if grupos:
             cur.execute('SELECT nome, numero, grupo FROM contatos WHERE grupo = ANY(%s)', (grupos,))
@@ -118,11 +133,13 @@ async def envio_async(grupos):
         contatos = cur.fetchall()
         cur.execute('SELECT conteudo FROM mensagens WHERE ativa=true')
         msgs = [r['conteudo'] for r in cur.fetchall()]
+    contatos.extend({'nome': None, 'numero': n, 'grupo': None} for n in numeros)
+    random.shuffle(contatos)
     log = load_log()
     enviados = {e['numero'] for e in log}
     total = len(log)
     for c in contatos:
-        numero = c['numero']
+        numero = formatar_numero_whatsapp(c['numero'])
         if numero in enviados:
             continue
         if not is_on_whatsapp(numero):
@@ -135,22 +152,29 @@ async def envio_async(grupos):
         save_log(log)
         total += 1
         delay_base = max(30, 50 + random.randint(-50, 50))
-        delay = delay_base + random.randint(0,10)
+        delay = delay_base + random.randint(0, 10)
         for i in range(delay, 0, -1):
             print(f'{numero} - msg "{mensagem[:10]}..." aguardando {i}s - total {total}', end='\r')
             await asyncio.sleep(1)
         print()
 
 
-def iniciar_envio(grupos):
-    asyncio.run(envio_async(grupos))
+def iniciar_envio(grupos, numeros):
+    asyncio.run(envio_async(grupos, numeros))
 
 
 @app.route('/enviar', methods=['POST'])
 def enviar():
     grupos = request.json.get('grupos', [])
-    Thread(target=iniciar_envio, args=(grupos,)).start()
+    numeros = request.json.get('numeros', [])
+    Thread(target=iniciar_envio, args=(grupos, numeros)).start()
     return jsonify({'ok': True})
+
+
+@app.route('/log')
+def log():
+    """Retorna o log atual de envios."""
+    return jsonify(load_log())
 
 
 if __name__ == '__main__':
