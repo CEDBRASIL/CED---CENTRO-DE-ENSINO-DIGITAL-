@@ -451,8 +451,37 @@
             const filtroInput = getEl('aluno-filtro');
             const buscarAlunosBtn = getEl('buscar-alunos');
             const selectAllCheckbox = getEl('select-all');
+            const bloquearSelecionadosBtn = getEl('bloquear-selecionados');
+            const desbloquearSelecionadosBtn = getEl('desbloquear-selecionados');
+            const excluirSelecionadosBtn = getEl('excluir-selecionados');
+            const assinantesExcluirBtn = getEl('assinantes-excluir');
+            const cobrancasExcluirBtn = getEl('cobrancas-excluir');
+            const wpStatusSpan = getEl('wp-status');
+            const wpNumber = getEl('wp-number');
+            const wpQrDiv = getEl('wp-qr');
+            const wpConnectBtn = getEl('wp-connect-btn');
+            const wpPingBtn = getEl('wp-ping-btn');
+            const wpSendBtn = getEl('wp-send-btn');
+            const wpFile = getEl('wp-file');
+            const wpMsg = getEl('wp-msg');
+            const wpNumeros = getEl('wp-numeros');
+            const wpInterval = getEl('wp-interval');
+            const wpSendStatus = getEl('wp-send-status');
+            const wpNumCount = getEl('wp-num-count');
+            const leadsTabela = getEl('leads-tabela');
             
+
+            // --- CORE LOGIC (UNCHANGED, MAS AGORA USANDO A API DE AUTENTICAÇÃO) ---
+
+            logoutButton.addEventListener('click', () => {
+                 loginSection.classList.remove('hidden');
+                 setTimeout(() => loginSection.classList.remove('opacity-0'), 10);
+                 systemSection.classList.add('hidden');
+                 loginForm.reset();
+            });
+
             // --- CORE LOGIC (UNCHANGED, BUT WITH MODALS) ---
+
             
             // Example of adapting a function
             async function deleteAluno(id) {
@@ -567,27 +596,39 @@
                 if(e.key === 'Enter') fetchAlunos();
             });
 
-            excluirSelecionadosBtn.addEventListener('click', deleteSelecionados);
-            bloquearSelecionadosBtn.addEventListener('click', () => updateSelecionados(1));
-            desbloquearSelecionadosBtn.addEventListener('click', () => updateSelecionados(0));
+            if (excluirSelecionadosBtn) excluirSelecionadosBtn.addEventListener('click', deleteSelecionados);
+            if (bloquearSelecionadosBtn) bloquearSelecionadosBtn.addEventListener('click', () => updateSelecionados(1));
+            if (desbloquearSelecionadosBtn) desbloquearSelecionadosBtn.addEventListener('click', () => updateSelecionados(0));
 
-            assinantesExcluirBtn.addEventListener('click', deleteAssinantesSelecionados);
+            if (assinantesExcluirBtn) assinantesExcluirBtn.addEventListener('click', deleteAssinantesSelecionados);
 
-            assinantesSelectAll.addEventListener('change', () => {
-                document.querySelectorAll('.select-assinante').forEach(cb => cb.checked = assinantesSelectAll.checked);
-                updateAssinantesDrawer();
-            });
+            const assinantesSelectAll = getEl('assinantes-select-all');
+            if (assinantesSelectAll) {
+                assinantesSelectAll.addEventListener('change', () => {
+                    document.querySelectorAll('.select-assinante').forEach(cb => cb.checked = assinantesSelectAll.checked);
+                    updateAssinantesDrawer();
+                });
+            }
 
-            cobrancasExcluirBtn.addEventListener('click', deleteCobrancasSelecionadas);
+            if (cobrancasExcluirBtn) cobrancasExcluirBtn.addEventListener('click', deleteCobrancasSelecionadas);
 
-            cobrancasSelectAll.addEventListener('change', () => {
-                document.querySelectorAll('.select-cobranca').forEach(cb => cb.checked = cobrancasSelectAll.checked);
-                updateCobrancasDrawer();
-            });
+            const cobrancasSelectAll = getEl('cobrancas-select-all');
+            if (cobrancasSelectAll) {
+                cobrancasSelectAll.addEventListener('change', () => {
+                    document.querySelectorAll('.select-cobranca').forEach(cb => cb.checked = cobrancasSelectAll.checked);
+                    updateCobrancasDrawer();
+                });
+            }
 
-            grupoSelect.addEventListener('change', () => fetchParticipantes(grupoSelect.value));
-            exportCsvBtn.addEventListener('click', exportCSV);
-            exportXlsxBtn.addEventListener('click', exportXLSX);
+            const grupoSelect = getEl('grupo-select');
+            if (grupoSelect) grupoSelect.addEventListener('change', () => fetchParticipantes(grupoSelect.value));
+            const exportCsvBtn = getEl('export-csv');
+            if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportCSV);
+            const exportXlsxBtn = getEl('export-xlsx');
+            if (exportXlsxBtn) exportXlsxBtn.addEventListener('click', exportXLSX);
+
+            if (wpNumeros) wpNumeros.addEventListener('input', updateNumberCount);
+            if (wpFile) wpFile.addEventListener('change', updateNumberCount);
 
             selectAllCheckbox.addEventListener('change', () => {
                 document.querySelectorAll('.select-aluno').forEach(cb => cb.checked = selectAllCheckbox.checked);
@@ -870,7 +911,8 @@
                 }
             }
 
-            wpConnectBtn.addEventListener("click", async () => {
+            if (wpConnectBtn) wpConnectBtn.addEventListener("click", async () => {
+                if (!wpQrDiv) return;
                 wpQrDiv.innerHTML = "Carregando...";
                 try {
                     const resp = await fetch("https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/qr");
@@ -880,7 +922,7 @@
                     wpQrDiv.textContent = "Erro ao obter QR code";
                 }
             });
-            wpPingBtn.addEventListener("click", async () => {
+            if (wpPingBtn) wpPingBtn.addEventListener("click", async () => {
                 try {
                     await fetch("https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/send?para=61986660241&mensagem=PONG");
                     alert("Ping enviado!");
@@ -888,7 +930,7 @@
                     alert("Falha ao enviar ping.");
                 }
             });
-            wpSendBtn.addEventListener('click', async () => {
+            if (wpSendBtn) wpSendBtn.addEventListener('click', async () => {
                 const file = wpFile.files[0];
                 const mensagem = wpMsg.value.trim();
                 const manualNums = wpNumeros.value.split(/[\n,;]+/).map(n => normalizarNumero(n)).filter(Boolean);
