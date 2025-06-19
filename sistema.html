@@ -157,7 +157,7 @@ async function disparar(mensagem, intervalo) {
   fb.textContent = "Enviando…";
   fb.className = "text-yellow-400 text-center";
   try {
-    const r = await fetchApi("/disparo", {
+    const r = await fetchApi("/enviar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mensagem, intervalo })

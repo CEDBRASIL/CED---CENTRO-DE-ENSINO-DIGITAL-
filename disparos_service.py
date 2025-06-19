@@ -218,6 +218,13 @@ def enviar():
     return jsonify({'ok': True})
 
 
+# Compatibilidade com a rota antiga utilizada pelo frontend
+@app.route('/disparo', methods=['POST'])
+def disparo():
+    """Alias para ``/enviar``."""
+    return enviar()
+
+
 @app.route('/status')
 def status():
     """Retorna o progresso atual do disparo."""
