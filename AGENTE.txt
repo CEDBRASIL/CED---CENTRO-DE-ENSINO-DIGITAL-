@@ -4,3 +4,14 @@ PR #1 - Dockerização inicial
 - Criado docker-compose.yml simples
 - Criado .env.example com variáveis usadas no projeto
 - Atualizado README com instruções de uso em Docker
+PR #2 - Módulo de disparos WhatsApp
+- Criado backend assíncrono com FastAPI e SQLAlchemy
+- Implementados modelos, rotas CRUD e worker
+- Adicionado frontend simples com HTML/JS/CSS
+- Atualizados Dockerfile e docker-compose para executar a nova API
+- Incluído .env.example reduzido
+
+PR #3 - Correção de quebra do site
+- Restaurado Dockerfile apontando para main.py original
+- Restaurado docker-compose simples
+- Recuperado .env.example completo e README antigo
