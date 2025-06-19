@@ -10,3 +10,10 @@ PR #2 - Módulo de disparos WhatsApp
 - Adicionado frontend simples com HTML/JS/CSS
 - Atualizados Dockerfile e docker-compose para executar a nova API
 - Incluído .env.example reduzido
+
+PR #3 - Correção de quebra do site
+- Restaurado Dockerfile apontando para main.py original
+- Restaurado docker-compose simples
+- Recuperado .env.example completo e README antigo
+=======
+
