@@ -53,3 +53,5 @@ PR #14 - Correção da importação de contatos
 PR #15 - Configuração de API base
 - frontend/index.html inclui script definindo window.API_BASE.
 - script.js passa a usar window.API_BASE como base da API.
+PR #16 - Ferramenta db_admin
+- Novo script db_admin.py para gerenciar criacao e consulta no Postgres.
