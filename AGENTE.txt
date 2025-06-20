@@ -71,3 +71,8 @@ PR #23 - Integra serviço WhatsApp em Node
 - Dockerfile adicionado em API WHATSAPP e serviço "whatsapp" no compose
 - Variáveis WP_API e WHATSAPP_URL no .env.example
 - READMEs removidos conforme instruções
+
+PR #24 - Persistência das credenciais do WhatsApp
+- index.js permite configurar pasta via WHATSAPP_AUTH_DIR
+- docker-compose monta volume whatsapp_auth em /data
+- .env.example define variável WHATSAPP_AUTH_DIR=/data

@@ -26,7 +26,11 @@ services:
     build: ./API WHATSAPP
     environment:
       - PORT=3000
+      - WHATSAPP_AUTH_DIR=/data
     ports:
       - "3000:3000"
+    volumes:
+      - whatsapp_auth:/data
 volumes:
   pgdata:
+  whatsapp_auth:
