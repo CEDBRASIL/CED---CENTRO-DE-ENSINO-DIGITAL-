@@ -98,9 +98,9 @@ def health():
 
 
 static_dir = os.path.dirname(os.path.abspath(__file__))
-app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 disparo_frontend = os.path.join(static_dir, "frontend")
 app.mount("/sistema/disparo", StaticFiles(directory=disparo_frontend, html=True), name="disparo")
+app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
 @app.get("/sistema/disparo", include_in_schema=False)
 async def disparo_root_redirect():
