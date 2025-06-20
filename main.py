@@ -11,6 +11,8 @@ from log_config import setup_logging, send_startup_message
 # endereço do serviço Node que gera o QR do WhatsApp
 # por padrão usa o domínio oficial em produção
 WP_API = os.getenv("WP_API", "https://api.cedbrasilia.com.br")
+# para buscar o QR diretamente no serviço, permite definir uma porta
+WP_API_QR = os.getenv("WP_API_QR", f"{WP_API}:3000")
 
 setup_logging()
 
@@ -129,10 +131,10 @@ def qr_data():
     """Busca o QR Code atualizado na API externa."""
     try:
         try:
-            requests.post(f"{WP_API}/connect", timeout=5)
+            requests.post(f"{WP_API_QR}/connect", timeout=5)
         except Exception:
             pass
-        resp = requests.get(f"{WP_API}/qr", timeout=10)
+        resp = requests.get(f"{WP_API_QR}/qr", timeout=10)
         if resp.ok:
             try:
                 data = resp.json()

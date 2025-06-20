@@ -92,5 +92,3 @@ PR #28 - Fallback de QR e novo endpoint
 PR #29 - Remove fallback QR generation and /qr/raw endpoint
 PR #30 - Corrige endpoint do QR e parsing
 PR #31 - Ajusta WP_API para dominio api.cedbrasilia.com.br por padrao
-PR #32 - Melhor feedback visual no QR
-- qr.html exibe animacao de carregamento e mensagem de erro quando o codigo nao esta disponivel
