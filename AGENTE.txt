@@ -67,3 +67,7 @@ PR #21 - Contagem de participantes nos grupos de disparo
 - Interface exibe contagem ao selecionar grupos
 PR #22 - Alias /disparo
 - Rotas /disparo, /disparos e /sistema/disparo redirecionam para /sistema
+PR #23 - Integra serviço WhatsApp em Node
+- Dockerfile adicionado em API WHATSAPP e serviço "whatsapp" no compose
+- Variáveis WP_API e WHATSAPP_URL no .env.example
+- READMEs removidos conforme instruções
