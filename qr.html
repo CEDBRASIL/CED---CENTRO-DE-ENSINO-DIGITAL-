@@ -42,21 +42,34 @@
 </head>
 <body>
     <div id="qr-container">
-        <img id="qr-img" src="" alt="QR Code" />
-        <p class="mt-4 text-center text-gray-400">Aponte a câmera do WhatsApp para o QR Code</p>
+        <div id="loader" class="text-6xl animate-spin mb-6"><i class="fas fa-spinner"></i></div>
+        <img id="qr-img" src="" alt="QR Code" class="hidden" />
+        <p id="msg" class="mt-4 text-center text-gray-400">Aponte a câmera do WhatsApp para o QR Code</p>
     </div>
     <script>
         const API = '/qr/data';
         const img = document.getElementById('qr-img');
+        const loader = document.getElementById('loader');
+        const msg = document.getElementById('msg');
+        let attempts = 0;
+
         async function fetchQR(){
             try {
                 const r = await fetch(API);
                 const j = await r.json();
                 if(j.qr){
+                    loader.classList.add('hidden');
                     img.style.opacity = '0';
-                    setTimeout(() => { img.src = j.qr; img.style.opacity = '1'; }, 150);
+                    setTimeout(() => { img.src = j.qr; img.classList.remove('hidden'); img.style.opacity = '1'; }, 150);
+                } else if (++attempts > 6) {
+                    loader.classList.add('hidden');
+                    msg.textContent = 'QR Code indisponível no momento.';
                 }
-            } catch(e){ console.error(e); }
+            } catch(e){
+                console.error(e);
+                loader.classList.add('hidden');
+                msg.textContent = 'Erro ao carregar QR Code.';
+            }
         }
         fetchQR();
         setInterval(fetchQR, 10000);
