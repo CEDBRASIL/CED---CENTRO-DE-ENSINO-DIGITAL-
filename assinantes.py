@@ -10,6 +10,8 @@ from bloquear import _alterar_bloqueio
 
 router = APIRouter(prefix="/assinantes", tags=["Assinantes"])
 
+# Leituras de configuração feitas dinamicamente em cada requisição para
+# evitar problemas quando variáveis são carregadas após o import deste módulo
 ASAAS_KEY = os.getenv("ASAAS_KEY")
 ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
 
@@ -20,10 +22,11 @@ ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
 def listar_assinantes():
     """Retorna uma lista formatada com os assinantes cadastrados."""
 
-    if not ASAAS_KEY:
+    key = os.getenv("ASAAS_KEY")
+    if not key:
         raise HTTPException(500, "ASAAS_KEY não configurada")
 
-    headers = {"Content-Type": "application/json", "access_token": ASAAS_KEY}
+    headers = {"Content-Type": "application/json", "access_token": key}
 
     try:
         resp = requests.get(

@@ -4,14 +4,17 @@ from fastapi import APIRouter, HTTPException
 
 router = APIRouter(prefix="/cobrancas", tags=["Cobranças"])
 
+# Leituras dinâmicas para evitar problemas caso o ambiente seja carregado
+# após a importação deste módulo
 ASAAS_KEY = os.getenv("ASAAS_KEY")
 ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
 
 
 def _headers() -> dict:
-    if not ASAAS_KEY:
+    key = os.getenv("ASAAS_KEY")
+    if not key:
         raise HTTPException(500, "ASAAS_KEY não configurada")
-    return {"Content-Type": "application/json", "access_token": ASAAS_KEY}
+    return {"Content-Type": "application/json", "access_token": key}
 
 
 _customer_cache: dict[str, tuple[str | None, str | None]] = {}
