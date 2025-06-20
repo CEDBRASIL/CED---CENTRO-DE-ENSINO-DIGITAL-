@@ -3,44 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disparo</title>
-    <link rel="stylesheet" href="/sistema/disparo/styles.css">
+    <title>Disparos - Sistema</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark-primary: #121212;
+            --bg-dark-secondary: #181818;
+            --bg-dark-tertiary: #1f1f1f;
+            --primary-accent: #1db954;
+            --primary-green: #28a745;
+            --primary-red: #e94560;
+            --primary-yellow: #ffc107;
+            --text-light: #E5E7EB;
+            --text-muted: #9CA3AF;
+            --border-color: #282828;
+        }
+        * {margin:0;padding:0;box-sizing:border-box;}
+        html,body{height:100%;}
+        body{font-family:'Poppins',sans-serif;background-color:var(--bg-dark-primary);color:var(--text-light);display:flex;font-size:14px;overflow:hidden;}
+        a{text-decoration:none;color:inherit;}
+        .vertical-sidebar{width:250px;background-color:var(--bg-dark-secondary);height:100vh;padding:25px 15px;display:flex;flex-direction:column;border-right:1px solid var(--border-color);position:fixed;top:0;left:0;z-index:200;}
+        .vertical-sidebar .sidebar-title{text-align:center;margin-bottom:40px;}
+        .vertical-nav-link{display:flex;align-items:center;gap:15px;padding:14px 20px;margin-bottom:8px;border-radius:8px;font-weight:500;transition:background-color .3s ease,color .3s ease;color:var(--text-muted);}
+        .vertical-nav-link:hover{background-color:var(--bg-dark-tertiary);color:var(--text-light);}
+        .vertical-nav-link.active{background-color:var(--primary-accent);color:var(--bg-dark-primary);font-weight:600;}
+        .main-content{margin-left:250px;flex:1;overflow-y:auto;height:100vh;padding:30px 40px;}
+        .page{display:none;}
+        .page.active{display:block;}
+        .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;}
+        .page-header h1{font-size:26px;font-weight:600;}
+        .btn{padding:10px 22px;border:none;border-radius:6px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:500;font-size:14px;transition:all .3s ease;display:inline-flex;align-items:center;gap:8px;}
+        .btn-primary{background-color:var(--primary-accent);color:var(--bg-dark-primary);}
+        .btn-primary:hover{opacity:.9;transform:translateY(-2px);}
+        .btn-secondary{background-color:var(--bg-dark-tertiary);color:var(--text-light);border:1px solid var(--border-color);}
+        .btn-secondary:hover{background-color:var(--border-color);}
+        .btn-icon{background:none;border:none;cursor:pointer;font-size:18px;padding:5px;border-radius:50%;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;transition:background-color .2s;}
+        .btn-icon:hover{background-color:var(--bg-dark-tertiary);}
+        .btn-delete{color:var(--primary-red);}
+        .btn-add-contacts{color:var(--primary-green);}
+        .data-table-container{background-color:var(--bg-dark-secondary);border-radius:8px;padding:15px;border:1px solid var(--border-color);}
+        .data-table{width:100%;border-collapse:collapse;}
+        .data-table th,.data-table td{padding:15px;text-align:left;}
+        .data-table thead{border-bottom:2px solid var(--border-color);}
+        .data-table th{color:var(--text-muted);font-weight:600;text-transform:uppercase;font-size:12px;}
+        .data-table tbody tr{border-bottom:1px solid var(--border-color);}
+        .data-table tbody tr:last-child{border-bottom:none;}
+        .data-table tbody tr:hover{background-color:var(--bg-dark-tertiary);}
+        .table-actions{display:flex;gap:5px;}
+        .form-container{background-color:var(--bg-dark-secondary);padding:30px;border-radius:8px;border:1px solid var(--border-color);max-width:700px;margin:auto;}
+        .form-group{margin-bottom:20px;}
+        .form-group label{display:block;margin-bottom:8px;color:var(--text-muted);font-weight:500;}
+        input[type="text"],input[type="file"],input[type="datetime-local"],select,textarea{width:100%;padding:12px;background-color:var(--bg-dark-primary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-light);font-family:'Poppins',sans-serif;font-size:14px;}
+        input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary-accent);box-shadow:0 0 0 3px rgba(29,185,84,.2);}
+        .file-input-wrapper{border:2px dashed var(--border-color);border-radius:8px;padding:40px;text-align:center;cursor:pointer;transition:border-color .3s;}
+        .file-input-wrapper:hover{border-color:var(--primary-accent);}
+        .message-creator-layout{display:grid;grid-template-columns:1fr 380px;gap:30px;}
+        .placeholders{margin-top:15px;border-top:1px solid var(--border-color);padding-top:15px;}
+        .placeholders p{font-size:12px;color:var(--text-muted);margin-bottom:10px;}
+        .btn-placeholder{background-color:var(--bg-dark-tertiary);color:var(--text-light);border:1px solid var(--border-color);border-radius:15px;padding:5px 12px;cursor:pointer;margin:3px;font-size:12px;transition:all .2s;}
+        .btn-placeholder:hover{border-color:var(--primary-accent);color:var(--primary-accent);}
+        .whatsapp-preview-container{background-color:#0d1418;border:8px solid #333;border-radius:20px;padding:10px;height:550px;display:flex;flex-direction:column;background-image:url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');}
+        .whatsapp-chat-area{padding:20px 10px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;}
+        .chat-bubble{background-color:#056162;align-self:flex-end;border-radius:8px 8px 0 8px;padding:8px 12px;max-width:90%;color:white;word-wrap:break-word;}
+        .chat-bubble .text{white-space:pre-wrap;font-size:14.2px;line-height:1.4;}
+        #preview-image{width:100%;border-radius:6px;margin-bottom:5px;display:none;}
+        .chat-bubble .time{font-size:11px;color:rgba(255,255,255,.6);text-align:right;margin-top:5px;display:block;}
+        .add-contacts-tabs{display:flex;border-bottom:1px solid var(--border-color);margin-bottom:25px;}
+        .add-contacts-tab-link{padding:12px 25px;cursor:pointer;border:none;background:none;color:var(--text-muted);font-size:15px;font-weight:500;position:relative;}
+        .add-contacts-tab-link.active{color:var(--primary-accent);}
+        .add-contacts-tab-link.active::after{content:'';position:absolute;bottom:-1px;left:0;width:100%;height:2px;background-color:var(--primary-accent);}
+        .tab-content{display:none;}
+        .tab-content.active{display:block;}
+        .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.7);display:none;justify-content:center;align-items:center;z-index:1000;}
+        .modal-content{background-color:var(--bg-dark-secondary);padding:30px;border-radius:8px;width:90%;max-width:500px;position:relative;border:1px solid var(--border-color);}
+        .close-modal{position:absolute;top:15px;right:20px;font-size:28px;cursor:pointer;color:var(--text-muted);transition:color .2s;}
+        .close-modal:hover{color:var(--text-light);}
+        .modal-content h2{margin-bottom:25px;text-align:center;font-weight:600;}
+        .empty-state-container{text-align:center;padding:50px;background-color:var(--bg-dark-secondary);border-radius:8px;border:1px dashed var(--border-color);}
+        .empty-state-container p{color:var(--text-muted);margin-bottom:20px;}
+        @media (max-width:1200px){.message-creator-layout{grid-template-columns:1fr;}}
+        @media (max-width:768px){body{flex-direction:column;overflow:auto;}.vertical-sidebar{width:100%;height:auto;position:static;flex-direction:row;align-items:center;padding:10px 15px;z-index:200;}.vertical-sidebar .sidebar-title{display:none;}.vertical-sidebar{justify-content:space-around;}.main-content{margin-left:0;height:auto;padding:20px;}.page-header{flex-direction:column;align-items:flex-start;gap:15px;}}
+    </style>
 </head>
 <body>
-<h1>Disparo de Mensagens</h1>
-<div id="arquivos" class="secao">
-    <h2>Meus Arquivos</h2>
-    <input type="file" id="fileInput" />
-    <button onclick="uploadArquivo()">Enviar</button>
-    <ul id="listaArquivos"></ul>
-</div>
-<div id="listas" class="secao">
-    <h2>Listas</h2>
-    <input id="nomeLista" placeholder="Nome" />
-    <button onclick="criarLista()">Criar</button>
-    <ul id="listaListas"></ul>
-</div>
-<div id="contatos" class="secao">
-    <h2>Contatos</h2>
-    <input id="contatoTelefone" placeholder="Telefone" />
-    <input id="contatoLista" placeholder="ID da Lista" type="number" />
-    <button onclick="criarContato()">Adicionar</button>
-    <ul id="listaContatos"></ul>
-</div>
-<div id="mensagens" class="secao">
-    <h2>Mensagens</h2>
-    <input id="msgIdent" placeholder="Identificador" />
-    <textarea id="msgConteudo" placeholder="Conteúdo"></textarea>
-    <button onclick="criarMensagem()">Criar</button>
-    <ul id="listaMensagens"></ul>
-</div>
-<div id="disparos" class="secao">
-    <h2>Disparo de Mensagens</h2>
-    <input id="dispLista" placeholder="ID Lista" type="number" />
-    <input id="dispMsg" placeholder="ID Mensagem" type="number" />
-    <button onclick="criarDisparo()">Disparar</button>
-    <ul id="listaDisparos"></ul>
-</div>
-<script src="/sistema/disparo/script.js"></script>
+    <div class="modal-overlay" id="modal-add-list">
+        <div class="modal-content">
+            <span class="close-modal" data-modal-id="modal-add-list">&times;</span>
+            <h2>Adicionar Nova Lista</h2>
+            <form class="modal-form" id="form-add-list">
+                <div class="form-group">
+                    <label for="list-name">Nome da Lista</label>
+                    <input type="text" id="list-name" placeholder="Ex: Clientes VIP">
+                </div>
+                <div class="form-group">
+                    <label for="list-desc">Descrição (Opcional)</label>
+                    <input type="text" id="list-desc" placeholder="Ex: Contatos da campanha de Junho">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Salvar Lista</button>
+            </form>
+        </div>
+    </div>
+    <nav class="vertical-sidebar">
+        <div class="sidebar-title"><img src="/ced.svg" alt="CED" style="max-width:160px;"></div>
+        <a href="#" class="vertical-nav-link" data-page="page-contact-lists">Listas de Contatos</a>
+        <a href="#" class="vertical-nav-link" data-page="page-messages">Mensagens</a>
+        <a href="#" class="vertical-nav-link" data-page="page-broadcast">Disparo de Mensagem</a>
+        <a href="#" class="vertical-nav-link" data-page="page-files">Meus Arquivos</a>
+    </nav>
+    <main class="main-content">
+        <div id="page-contact-lists" class="page active">
+            <div class="page-header">
+                <h1>Minhas Listas de Contatos</h1>
+                <button class="btn btn-primary" id="btn-open-modal-add-list">Adicionar Lista</button>
+            </div>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Nome da Lista</th><th>Descrição</th><th>Contatos</th><th>Ações</th></tr>
+                    </thead>
+                    <tbody id="tbody-listas"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="page-messages" class="page">
+            <div class="page-header">
+                <h1>Modelos de Mensagem</h1>
+                <button class="btn btn-primary" data-page="page-add-template">Adicionar</button>
+            </div>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Identificador</th><th>Tipo</th><th>Prévia da Mensagem</th><th>Ações</th></tr>
+                    </thead>
+                    <tbody id="tbody-mensagens"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="page-broadcast" class="page">
+            <div class="page-header">
+                <h1>Disparo de Mensagem</h1>
+            </div>
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="broadcast-list">Lista</label>
+                    <select id="broadcast-list"></select>
+                </div>
+                <div class="form-group">
+                    <label for="broadcast-template">Mensagem</label>
+                    <select id="broadcast-template"></select>
+                </div>
+                <div class="form-group">
+                    <label for="broadcast-schedule">Agendar Disparo (Opcional)</label>
+                    <input type="datetime-local" id="broadcast-schedule">
+                </div>
+                <button class="btn btn-primary" id="btn-disparar" style="width:100%;">🚀 Enviar</button>
+            </div>
+        </div>
+        <div id="page-files" class="page">
+            <div class="page-header">
+                <h1>Meus Arquivos</h1>
+            </div>
+            <div class="form-container" style="max-width:none;">
+                <label>Upload de Imagens</label>
+                <div class="file-input-wrapper">
+                    <p>Arraste e solte arquivos aqui ou clique para selecionar</p>
+                    <input type="file" multiple id="file-upload" style="display:none;">
+                </div>
+            </div>
+        </div>
+        <div id="page-add-contacts" class="page">
+            <div class="page-header">
+                <h1 id="add-contacts-title">Gerenciar Contatos</h1>
+                <button class="btn btn-secondary" data-page="page-contact-lists">← Voltar para Listas</button>
+            </div>
+            <div class="form-container">
+                <div class="add-contacts-tabs">
+                    <button class="add-contacts-tab-link active" data-tab="manual">Adicionar Manualmente</button>
+                    <button class="add-contacts-tab-link" data-tab="upload">Fazer Upload</button>
+                </div>
+                <div id="manual" class="tab-content active">
+                    <div class="form-group">
+                        <label for="contact-name">Nome do Contato</label>
+                        <input type="text" id="contact-name" placeholder="Nome Completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-number">Número com DDD</label>
+                        <input type="text" id="contact-number" placeholder="(XX) XXXXX-XXXX">
+                    </div>
+                    <button class="btn btn-primary" id="btn-add-contato">Adicionar Contato</button>
+                </div>
+                <div id="upload" class="tab-content">
+                    <div class="form-group">
+                        <label>Arquivo (.csv, .txt)</label>
+                        <input type="file" class="file-input" id="file-contatos">
+                    </div>
+                    <p style="text-align:center;color:var(--text-muted);margin:20px 0;">Selecione as colunas correspondentes:</p>
+                    <div class="form-group"><label for="col-name">Nome (Opcional)</label><select id="col-name"></select></div>
+                    <div class="form-group"><label for="col-number">Número</label><select id="col-number"></select></div>
+                    <div class="form-group"><label for="col-desc1">Descrição 1</label><select id="col-desc1"></select></div>
+                    <div class="form-group"><label for="col-desc2">Descrição 2</label><select id="col-desc2"></select></div>
+                    <div class="form-group"><label for="col-desc3">Descrição 3</label><select id="col-desc3"></select></div>
+                    <button class="btn btn-primary" id="btn-import-contatos">Importar Contatos</button>
+                </div>
+            </div>
+        </div>
+        <div id="page-add-template" class="page">
+            <div class="page-header">
+                <h1>Criar Mensagem</h1>
+                <button class="btn btn-secondary" data-page="page-messages">← Voltar para Mensagens</button>
+            </div>
+            <div class="message-creator-layout">
+                <div class="form-container" style="max-width:none;margin:0;">
+                    <div class="form-group">
+                        <label for="msg-identifier">Identificador (Título da mensagem)</label>
+                        <input type="text" id="msg-identifier" placeholder="Ex: Campanha de Lançamento">
+                    </div>
+                    <div class="form-group">
+                        <label for="msg-type">Tipo</label>
+                        <select id="msg-type"><option value="text">Texto</option><option value="image">Imagem</option></select>
+                    </div>
+                    <div class="form-group" id="image-upload-group" style="display:none;">
+                        <label>Imagem</label>
+                        <input type="file" class="file-input" accept="image/*" id="msg-image">
+                    </div>
+                    <div class="form-group">
+                        <label for="msg-content">Mensagem</label>
+                        <textarea id="msg-content" rows="8" placeholder="Escreva a sua mensagem aqui..."></textarea>
+                    </div>
+                    <div class="placeholders">
+                        <p>Clique para adicionar informações do contato:</p>
+                        <button class="btn-placeholder">{{Nome}}</button>
+                        <button class="btn-placeholder">{{Descrição 1}}</button>
+                        <button class="btn-placeholder">{{Descrição 2}}</button>
+                        <button class="btn-placeholder">{{Descrição 3}}</button>
+                    </div>
+                    <button class="btn btn-primary" id="btn-criar-mensagem" style="width:100%;margin-top:20px;">Criar</button>
+                </div>
+                <div>
+                    <h3 style="text-align:center;margin-bottom:15px;font-weight:500;">Pré-visualização da mensagem</h3>
+                    <div class="whatsapp-preview-container">
+                        <div class="whatsapp-chat-area">
+                            <div class="chat-bubble">
+                                <img src="https://placehold.co/600x400/16213e/e0fbfc?text=Sua+Imagem" id="preview-image" alt="Preview da imagem">
+                                <span class="text" id="preview-text">Sua mensagem aparecerá aqui.</span>
+                                <span class="time">21:13</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="script.js"></script>
 </body>
 </html>
