@@ -209,6 +209,7 @@
                 <div class="add-contacts-tabs">
                     <button class="add-contacts-tab-link active" data-tab="manual">Adicionar Manualmente</button>
                     <button class="add-contacts-tab-link" data-tab="upload">Fazer Upload</button>
+                    <button class="add-contacts-tab-link" data-tab="grupo">Do Grupo</button>
                 </div>
                 <div id="manual" class="tab-content active">
                     <div class="form-group">
@@ -233,6 +234,19 @@
                     <div class="form-group"><label for="col-desc2">Descrição 2</label><select id="col-desc2"></select></div>
                     <div class="form-group"><label for="col-desc3">Descrição 3</label><select id="col-desc3"></select></div>
                     <button class="btn btn-primary" id="btn-import-contatos">Importar Contatos</button>
+                </div>
+                <div id="grupo" class="tab-content">
+                    <div class="form-group">
+                        <label for="groups-select-add">Grupo</label>
+                        <select id="groups-select-add"></select>
+                    </div>
+                    <div class="data-table-container" style="margin-top:10px;">
+                        <table class="data-table">
+                            <thead><tr><th>Número</th><th>Admin</th></tr></thead>
+                            <tbody id="tbody-grupo-add"></tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-primary" id="btn-add-from-group" style="margin-top:15px;">Adicionar Números</button>
                 </div>
             </div>
         </div>
