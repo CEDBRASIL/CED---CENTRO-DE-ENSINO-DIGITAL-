@@ -9,8 +9,8 @@ import re
 from log_config import setup_logging, send_startup_message
 
 # endereço do serviço Node que gera o QR do WhatsApp
-# por padrão aponta para a porta local usada no docker-compose
-WP_API = os.getenv("WP_API", "http://localhost:3000")
+# por padrão usa o domínio oficial em produção
+WP_API = os.getenv("WP_API", "https://api.cedbrasilia.com.br")
 
 setup_logging()
 

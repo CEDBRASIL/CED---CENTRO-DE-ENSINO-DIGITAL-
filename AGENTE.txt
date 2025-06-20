@@ -91,3 +91,4 @@ PR #27 - Atualiza domínio do serviço WhatsApp e melhoria no QR
 PR #28 - Fallback de QR e novo endpoint
 PR #29 - Remove fallback QR generation and /qr/raw endpoint
 PR #30 - Corrige endpoint do QR e parsing
+PR #31 - Ajusta WP_API para dominio api.cedbrasilia.com.br por padrao
