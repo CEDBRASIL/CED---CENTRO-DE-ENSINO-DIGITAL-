@@ -1057,11 +1057,14 @@
             async function fetchGrupos() {
                 grupoSelect.innerHTML = '<option value="">Carregando...</option>';
                 try {
-                    const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`${WP_API}/grupos`)}`);
-                    const data = await resp.json();
-                    data.sort((a, b) => a.nome.localeCompare(b.nome));
+                    const resp = await fetch(`${API_BASE}/grupos`);
+                    const raw = await resp.json();
+                    const grupos = Array.isArray(raw)
+                        ? raw
+                        : (raw.grupos || []).map(n => ({ nome: n }));
+                    grupos.sort((a, b) => a.nome.localeCompare(b.nome));
                     grupoSelect.innerHTML = '<option value="">Selecione</option>';
-                    data.forEach(g => {
+                    grupos.forEach(g => {
                         const opt = document.createElement('option');
                         opt.value = g.nome;
                         opt.textContent = g.nome;
@@ -1079,8 +1082,7 @@
                 if (!nome) { leadsTabela.innerHTML = ''; return; }
                 leadsTabela.innerHTML = `<tr><td colspan="2" class="px-6 py-4 text-center"><i class="fas fa-spinner fa-spin text-2xl spotify-green"></i></td></tr>`;
                 try {
-                    const url = `${WP_API}/grupos/${encodeURIComponent(nome)}`;
-                    const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+                    const resp = await fetch(`${API_BASE}/grupos/${encodeURIComponent(nome)}`);
                     const data = await resp.json();
                     leadsGrupo = data.nome;
                     leadsDados = data.participantes || [];
@@ -1344,8 +1346,7 @@
 
             async function obterQtdGrupo(nome) {
                 try {
-                    const url = `${WP_API}/grupos/${encodeURIComponent(nome)}`;
-                    const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+                    const r = await fetch(`${API_BASE}/grupos/${encodeURIComponent(nome)}`);
                     const d = await r.json();
                     return (d.participantes || []).length;
                 } catch {
@@ -1355,8 +1356,11 @@
 
             async function carregarGruposDisparos() {
                 try {
-                    const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`${WP_API}/grupos`)}`);
-                    const grupos = await resp.json();
+                    const resp = await fetch(`${API_BASE}/grupos`);
+                    const raw = await resp.json();
+                    const grupos = Array.isArray(raw)
+                        ? raw
+                        : (raw.grupos || []).map(n => ({ nome: n }));
                     grupos.sort((a, b) => a.nome.localeCompare(b.nome));
                     dispGrupos.innerHTML = grupos.map(g => `<label class="flex items-center gap-2"><input type="checkbox" value="${g.nome}" class="disp-grupo"><span>${g.nome}</span> <span class="count text-xs text-gray-500"></span></label>`).join('');
                     dispGrupos.querySelectorAll('.disp-grupo').forEach(cb => {
