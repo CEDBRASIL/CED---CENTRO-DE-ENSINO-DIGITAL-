@@ -178,15 +178,6 @@ app.get('/qr', (_, res) => {
   }
 });
 
-// Endpoint alternativo que retorna apenas o base64 do código
-app.get('/qr/raw', (_, res) => {
-  if (qrCodeBase64) {
-    res.json({ qr: qrCodeBase64 });
-  } else {
-    res.status(404).json({ qr: null });
-  }
-});
-
 app.get('/send', async (req, res) => {
   const para = req.query.para;
   const mensagem = req.query.mensagem;
@@ -247,17 +238,9 @@ async function startBot() {
 
   sock.ev.on('creds.update', saveCreds);
 
-  // Gera QR de fallback se não receber código real em alguns segundos
-  const fallbackTimer = setTimeout(async () => {
-    if (!qrCodeBase64) {
-      qrCodeBase64 = await qrcode.toDataURL('conexao-indisponivel');
-    }
-  }, 10000);
-
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;
     if (qr) {
-      clearTimeout(fallbackTimer);
       qrCodeBase64 = await qrcode.toDataURL(qr);
     }
     if (connection === 'close') {
@@ -268,7 +251,6 @@ async function startBot() {
         startBot();
       }
     } else if (connection === 'open') {
-      clearTimeout(fallbackTimer);
       qrCodeBase64 = null;
       console.log('Conectado ao WhatsApp');
     }
