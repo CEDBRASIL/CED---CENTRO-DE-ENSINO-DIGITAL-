@@ -11,6 +11,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const AUTH_DIR = process.env.WHATSAPP_AUTH_DIR || 'auth_info_baileys';
 let sock = null;
 let qrCodeBase64 = null;
 const NUMBERS_FILE = 'numbers.json';
@@ -198,7 +199,7 @@ app.head('/secure', (_, res) => {
 });
 
 async function startBot() {
-  const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys');
+  const { state, saveCreds } = await useMultiFileAuthState(AUTH_DIR);
   sock = makeWASocket({ auth: state, printQRInTerminal: false });
 
   sock.ev.on('creds.update', saveCreds);
