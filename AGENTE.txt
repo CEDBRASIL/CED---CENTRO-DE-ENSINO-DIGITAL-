@@ -53,3 +53,7 @@ PR #14 - Correção da importação de contatos
 PR #15 - Configuração de API base
 - frontend/index.html inclui script definindo window.API_BASE.
 - script.js passa a usar window.API_BASE como base da API.
+PR #16 - Script de administração do banco
+- Credenciais agora fixas em arquivos do módulo de disparos.
+- Novo db_admin.py para criação e consulta das tabelas via CLI.
+

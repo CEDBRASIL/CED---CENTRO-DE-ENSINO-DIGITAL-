@@ -1,13 +1,13 @@
-import os
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, func
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
-PG_HOST = os.getenv('PG_HOST', 'localhost')
-PG_PORT = os.getenv('PG_PORT', '5432')
-PG_DB = os.getenv('PG_DB', 'ced')
-PG_USER = os.getenv('PG_USER', 'ced')
-PG_PASS = os.getenv('PG_PASS', 'ced')
+# Configurações diretas do banco de dados
+PG_HOST = 'dpg-d1a3bpngi27c73f2s4s0-a.oregon-postgres.render.com'
+PG_PORT = '5432'
+PG_DB = 'ced_database_ec01'
+PG_USER = 'yuri'
+PG_PASS = 'Wz60DamitHUcXWJV5G61V7SAiWjsB5vl'
 
 DB_URL = f"postgresql+asyncpg://{PG_USER}:{PG_PASS}@{PG_HOST}:{PG_PORT}/{PG_DB}"
 
