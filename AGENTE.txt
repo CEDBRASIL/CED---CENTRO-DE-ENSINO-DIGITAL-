@@ -80,3 +80,6 @@ PR #25 - Endpoint para backup das credenciais
 - Rotas GET e POST /auth exportam e importam arquivos zipados
 - Dependência adm-zip adicionada no serviço WhatsApp
 - .env.example removido conforme solicitado
+PR #26 - Rota de QR Code e envio simplificado
+- Criada pagina qr.html com visual moderno e atualização automática do código
+- main.py ganhou rotas /qr, /qr/data e /send que integram com o serviço externo de WhatsApp

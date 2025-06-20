@@ -1,10 +1,14 @@
 import os
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+import requests
+import re
 
 from log_config import setup_logging, send_startup_message
+
+WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
 
 setup_logging()
 
@@ -104,6 +108,44 @@ def health():
 def legacy_disparo():
     """Compatibilidade com rotas antigas."""
     return RedirectResponse("/sistema")
+
+
+# ──────────────────────────────────────────────────────────
+# Integração com API externa de WhatsApp
+# ──────────────────────────────────────────────────────────
+
+@app.get("/qr", include_in_schema=False)
+def qr_page():
+    """Página que exibe o QR Code para conexão."""
+    html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qr.html")
+    with open(html_path, "r", encoding="utf8") as f:
+        return HTMLResponse(f.read())
+
+
+@app.get("/qr/data", include_in_schema=False)
+def qr_data():
+    """Busca o QR Code atualizado na API externa."""
+    try:
+        resp = requests.get(f"{WP_API}/qr", timeout=10)
+        if resp.ok:
+            m = re.search(r'src="([^"]+)"', resp.text)
+            if m:
+                return {"qr": m.group(1)}
+    except Exception:
+        pass
+    return {"qr": None}
+
+
+@app.get("/send", tags=["WhatsApp"])
+def send_message(para: str, mensagem: str):
+    """Envia mensagem simples via API externa."""
+    try:
+        resp = requests.get(f"{WP_API}/send", params={"para": para, "mensagem": mensagem}, timeout=10)
+        if resp.ok:
+            return {"success": True}
+        raise HTTPException(resp.status_code, resp.text)
+    except Exception:
+        raise HTTPException(500, "Falha ao enviar mensagem")
 
 
 static_dir = os.path.dirname(os.path.abspath(__file__))
