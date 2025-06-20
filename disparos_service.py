@@ -174,12 +174,9 @@ def save_history(hist):
 
 
 def is_on_whatsapp(numero: str) -> bool:
-    """Verifica o formato e simula checagem no WhatsApp."""
+    """Valida somente o formato do número para envio no WhatsApp."""
     digitos = "".join(filter(str.isdigit, numero or ""))
-    if not digitos.startswith("55") or len(digitos) != 12:
-        return False
-    # Simula 5% de números não encontrados no WhatsApp
-    return random.random() > 0.05
+    return digitos.startswith("55") and len(digitos) == 12
 
 
 def enviar_mensagem(numero: str, mensagem: str):
