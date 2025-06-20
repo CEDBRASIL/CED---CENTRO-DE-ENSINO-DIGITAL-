@@ -65,3 +65,5 @@ PR #20 - Página /sistema/disparo removida
 PR #21 - Contagem de participantes nos grupos de disparo
 - Endpoint /grupos/<nome> retorna participantes e quantidade
 - Interface exibe contagem ao selecionar grupos
+PR #22 - Alias /disparo
+- Rotas /disparo, /disparos e /sistema/disparo redirecionam para /sistema
