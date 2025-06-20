@@ -43,3 +43,7 @@ PR #11 - Postgres por padrão no módulo de disparos
 - README detalha variáveis padrão do docker-compose.
 PR #12 - Variáveis de ambiente para endpoints
 - Endpoints do WhatsApp e webhook Discord agora usam os.getenv com valor padrão.
+PR #13 - Importação de contatos por lista
+- Nova rota /api/contatos/importar/{lista_id} para receber CSV ou Excel e gravar contatos no banco.
+- script.js atualizado para enviar o arquivo para a nova rota e exibir alerta.
+
