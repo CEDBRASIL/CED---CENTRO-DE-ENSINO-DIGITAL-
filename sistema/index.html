@@ -602,8 +602,11 @@
             });
 
             menuDisparos.addEventListener('click', () => {
-                // Redireciona para o módulo dedicado de disparos
-                window.location.href = '/sistema/disparo/';
+                mostrar(disparosSection);
+                carregarGruposDisparos();
+                carregarMensagens();
+                carregarHistorico();
+                verificarStatus();
             });
 
             menuLeads.addEventListener('click', () => {
