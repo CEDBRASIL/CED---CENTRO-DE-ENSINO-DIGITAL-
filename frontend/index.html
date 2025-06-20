@@ -115,7 +115,6 @@
         <a href="#" class="vertical-nav-link" data-page="page-contact-lists">Listas de Contatos</a>
         <a href="#" class="vertical-nav-link" data-page="page-messages">Mensagens</a>
         <a href="#" class="vertical-nav-link" data-page="page-broadcast">Disparo de Mensagem</a>
-        <a href="#" class="vertical-nav-link" data-page="page-files">Meus Arquivos</a>
         <a href="#" class="vertical-nav-link" data-page="page-groups">Grupos</a>
     </nav>
     <main class="main-content">
@@ -167,18 +166,6 @@
                 <button class="btn btn-primary" id="btn-disparar" style="width:100%;">🚀 Enviar</button>
             </div>
         </div>
-        <div id="page-files" class="page">
-            <div class="page-header">
-                <h1>Meus Arquivos</h1>
-            </div>
-            <div class="form-container" style="max-width:none;">
-                <label>Upload de Imagens</label>
-                <div class="file-input-wrapper">
-                    <p>Arraste e solte arquivos aqui ou clique para selecionar</p>
-                    <input type="file" multiple id="file-upload" style="display:none;">
-                </div>
-            </div>
-        </div>
         <div id="page-groups" class="page">
             <div class="page-header">
                 <h1>Grupos</h1>
@@ -209,6 +196,7 @@
                 <div class="add-contacts-tabs">
                     <button class="add-contacts-tab-link active" data-tab="manual">Adicionar Manualmente</button>
                     <button class="add-contacts-tab-link" data-tab="upload">Fazer Upload</button>
+                    <button class="add-contacts-tab-link" data-tab="grupo">Do Grupo</button>
                 </div>
                 <div id="manual" class="tab-content active">
                     <div class="form-group">
@@ -233,6 +221,19 @@
                     <div class="form-group"><label for="col-desc2">Descrição 2</label><select id="col-desc2"></select></div>
                     <div class="form-group"><label for="col-desc3">Descrição 3</label><select id="col-desc3"></select></div>
                     <button class="btn btn-primary" id="btn-import-contatos">Importar Contatos</button>
+                </div>
+                <div id="grupo" class="tab-content">
+                    <div class="form-group">
+                        <label for="groups-select-add">Grupo</label>
+                        <select id="groups-select-add"></select>
+                    </div>
+                    <div class="data-table-container" style="margin-top:10px;">
+                        <table class="data-table">
+                            <thead><tr><th>Número</th><th>Admin</th></tr></thead>
+                            <tbody id="tbody-grupo-add"></tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-primary" id="btn-add-from-group" style="margin-top:15px;">Adicionar Números</button>
                 </div>
             </div>
         </div>

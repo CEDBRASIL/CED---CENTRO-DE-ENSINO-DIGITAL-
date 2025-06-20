@@ -273,18 +273,51 @@ document.addEventListener('DOMContentLoaded', ()=>{
         await disparar();
         alert('Disparo criado!');
     });
-    document.querySelector('.file-input-wrapper').addEventListener('click',()=>{
-        document.getElementById('file-upload').click();
+    const fileWrapper = document.querySelector('.file-input-wrapper');
+    if(fileWrapper){
+        const fileInput = document.getElementById('file-upload');
+        fileWrapper.addEventListener('click',()=>{ fileInput.click(); });
+        fileInput.addEventListener('change',async(e)=>{
+            const f = e.target.files ? e.target.files[0] : null;
+            if(!f || !currentListId) return;
+            const fd = new FormData();
+            fd.append('file', f);
+            await fetch(`${api}/contatos/importar/${currentListId}`, {method:'POST', body: fd});
+            e.target.value='';
+            alert('Contatos importados com sucesso');
+        });
+    }
+
+    document.querySelectorAll('.add-contacts-tab-link').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            document.querySelectorAll('.add-contacts-tab-link').forEach(b=>b.classList.remove('active'));
+            document.querySelectorAll('#page-add-contacts .tab-content').forEach(tc=>tc.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
     });
-    document.getElementById('file-upload').addEventListener('change',async(e)=>{
-        const f = e.target.files ? e.target.files[0] : null;
-        if(!f || !currentListId) return;
-        const fd = new FormData();
-        fd.append('file', f);
-        await fetch(`${api}/contatos/importar/${currentListId}`, {method:'POST', body: fd});
-        e.target.value='';
-        alert('Contatos importados com sucesso');
-    });
+
+    const grpAdd = document.getElementById('groups-select-add');
+    if(grpAdd){
+        carregarGrupos('groups-select-add');
+        grpAdd.addEventListener('change',e=>carregarParticipantes(e.target.value,'tbody-grupo-add'));
+    }
+    const btnAddGrupo = document.getElementById('btn-add-from-group');
+    if(btnAddGrupo){
+        btnAddGrupo.addEventListener('click',async()=>{
+            const nome = document.getElementById('groups-select-add').value;
+            if(!nome || !currentListId) return;
+            const data = await fetchJSON(`/grupos/${encodeURIComponent(nome)}`);
+            const numeros = (data.participantes||[]).map(p=>p.numero);
+            if(numeros.length){
+                await fetch(`${api}/contatos/adicionar_numeros/${currentListId}`,{
+                    method:'POST',headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify(numeros)
+                });
+                alert('Números adicionados');
+            }
+        });
+    }
 
     const grpSel = document.getElementById('groups-select');
     if(grpSel){
