@@ -22,8 +22,6 @@ app.include_router(contatos.router)
 app.include_router(mensagens.router)
 app.include_router(disparos.router)
 
-FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "frontend")
-app.mount("/sistema/disparo", StaticFiles(directory=FRONTEND_DIR, html=True), name="disparo")
 
 @app.on_event("startup")
 async def startup():

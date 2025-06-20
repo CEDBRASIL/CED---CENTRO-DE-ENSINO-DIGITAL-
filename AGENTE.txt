@@ -58,3 +58,7 @@ PR #16 - Ferramenta CLI de administração do banco
 PR #17 - Script PHP para disparos
 PR #18 - Atalho para /disparos
 PR #19 - Importação por grupos e cache de mensagens restaurados
+PR #20 - Página /sistema/disparo removida
+- Integração volta para seção Disparos dentro de sistema/index.html
+- Rotas /sistema/disparo e /disparos removidas de main.py e backend
+- README atualizado com novo caminho da interface

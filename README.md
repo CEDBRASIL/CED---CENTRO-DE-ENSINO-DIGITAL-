@@ -20,7 +20,7 @@ Este projeto disponibiliza um serviço em FastAPI para gerenciamento e envio de 
 docker compose up --build
 ```
 
-A interface Web ficará disponível em `http://localhost:8000/sistema/disparo`.
+A interface Web ficará disponível em `http://localhost:8000/sistema`, na aba **Disparos**.
 
 ## Exemplos de requisições
 
