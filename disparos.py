@@ -21,9 +21,9 @@ router = APIRouter()
 
 # Endpoints da API do WhatsApp
 WHATSAPP_URL = os.getenv(
-    "WHATSAPP_URL", "https://api.cedbrasilia.com.br/send"
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
 )
-WP_API = os.getenv("WP_API", "https://api.cedbrasilia.com.br")
+WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
 
 
 def get_conn():

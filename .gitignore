@@ -3,5 +3,3 @@ __pycache__/
 uploads/
 log.json
 node_modules/
-API WHATSAPP/auth_info_baileys/
-API WHATSAPP/numbers.json

@@ -333,7 +333,7 @@
                     if (response.ok) {
                         // Dispara mensagem de WhatsApp informando o início da matrícula
                         const msg = `Olá ${data.nome} tudo bem?\nAcabamos de te enviar o link da sua assinatura no WhatsApp!\nVamos te matricular assim que confirmarmos o pagamento!\nQualquer duvida, estou aqui!`;
-                        fetch(`https://api.cedbrasilia.com.br/send?para=${data.whatsapp}&mensagem=${encodeURIComponent(msg)}`)
+                        fetch(`https://whatsapptest-stij.onrender.com/send?para=${data.whatsapp}&mensagem=${encodeURIComponent(msg)}`)
                           .catch(() => {});
                         enrollmentCard.style.display = 'none';
                         thankYouNameSpan.textContent = data.nome;

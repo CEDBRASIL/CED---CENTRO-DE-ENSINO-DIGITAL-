@@ -21,7 +21,7 @@ OM_BASE = os.getenv("OM_BASE")
 BASIC_B64 = os.getenv("BASIC_B64")
 # Endpoint do WhatsApp (não requer token)
 WHATSAPP_URL = os.getenv(
-    "WHATSAPP_URL", "https://api.cedbrasilia.com.br/send"
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
 )
 # Número para receber os logs via WhatsApp
 WHATSAPP_LOG_NUM = os.getenv("WHATSAPP_LOG_NUM", "556186660241")
