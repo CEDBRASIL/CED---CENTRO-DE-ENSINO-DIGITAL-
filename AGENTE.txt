@@ -18,3 +18,7 @@ PR #4 - Integracao do modulo de disparos ao sistema principal
 - Roteadores /api integrados no main.py
 - Worker e criacao de tabelas iniciados no startup
 - Pagina /sistema/disparo servida pelo app principal
+PR #5 - Novo layout responsivo para disparos
+- Substituída interface em frontend/index.html por nova página com sidebar e páginas internas
+- Novas cores seguindo padrão do sistema e logo do CED no menu
+- script.js reescrito para integrar com API: criação e listagem de listas, mensagens, contatos e disparos
