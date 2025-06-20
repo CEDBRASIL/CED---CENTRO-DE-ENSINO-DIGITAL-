@@ -1342,12 +1342,33 @@
                 }
             }
 
+            async function obterQtdGrupo(nome) {
+                try {
+                    const url = `${WP_API}/grupos/${encodeURIComponent(nome)}`;
+                    const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+                    const d = await r.json();
+                    return (d.participantes || []).length;
+                } catch {
+                    return 0;
+                }
+            }
+
             async function carregarGruposDisparos() {
                 try {
                     const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`${WP_API}/grupos`)}`);
                     const grupos = await resp.json();
                     grupos.sort((a, b) => a.nome.localeCompare(b.nome));
-                    dispGrupos.innerHTML = grupos.map(g => `<label class="flex items-center gap-2"><input type="checkbox" value="${g.nome}" class="disp-grupo">${g.nome}</label>`).join('');
+                    dispGrupos.innerHTML = grupos.map(g => `<label class="flex items-center gap-2"><input type="checkbox" value="${g.nome}" class="disp-grupo"><span>${g.nome}</span> <span class="count text-xs text-gray-500"></span></label>`).join('');
+                    dispGrupos.querySelectorAll('.disp-grupo').forEach(cb => {
+                        cb.addEventListener('change', async () => {
+                            const span = cb.parentElement.querySelector('.count');
+                            if (cb.checked && !span.textContent) {
+                                span.textContent = '...';
+                                const qtd = await obterQtdGrupo(cb.value);
+                                span.textContent = `(${qtd})`;
+                            }
+                        });
+                    });
                 } catch (err) {
                     dispGrupos.innerHTML = '<p>Erro ao carregar</p>';
                 }

@@ -67,6 +67,17 @@ def grupos():
     return jsonify({'grupos': grupos})
 
 
+@app.route('/grupos/<string:nome>')
+def grupo_detalhe(nome: str):
+    """Retorna participantes de um grupo específico."""
+    participantes = buscar_numeros_do_grupo(nome)
+    return jsonify({
+        'nome': nome,
+        'quantidade': len(participantes),
+        'participantes': [{'numero': n} for n in participantes]
+    })
+
+
 @app.route('/mensagens', methods=['GET', 'POST'])
 def mensagens():
     if request.method == 'POST':
