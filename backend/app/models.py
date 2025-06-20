@@ -9,7 +9,12 @@ PG_DB = os.getenv('PG_DB')
 PG_USER = os.getenv('PG_USER')
 PG_PASS = os.getenv('PG_PASS')
 
-DB_URL = f"postgresql+asyncpg://{PG_USER}:{PG_PASS}@{PG_HOST}:{PG_PORT}/{PG_DB}"
+if PG_HOST:
+    DB_URL = f"postgresql+asyncpg://{PG_USER}:{PG_PASS}@{PG_HOST}:{PG_PORT}/{PG_DB}"
+else:
+    sqlite_path = os.getenv('SQLITE_DB', 'local.db')
+    DB_URL = f"sqlite+aiosqlite:///{sqlite_path}"
+
 engine = create_async_engine(DB_URL, future=True, echo=False)
 AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 

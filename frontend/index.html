@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Disparos - Sistema</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="icon" href="/favicon.jpg" type="image/jpeg" />
     <style>
         :root {
             --bg-dark-primary: #121212;
@@ -111,6 +112,7 @@
         <a href="#" class="vertical-nav-link" data-page="page-messages">Mensagens</a>
         <a href="#" class="vertical-nav-link" data-page="page-broadcast">Disparo de Mensagem</a>
         <a href="#" class="vertical-nav-link" data-page="page-files">Meus Arquivos</a>
+        <a href="#" class="vertical-nav-link" data-page="page-groups">Grupos</a>
     </nav>
     <main class="main-content">
         <div id="page-contact-lists" class="page active">
@@ -171,6 +173,27 @@
                     <p>Arraste e solte arquivos aqui ou clique para selecionar</p>
                     <input type="file" multiple id="file-upload" style="display:none;">
                 </div>
+            </div>
+        </div>
+        <div id="page-groups" class="page">
+            <div class="page-header">
+                <h1>Grupos</h1>
+            </div>
+            <div class="form-container" style="max-width:400px;">
+                <label for="groups-select">Grupo</label>
+                <select id="groups-select"></select>
+            </div>
+            <div class="data-table-container" style="margin-top:20px;">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Número</th><th>Admin</th></tr>
+                    </thead>
+                    <tbody id="tbody-grupo"></tbody>
+                </table>
+            </div>
+            <div style="margin-top:15px;text-align:center;">
+                <button class="btn btn-primary" id="btn-export-csv">Exportar CSV</button>
+                <button class="btn btn-primary" id="btn-export-xlsx">Exportar XLSX</button>
             </div>
         </div>
         <div id="page-add-contacts" class="page">
@@ -256,6 +279,7 @@
             </div>
         </div>
     </main>
+    <script src="/libs/xlsx.full.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
