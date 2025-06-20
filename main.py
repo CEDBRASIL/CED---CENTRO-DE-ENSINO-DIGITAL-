@@ -8,7 +8,7 @@ import re
 
 from log_config import setup_logging, send_startup_message
 
-WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
+WP_API = os.getenv("WP_API", "https://api.cedbrasilia.com.br")
 
 setup_logging()
 
@@ -126,6 +126,10 @@ def qr_page():
 def qr_data():
     """Busca o QR Code atualizado na API externa."""
     try:
+        try:
+            requests.post(f"{WP_API}/connect", timeout=5)
+        except Exception:
+            pass
         resp = requests.get(f"{WP_API}/qr", timeout=10)
         if resp.ok:
             m = re.search(r'src="([^"]+)"', resp.text)

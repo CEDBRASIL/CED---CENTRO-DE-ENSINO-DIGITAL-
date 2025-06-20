@@ -25,7 +25,7 @@ ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
 
 # Endpoint da API do WhatsApp
 WHATSAPP_URL = os.getenv(
-    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
+    "WHATSAPP_URL", "https://api.cedbrasilia.com.br/send"
 )
 SENHA_PADRAO = os.getenv("SENHA_PADRAO", "123456")
 

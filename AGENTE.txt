@@ -83,3 +83,8 @@ PR #25 - Endpoint para backup das credenciais
 PR #26 - Rota de QR Code e envio simplificado
 - Criada pagina qr.html com visual moderno e atualização automática do código
 - main.py ganhou rotas /qr, /qr/data e /send que integram com o serviço externo de WhatsApp
+PR #27 - Atualiza domínio do serviço WhatsApp e melhoria no QR
+- Variáveis WP_API e WHATSAPP_URL agora usam https://api.cedbrasilia.com.br
+- Rota /qr/data aciona /connect antes de buscar o QR
+- qr.html recebeu novo layout animado
+
