@@ -252,6 +252,22 @@ document.addEventListener('DOMContentLoaded', ()=>{
         document.getElementById('contact-name').value='';
         document.getElementById('contact-number').value='';
     });
+    document.getElementById('btn-import-contatos').addEventListener('click', async () => {
+        const file = document.getElementById('file-contatos').files[0];
+        if(!file || !currentListId){
+            alert('Selecione o arquivo com os contatos');
+            return;
+        }
+        const fd = new FormData();
+        fd.append('file', file);
+        try {
+            await fetch(`${api}/contatos/importar/${currentListId}`, {method:'POST', body: fd});
+            document.getElementById('file-contatos').value='';
+            alert('Contatos importados com sucesso');
+        } catch(e){
+            alert('Falha ao importar contatos');
+        }
+    });
     document.getElementById('btn-disparar').addEventListener('click',async()=>{
         await disparar();
         alert('Disparo criado!');

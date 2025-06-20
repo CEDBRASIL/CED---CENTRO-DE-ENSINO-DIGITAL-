@@ -47,3 +47,6 @@ PR #13 - Importação de contatos por lista
 - Nova rota /api/contatos/importar/{lista_id} para receber CSV ou Excel e gravar contatos no banco.
 - script.js atualizado para enviar o arquivo para a nova rota e exibir alerta.
 
+PR #14 - Correção da importação de contatos
+- Adicionado handler para o botão "Importar Contatos" em frontend/script.js enviando arquivo para a rota /api/contatos/importar.
+
