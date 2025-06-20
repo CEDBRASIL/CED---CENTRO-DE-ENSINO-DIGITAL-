@@ -33,3 +33,7 @@ PR #9 - Ajustes em listas e página de grupos
 - Interface de disparos agora usa Tailwind e favicon padrão
 - Adicionado menu "Grupos" com listagem de participantes e exportação
 - Script aprimorado com tratamento de erros e suporte a uploads
+PR #10 - Ajuste de leitura da ASAAS_KEY
+- Funções _headers e criacao de cobrança agora leem ASAAS_KEY dinamicamente.
+- Corrigido problema de variáveis não carregadas causando falha nos GET /sistema.
+

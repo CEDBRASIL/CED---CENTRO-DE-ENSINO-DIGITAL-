@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 router = APIRouter(prefix="/cobrar", tags=["Cobrança"])
 
+# Variáveis lidas em cada requisição para evitar inconsistências
 ASAAS_KEY = os.getenv("ASAAS_KEY")
 ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
 
@@ -19,11 +20,12 @@ class ChargeData(BaseModel):
 
 @router.post("/")
 def criar_cobranca(data: ChargeData):
-    if not ASAAS_KEY:
+    key = os.getenv("ASAAS_KEY")
+    if not key:
         raise HTTPException(500, "ASAAS_KEY não configurada")
 
     url = f"{ASAAS_BASE_URL}/payments"
-    headers = {"Content-Type": "application/json", "access_token": ASAAS_KEY}
+    headers = {"Content-Type": "application/json", "access_token": key}
     payload = data.dict()
 
     try:

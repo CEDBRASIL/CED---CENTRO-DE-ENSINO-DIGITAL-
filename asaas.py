@@ -18,6 +18,8 @@ VALID_CURSO_IDS = {cid for ids in CURSOS_OM.values() for cid in ids}
 
 router = APIRouter(prefix="/asaas", tags=["Matrícula Assas"])
 
+# A chave do ASAAS é lida dinamicamente em cada requisição para evitar
+# problemas caso as variáveis de ambiente sejam carregadas depois do import.
 ASAAS_KEY = os.getenv("ASAAS_KEY")
 ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
 
@@ -29,9 +31,11 @@ logger = logging.getLogger(__name__)
 
 
 def _headers() -> dict:
-    if not ASAAS_KEY:
+    # Lê a chave diretamente do ambiente em cada chamada
+    key = os.getenv("ASAAS_KEY")
+    if not key:
         raise HTTPException(500, "ASAAS_KEY não configurada")
-    return {"Content-Type": "application/json", "access_token": ASAAS_KEY}
+    return {"Content-Type": "application/json", "access_token": key}
 
 
 def _criar_ou_obter_cliente(

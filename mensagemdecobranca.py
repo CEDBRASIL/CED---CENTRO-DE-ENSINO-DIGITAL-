@@ -17,6 +17,8 @@ from utils import formatar_numero_whatsapp
 
 router = APIRouter(prefix="/mensagem-cobranca", tags=["Cobrança"])
 
+# Variáveis lidas dinamicamente para funcionar mesmo que o .env seja
+# carregado após a importação deste módulo
 ASAAS_KEY = os.getenv("ASAAS_KEY")
 ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
 WHATSAPP_URL = "https://whatsapptest-stij.onrender.com/send"
@@ -29,9 +31,10 @@ CACHE_CLIENTES: dict[str, tuple[str | None, str | None]] = {}
 
 
 def _headers() -> dict:
-    if not ASAAS_KEY:
+    key = os.getenv("ASAAS_KEY")
+    if not key:
         raise HTTPException(500, "ASAAS_KEY não configurada")
-    return {"Content-Type": "application/json", "access_token": ASAAS_KEY}
+    return {"Content-Type": "application/json", "access_token": key}
 
 
 def _obter_cliente(cid: str) -> tuple[str | None, str | None]:
