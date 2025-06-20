@@ -121,8 +121,8 @@ let currentMsgId = null;
 let gruposDados = [];
 let gruposNome = '';
 
-async function carregarGrupos(elId='groups-select'){
-    const sel = document.getElementById(elId);
+async function carregarGrupos(){
+    const sel = document.getElementById('groups-select');
     sel.innerHTML = '<option>Carregando...</option>';
     try{
         const data = await fetchJSON('/grupos');
@@ -140,8 +140,8 @@ async function carregarGrupos(elId='groups-select'){
     }
 }
 
-async function carregarParticipantes(nome, tbodyId='tbody-grupo'){
-    const tbody = document.getElementById(tbodyId);
+async function carregarParticipantes(nome){
+    const tbody = document.getElementById('tbody-grupo');
     if(!nome){ tbody.innerHTML = ''; return; }
     tbody.innerHTML = '<tr><td colspan="2" style="text-align:center">Carregando...</td></tr>';
     try{
@@ -285,37 +285,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         e.target.value='';
         alert('Contatos importados com sucesso');
     });
-
-    document.querySelectorAll('.add-contacts-tab-link').forEach(btn=>{
-        btn.addEventListener('click',()=>{
-            document.querySelectorAll('.add-contacts-tab-link').forEach(b=>b.classList.remove('active'));
-            document.querySelectorAll('#page-add-contacts .tab-content').forEach(tc=>tc.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById(btn.dataset.tab).classList.add('active');
-        });
-    });
-
-    const grpAdd = document.getElementById('groups-select-add');
-    if(grpAdd){
-        carregarGrupos('groups-select-add');
-        grpAdd.addEventListener('change',e=>carregarParticipantes(e.target.value,'tbody-grupo-add'));
-    }
-    const btnAddGrupo = document.getElementById('btn-add-from-group');
-    if(btnAddGrupo){
-        btnAddGrupo.addEventListener('click',async()=>{
-            const nome = document.getElementById('groups-select-add').value;
-            if(!nome || !currentListId) return;
-            const data = await fetchJSON(`/grupos/${encodeURIComponent(nome)}`);
-            const numeros = (data.participantes||[]).map(p=>p.numero);
-            if(numeros.length){
-                await fetch(`${api}/contatos/adicionar_numeros/${currentListId}`,{
-                    method:'POST',headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify(numeros)
-                });
-                alert('Números adicionados');
-            }
-        });
-    }
 
     const grpSel = document.getElementById('groups-select');
     if(grpSel){
