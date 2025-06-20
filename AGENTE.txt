@@ -26,3 +26,5 @@ PR #6 - Redireciona menu Disparos para /sistema/disparo
 - Ajuste de event handler no sistema/index.html para abrir nova página
 
 PR #7 - Corrige acesso sem barra final a /sistema/disparo e atualiza menu
+
+PR #8 - Corrige 404 em /sistema/disparo ordenando mounts
