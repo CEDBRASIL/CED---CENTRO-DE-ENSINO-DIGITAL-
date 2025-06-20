@@ -22,3 +22,6 @@ PR #5 - Novo layout responsivo para disparos
 - Substituída interface em frontend/index.html por nova página com sidebar e páginas internas
 - Novas cores seguindo padrão do sistema e logo do CED no menu
 - script.js reescrito para integrar com API: criação e listagem de listas, mensagens, contatos e disparos
+PR #6 - Redireciona menu Disparos para /sistema/disparo
+- Ajuste de event handler no sistema/index.html para abrir nova página
+
