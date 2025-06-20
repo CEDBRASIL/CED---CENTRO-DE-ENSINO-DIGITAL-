@@ -62,3 +62,6 @@ PR #20 - Página /sistema/disparo removida
 - Integração volta para seção Disparos dentro de sistema/index.html
 - Rotas /sistema/disparo e /disparos removidas de main.py e backend
 - README atualizado com novo caminho da interface
+PR #21 - Contagem de participantes nos grupos de disparo
+- Endpoint /grupos/<nome> retorna participantes e quantidade
+- Interface exibe contagem ao selecionar grupos
