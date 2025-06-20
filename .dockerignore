@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 .git
 .env
+node_modules/
+API WHATSAPP/node_modules/
