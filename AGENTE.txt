@@ -53,3 +53,5 @@ PR #14 - Correção da importação de contatos
 PR #15 - Configuração de API base
 - frontend/index.html inclui script definindo window.API_BASE.
 - script.js passa a usar window.API_BASE como base da API.
+PR #16 - Ferramenta CLI de administração do banco
+- Criado db_admin.py com comandos init-db, add-lista, list-listas, add-contato e list-contatos
