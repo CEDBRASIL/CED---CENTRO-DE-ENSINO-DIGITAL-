@@ -120,10 +120,13 @@ def legacy_disparo():
 
 @app.get("/qr", include_in_schema=False)
 def qr_page():
-    """Página que exibe o QR Code para conexão."""
-    html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qr.html")
-    with open(html_path, "r", encoding="utf8") as f:
-        return HTMLResponse(f.read())
+    """Exibe somente o QR Code atual sem estilos ou scripts."""
+    qr = qr_data().get("qr")
+    if qr:
+        html = f'<html><body><img src="{qr}" alt="QR Code" /></body></html>'
+    else:
+        html = "<html><body>QR Code indisponível.</body></html>"
+    return HTMLResponse(html)
 
 
 @app.get("/qr/data", include_in_schema=False)
