@@ -8,7 +8,9 @@ import re
 
 from log_config import setup_logging, send_startup_message
 
-WP_API = os.getenv("WP_API", "https://api.cedbrasilia.com.br")
+# endereço do serviço Node que gera o QR do WhatsApp
+# por padrão aponta para a porta local usada no docker-compose
+WP_API = os.getenv("WP_API", "http://localhost:3000")
 
 setup_logging()
 
@@ -132,7 +134,13 @@ def qr_data():
             pass
         resp = requests.get(f"{WP_API}/qr", timeout=10)
         if resp.ok:
-            m = re.search(r'src="([^"]+)"', resp.text)
+            try:
+                data = resp.json()
+                if isinstance(data, dict) and data.get("qr"):
+                    return {"qr": data["qr"]}
+            except Exception:
+                pass
+            m = re.search(r'src="(data:[^"]+)"', resp.text)
             if m:
                 return {"qr": m.group(1)}
     except Exception:
