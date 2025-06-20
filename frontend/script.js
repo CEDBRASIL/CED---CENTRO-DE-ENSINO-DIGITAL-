@@ -1,7 +1,11 @@
 const api = '/api';
 
-async function fetchJSON(url, opts={}) {
+async function fetchJSON(url, opts = {}) {
     const r = await fetch(url, opts);
+    if (!r.ok) {
+        const t = await r.text();
+        throw new Error(t || 'Erro ao comunicar com servidor');
+    }
     return r.json();
 }
 
@@ -52,8 +56,16 @@ async function listarListas(){
     });
 }
 
-async function criarLista(nome,desc){
-    await fetch(`${api}/listas`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,descricao:desc})});
+async function criarLista(nome, desc) {
+    const resp = await fetch(`${api}/listas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, descricao: desc })
+    });
+    if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(txt || 'Falha ao criar lista');
+    }
 }
 
 async function listarMensagens(){
@@ -105,6 +117,73 @@ async function disparar(){
 
 let currentListId = null;
 let currentMsgId = null;
+let gruposDados = [];
+let gruposNome = '';
+
+async function carregarGrupos(){
+    const sel = document.getElementById('groups-select');
+    sel.innerHTML = '<option>Carregando...</option>';
+    try{
+        const data = await fetchJSON('/grupos');
+        const lista = data.grupos || data;
+        sel.innerHTML = '<option value="">Selecione</option>';
+        lista.forEach(g=>{
+            const nome = typeof g === 'string' ? g : g.nome;
+            const opt = document.createElement('option');
+            opt.value = nome;
+            opt.textContent = nome;
+            sel.appendChild(opt);
+        });
+    }catch(e){
+        sel.innerHTML = '<option value="">Erro ao carregar</option>';
+    }
+}
+
+async function carregarParticipantes(nome){
+    const tbody = document.getElementById('tbody-grupo');
+    if(!nome){ tbody.innerHTML = ''; return; }
+    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center">Carregando...</td></tr>';
+    try{
+        const data = await fetchJSON(`/grupos/${encodeURIComponent(nome)}`);
+        gruposNome = data.nome || nome;
+        gruposDados = data.participantes || [];
+        if(gruposDados.length===0){
+            tbody.innerHTML = '<tr><td colspan="2" style="text-align:center">Nenhum número.</td></tr>';
+        }else{
+            tbody.innerHTML = gruposDados.map(p=>`<tr><td>${p.numero}</td><td>${p.admin?'Sim':'Não'}</td></tr>`).join('');
+        }
+    }catch(e){
+        tbody.innerHTML = '<tr><td colspan="2" class="text-red-500" style="text-align:center">Erro ao carregar</td></tr>';
+    }
+}
+
+function exportCSV(){
+    if(gruposDados.length===0) return;
+    const header = 'NOME,NUMERO,ADMIN\n';
+    const rows = gruposDados.map(p=>`${gruposNome},${p.numero},${p.admin?'Sim':'Não'}`).join('\n');
+    const blob = new Blob([header+rows],{type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'grupos.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function exportXLSX(){
+    if(gruposDados.length===0) return;
+    const ws = XLSX.utils.json_to_sheet(gruposDados.map(p=>({NOME:gruposNome,NUMERO:p.numero,ADMIN:p.admin?'Sim':'Não'})));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Grupos');
+    const wbout = XLSX.write(wb,{bookType:'xlsx',type:'array'});
+    const blob = new Blob([wbout],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'grupos.xlsx';
+    a.click();
+    URL.revokeObjectURL(url);
+}
 
 document.addEventListener('DOMContentLoaded', ()=>{
     listarListas();
@@ -119,12 +198,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
     document.getElementById('modal-add-list').addEventListener('click',e=>{ if(e.target.id==='modal-add-list') e.currentTarget.style.display='none'; });
     document.getElementById('form-add-list').addEventListener('submit',async(e)=>{
         e.preventDefault();
-        const nome=document.getElementById('list-name').value;
-        const desc=document.getElementById('list-desc').value;
-        await criarLista(nome,desc);
-        document.getElementById('modal-add-list').style.display='none';
-        listarListas();
-        carregarSelects();
+        const nome = document.getElementById('list-name').value.trim();
+        const desc = document.getElementById('list-desc').value.trim();
+        if(!nome){
+            alert('Informe o nome da lista');
+            return;
+        }
+        try {
+            await criarLista(nome, desc);
+            document.getElementById('modal-add-list').style.display = 'none';
+            listarListas();
+            carregarSelects();
+        } catch(err){
+            alert(err.message);
+        }
     });
     document.querySelectorAll('[data-page]').forEach(link=>{
         link.addEventListener('click',e=>{e.preventDefault();showPage(link.dataset.page);});
@@ -172,11 +259,21 @@ document.addEventListener('DOMContentLoaded', ()=>{
     document.querySelector('.file-input-wrapper').addEventListener('click',()=>{
         document.getElementById('file-upload').click();
     });
-    document.getElementById('file-upload').addEventListener('change',async()=>{
-        const f=this.files?this.files[0]:null;
+    document.getElementById('file-upload').addEventListener('change',async(e)=>{
+        const f = e.target.files ? e.target.files[0] : null;
         if(!f) return;
         const fd=new FormData();
         fd.append('file',f);
         await fetch(`${api}/arquivos/upload`,{method:'POST',body:fd});
     });
+
+    const grpSel = document.getElementById('groups-select');
+    if(grpSel){
+        carregarGrupos();
+        grpSel.addEventListener('change',e=>carregarParticipantes(e.target.value));
+    }
+    const btnCsv = document.getElementById('btn-export-csv');
+    if(btnCsv) btnCsv.addEventListener('click',exportCSV);
+    const btnXlsx = document.getElementById('btn-export-xlsx');
+    if(btnXlsx) btnXlsx.addEventListener('click',exportXLSX);
 });

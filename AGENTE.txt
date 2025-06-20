@@ -28,3 +28,8 @@ PR #6 - Redireciona menu Disparos para /sistema/disparo
 PR #7 - Corrige acesso sem barra final a /sistema/disparo e atualiza menu
 
 PR #8 - Corrige 404 em /sistema/disparo ordenando mounts
+PR #9 - Ajustes em listas e página de grupos
+- Novo fallback para SQLite em backend/app/models.py
+- Interface de disparos agora usa Tailwind e favicon padrão
+- Adicionado menu "Grupos" com listagem de participantes e exportação
+- Script aprimorado com tratamento de erros e suporte a uploads
