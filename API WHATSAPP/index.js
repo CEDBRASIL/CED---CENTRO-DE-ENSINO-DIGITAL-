@@ -8,6 +8,7 @@ const multer = require('multer');
 const { parse } = require('csv-parse/sync');
 const xlsx = require('xlsx');
 const path = require('path');
+const AdmZip = require('adm-zip');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -190,6 +191,39 @@ app.get('/send', async (req, res) => {
   } catch (err) {
     console.error('Erro ao enviar mensagem:', err);
     res.status(500).send('Erro ao enviar mensagem');
+  }
+});
+
+// Permite exportar e importar as credenciais do Baileys
+const uploadAuth = multer({ storage: multer.memoryStorage() });
+
+app.get('/auth', (_, res) => {
+  try {
+    const zip = new AdmZip();
+    if (fs.existsSync(AUTH_DIR)) {
+      zip.addLocalFolder(AUTH_DIR);
+    }
+    const data = zip.toBuffer();
+    res.set('Content-Type', 'application/zip');
+    res.set('Content-Disposition', 'attachment; filename=auth.zip');
+    res.send(data);
+  } catch (err) {
+    console.error('Erro ao exportar credenciais:', err);
+    res.status(500).send('Erro ao exportar credenciais');
+  }
+});
+
+app.post('/auth', uploadAuth.single('file'), (req, res) => {
+  const file = req.file;
+  if (!file) return res.status(400).send('Arquivo é obrigatório');
+  try {
+    fs.rmSync(AUTH_DIR, { recursive: true, force: true });
+    const zip = new AdmZip(file.buffer);
+    zip.extractAllTo(AUTH_DIR, true);
+    res.send('Credenciais salvas');
+  } catch (err) {
+    console.error('Erro ao salvar credenciais:', err);
+    res.status(500).send('Erro ao salvar credenciais');
   }
 });
 
