@@ -1,4 +1,5 @@
-const api = '/api';
+// URL base da API pode ser configurada via window.API_BASE
+const api = window.API_BASE || '/api';
 
 async function fetchJSON(url, opts = {}) {
     const r = await fetch(url, opts);

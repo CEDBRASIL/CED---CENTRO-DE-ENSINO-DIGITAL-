@@ -50,3 +50,6 @@ PR #13 - Importação de contatos por lista
 PR #14 - Correção da importação de contatos
 - Adicionado handler para o botão "Importar Contatos" em frontend/script.js enviando arquivo para a rota /api/contatos/importar.
 
+PR #15 - Configuração de API base
+- frontend/index.html inclui script definindo window.API_BASE.
+- script.js passa a usar window.API_BASE como base da API.
