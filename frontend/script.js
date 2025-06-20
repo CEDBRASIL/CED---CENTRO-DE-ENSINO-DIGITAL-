@@ -261,10 +261,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
     document.getElementById('file-upload').addEventListener('change',async(e)=>{
         const f = e.target.files ? e.target.files[0] : null;
-        if(!f) return;
-        const fd=new FormData();
-        fd.append('file',f);
-        await fetch(`${api}/arquivos/upload`,{method:'POST',body:fd});
+        if(!f || !currentListId) return;
+        const fd = new FormData();
+        fd.append('file', f);
+        await fetch(`${api}/contatos/importar/${currentListId}`, {method:'POST', body: fd});
+        e.target.value='';
+        alert('Contatos importados com sucesso');
     });
 
     const grpSel = document.getElementById('groups-select');
