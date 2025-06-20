@@ -15,7 +15,7 @@ TRIAL_DAYS = 3
 TRIALS_FILE = os.getenv("TRIALS_FILE", "trials.json")
 SENHA_PADRAO = os.getenv("SENHA_PADRAO", "123456")
 WHATSAPP_URL = os.getenv(
-    "WHATSAPP_URL", "https://api.cedbrasilia.com.br/send"
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
 )
 
 

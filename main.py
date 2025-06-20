@@ -10,9 +10,9 @@ from log_config import setup_logging, send_startup_message
 
 # endereço do serviço Node que gera o QR do WhatsApp
 # por padrão usa o domínio oficial em produção
-WP_API = os.getenv("WP_API", "https://api.cedbrasilia.com.br")
-# para buscar o QR diretamente no serviço, permite definir uma porta
-WP_API_QR = os.getenv("WP_API_QR", f"{WP_API}:3000")
+WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
+# Endpoint para o QR Code; usa o mesmo domínio por padrão
+WP_API_QR = os.getenv("WP_API_QR", WP_API)
 
 setup_logging()
 
