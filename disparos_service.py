@@ -19,8 +19,10 @@ import pandas as pd
 app = Flask(__name__)
 
 # Endpoints da API do WhatsApp
-WHATSAPP_URL = "https://whatsapptest-stij.onrender.com/send"
-WP_API = "https://whatsapptest-stij.onrender.com"
+WHATSAPP_URL = os.getenv(
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
+)
+WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
 
 
 def get_conn():

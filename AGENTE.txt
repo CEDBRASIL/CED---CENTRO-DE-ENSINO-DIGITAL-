@@ -41,3 +41,5 @@ PR #11 - Postgres por padrão no módulo de disparos
 - Removido fallback para SQLite em backend/app/models.py.
 - .env.example atualizado para refletir uso exclusivo do Postgres.
 - README detalha variáveis padrão do docker-compose.
+PR #12 - Variáveis de ambiente para endpoints
+- Endpoints do WhatsApp e webhook Discord agora usam os.getenv com valor padrão.

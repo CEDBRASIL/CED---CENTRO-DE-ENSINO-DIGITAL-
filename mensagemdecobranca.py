@@ -21,7 +21,9 @@ router = APIRouter(prefix="/mensagem-cobranca", tags=["Cobrança"])
 # carregado após a importação deste módulo
 ASAAS_KEY = os.getenv("ASAAS_KEY")
 ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
-WHATSAPP_URL = "https://whatsapptest-stij.onrender.com/send"
+WHATSAPP_URL = os.getenv(
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

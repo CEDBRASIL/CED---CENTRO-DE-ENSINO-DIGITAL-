@@ -4,7 +4,9 @@ import requests
 
 from utils import formatar_numero_whatsapp
 
-WHATSAPP_URL = "https://whatsapptest-stij.onrender.com/send"
+WHATSAPP_URL = os.getenv(
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
+)
 WHATSAPP_LOG_NUM = os.getenv("WHATSAPP_LOG_NUM", "556186660241")
 
 class WhatsAppHandler(logging.Handler):
