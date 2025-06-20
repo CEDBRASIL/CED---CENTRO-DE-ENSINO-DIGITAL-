@@ -102,6 +102,17 @@ def grupos():
     return {'grupos': grupos}
 
 
+@router.get('/grupos/{nome}')
+def grupo_detalhe(nome: str):
+    """Retorna participantes de um grupo específico."""
+    participantes = buscar_numeros_do_grupo(nome)
+    return {
+        'nome': nome,
+        'quantidade': len(participantes),
+        'participantes': [{'numero': n} for n in participantes]
+    }
+
+
 @router.get('/mensagens')
 def listar_mensagens():
     with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
