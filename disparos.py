@@ -20,25 +20,19 @@ from utils import formatar_numero_whatsapp
 router = APIRouter()
 
 # Endpoints da API do WhatsApp
-# Endpoints da API do WhatsApp
-WHATSAPP_URL = "https://whatsapptest-stij.onrender.com/send"
-WP_API = "https://whatsapptest-stij.onrender.com"
-
-# Configurações diretas do banco de dados
-PG_HOST = "dpg-d1a3bpngi27c73f2s4s0-a.oregon-postgres.render.com"
-PG_PORT = "5432"
-PG_DB = "ced_database_ec01"
-PG_USER = "yuri"
-PG_PASS = "Wz60DamitHUcXWJV5G61V7SAiWjsB5vl"
+WHATSAPP_URL = os.getenv(
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
+)
+WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
 
 
 def get_conn():
     return psycopg2.connect(
-        host=PG_HOST,
-        port=PG_PORT,
-        dbname=PG_DB,
-        user=PG_USER,
-        password=PG_PASS,
+        host=os.getenv('PG_HOST'),
+        port=os.getenv('PG_PORT'),
+        dbname=os.getenv('PG_DB'),
+        user=os.getenv('PG_USER'),
+        password=os.getenv('PG_PASS'),
         sslmode='require',
     )
 
