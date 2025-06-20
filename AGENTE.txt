@@ -97,3 +97,5 @@ PR #32 - Ajusta QR usando WP_API_QR com porta padrao 3000
 PR #33 - Pagina /qr simplificada exibindo somente a imagem
 PR #34 - Remove API WhatsApp Node e usa whatsapptest-stij.onrender.com em todos os endpoints
 PR #35 - Ajuste de redirecionamento para abrir no início
+PR #36 - Rota de detalhes de grupos
+- Adicionada rota /grupos/{nome} em disparos.py para listar participantes.
