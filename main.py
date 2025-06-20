@@ -108,6 +108,12 @@ async def disparo_root_redirect():
     from fastapi.responses import RedirectResponse
     return RedirectResponse(url="/sistema/disparo/")
 
+@app.get("/disparos", include_in_schema=False)
+async def disparos_shortcut():
+    """Atalho para o módulo de disparos."""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/sistema/disparo/")
+
 # ──────────────────────────────────────────────────────────
 # Execução local / Render
 # ──────────────────────────────────────────────────────────
