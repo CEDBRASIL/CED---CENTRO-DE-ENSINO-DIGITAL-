@@ -76,3 +76,7 @@ PR #24 - Persistência das credenciais do WhatsApp
 - index.js permite configurar pasta via WHATSAPP_AUTH_DIR
 - docker-compose monta volume whatsapp_auth em /data
 - .env.example define variável WHATSAPP_AUTH_DIR=/data
+PR #25 - Endpoint para backup das credenciais
+- Rotas GET e POST /auth exportam e importam arquivos zipados
+- Dependência adm-zip adicionada no serviço WhatsApp
+- .env.example removido conforme solicitado
