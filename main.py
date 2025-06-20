@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -95,6 +96,14 @@ async def _on_startup() -> None:
 def health():
     """Verifica se o serviço está operacional."""
     return {"status": "online", "version": app.version}
+
+
+@app.get("/disparo", include_in_schema=False)
+@app.get("/disparos", include_in_schema=False)
+@app.get("/sistema/disparo", include_in_schema=False)
+def legacy_disparo():
+    """Compatibilidade com rotas antigas."""
+    return RedirectResponse("/sistema")
 
 
 static_dir = os.path.dirname(os.path.abspath(__file__))
