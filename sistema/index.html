@@ -112,6 +112,10 @@
                         <i class="fas fa-bullhorn"></i>
                         Disparos
                     </button>
+                    <button id="menu-disparos-teste" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-3">
+                        <i class="fas fa-flask"></i>
+                        Disparos (TESTE)
+                    </button>
                     <button id="menu-leads" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-3">
                         <i class="fas fa-address-card"></i>
                         Gerador de Leads
@@ -413,6 +417,7 @@
             const menuCobrancas = document.getElementById('menu-cobrancas');
             const menuWhatsapp = document.getElementById('menu-whatsapp');
             const menuDisparos = document.getElementById('menu-disparos');
+            const menuDisparosTeste = document.getElementById('menu-disparos-teste');
             const menuTarefas = document.getElementById('menu-tarefas');
             const menuUsuarios = document.getElementById('menu-usuarios');
             const menuLeads = document.getElementById('menu-leads');
@@ -607,6 +612,10 @@
                 carregarMensagens();
                 carregarHistorico();
                 verificarStatus();
+            });
+
+            menuDisparosTeste.addEventListener('click', () => {
+                window.location.href = 'disparos-teste/index.html';
             });
 
             menuLeads.addEventListener('click', () => {
