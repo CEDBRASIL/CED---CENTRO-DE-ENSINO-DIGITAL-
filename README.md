@@ -4,7 +4,16 @@ Este projeto disponibiliza um serviço em FastAPI para gerenciamento e envio de 
 
 ## Uso rápido
 
-1. Copie `.env.example` para `.env` e ajuste as variáveis do banco de dados.
+1. Copie `.env.example` para `.env` e ajuste as variáveis do PostgreSQL.
+   O arquivo já fornece valores padrão compatíveis com o `docker-compose`:
+
+   ```env
+   PG_HOST=db
+   PG_PORT=5432
+   PG_DB=ced
+   PG_USER=ced
+   PG_PASS=ced
+   ```
 2. Execute:
 
 ```bash

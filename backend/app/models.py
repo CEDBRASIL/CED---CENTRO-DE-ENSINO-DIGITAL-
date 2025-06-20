@@ -3,17 +3,13 @@ from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, func
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
-PG_HOST = os.getenv('PG_HOST')
-PG_PORT = os.getenv('PG_PORT')
-PG_DB = os.getenv('PG_DB')
-PG_USER = os.getenv('PG_USER')
-PG_PASS = os.getenv('PG_PASS')
+PG_HOST = os.getenv('PG_HOST', 'localhost')
+PG_PORT = os.getenv('PG_PORT', '5432')
+PG_DB = os.getenv('PG_DB', 'ced')
+PG_USER = os.getenv('PG_USER', 'ced')
+PG_PASS = os.getenv('PG_PASS', 'ced')
 
-if PG_HOST:
-    DB_URL = f"postgresql+asyncpg://{PG_USER}:{PG_PASS}@{PG_HOST}:{PG_PORT}/{PG_DB}"
-else:
-    sqlite_path = os.getenv('SQLITE_DB', 'local.db')
-    DB_URL = f"sqlite+aiosqlite:///{sqlite_path}"
+DB_URL = f"postgresql+asyncpg://{PG_USER}:{PG_PASS}@{PG_HOST}:{PG_PORT}/{PG_DB}"
 
 engine = create_async_engine(DB_URL, future=True, echo=False)
 AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)

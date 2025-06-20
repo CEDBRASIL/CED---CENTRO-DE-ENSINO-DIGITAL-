@@ -37,3 +37,7 @@ PR #10 - Ajuste de leitura da ASAAS_KEY
 - Funções _headers e criacao de cobrança agora leem ASAAS_KEY dinamicamente.
 - Corrigido problema de variáveis não carregadas causando falha nos GET /sistema.
 
+PR #11 - Postgres por padrão no módulo de disparos
+- Removido fallback para SQLite em backend/app/models.py.
+- .env.example atualizado para refletir uso exclusivo do Postgres.
+- README detalha variáveis padrão do docker-compose.
