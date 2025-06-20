@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Body
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 import pandas as pd
@@ -77,21 +77,6 @@ async def importar(lista_id: int, file: UploadFile = File(...), db: AsyncSession
             desc2=row.get("desc2"),
             desc3=row.get("desc3"),
         )
-        db.add(contato)
-        total += 1
-    await db.commit()
-    return {"importados": total}
-
-
-@router.post("/adicionar_numeros/{lista_id}", response_model=dict)
-async def adicionar_numeros(lista_id: int, numeros: list[str] = Body(...), db: AsyncSession = Depends(get_db)):
-    """Adiciona uma lista de números simples à lista informada."""
-    total = 0
-    for num in numeros:
-        telefone = str(num).strip()
-        if not telefone:
-            continue
-        contato = Contato(lista_id=lista_id, telefone=telefone)
         db.add(contato)
         total += 1
     await db.commit()

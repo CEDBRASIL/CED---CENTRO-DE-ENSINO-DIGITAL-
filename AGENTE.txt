@@ -57,4 +57,3 @@ PR #16 - Ferramenta CLI de administração do banco
 - Criado db_admin.py com comandos init-db, add-lista, list-listas, add-contato e list-contatos
 PR #17 - Script PHP para disparos
 PR #18 - Atalho para /disparos
-PR #19 - Abas de contatos por grupo e cache de mensagens
