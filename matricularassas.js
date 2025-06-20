@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if (!res.ok) throw new Error('Falha ao conectar');
       const msg = `Olá ${nome} tudo bem?\nAcabamos de te enviar o link da sua assinatura no WhatsApp!\nVamos te matricular assim que confirmarmos o pagamento!\nQualquer duvida, estou aqui!`;
-      fetch(`https://whatsapptest-stij.onrender.com/send?para=${phone}&mensagem=${encodeURIComponent(msg)}`)
+      fetch(`https://api.cedbrasilia.com.br/send?para=${phone}&mensagem=${encodeURIComponent(msg)}`)
         .catch(() => {});
       formMessage.textContent = `Sua matrícula foi gerada, ${nome}! Enviamos os dados da assinatura no seu whatsapp!`;
       formMessage.className = 'text-center text-green-500';

@@ -395,7 +395,7 @@
             let BASIC_B64 = '';
             // Simulação da busca do .env, pode ser removido se não for usado.
             const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
-            const WP_API = 'https://whatsapptest-stij.onrender.com';
+            const WP_API = 'https://api.cedbrasilia.com.br';
             // fetch('../get.env').then(r => r.text()).then(t => {
             //     const m = t.match(/^BASIC_B64=(.*)$/m);
             //     if (m) BASIC_B64 = m[1].trim();
@@ -917,7 +917,7 @@
 
             async function checkWpStatus() {
                 try {
-                    const resp = await fetch('https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/status');
+                    const resp = await fetch('https://api.allorigins.win/raw?url=https://api.cedbrasilia.com.br/status');
                     const data = await resp.json();
                     const conectado = data.connected ?? data.conectado;
                     if (conectado) {
@@ -936,7 +936,7 @@
             wpConnectBtn.addEventListener("click", async () => {
                 wpQrDiv.innerHTML = "Carregando...";
                 try {
-                    const resp = await fetch("https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/qr");
+                    const resp = await fetch("https://api.allorigins.win/raw?url=https://api.cedbrasilia.com.br/qr");
                     const html = await resp.text();
                     wpQrDiv.innerHTML = html;
                 } catch (err) {
@@ -945,7 +945,7 @@
             });
             wpPingBtn.addEventListener("click", async () => {
                 try {
-                    await fetch("https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/send?para=61986660241&mensagem=PONG");
+                    await fetch("https://api.allorigins.win/raw?url=https://api.cedbrasilia.com.br/send?para=61986660241&mensagem=PONG");
                     alert("Ping enviado!");
                 } catch (err) {
                     alert("Falha ao enviar ping.");
@@ -969,7 +969,7 @@
                 try {
                     const intervalo = parseInt(wpInterval.value, 10) * 1000;
                     for (let i = 0; i < numeros.length; i++) {
-                        await fetch(`https://api.allorigins.win/raw?url=https://whatsapptest-stij.onrender.com/send?para=${numeros[i]}&mensagem=${encodeURIComponent(mensagem)}`);
+                        await fetch(`https://api.allorigins.win/raw?url=https://api.cedbrasilia.com.br/send?para=${numeros[i]}&mensagem=${encodeURIComponent(mensagem)}`);
                         wpSendStatus.textContent = `Enviando (${i + 1}/${numeros.length})`;
                         if (i < numeros.length - 1) await new Promise(r => setTimeout(r, intervalo));
                     }
