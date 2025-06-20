@@ -23,7 +23,10 @@ router = APIRouter(prefix="/asaas", tags=["Matrícula Assas"])
 ASAAS_KEY = os.getenv("ASAAS_KEY")
 ASAAS_BASE_URL = os.getenv("ASAAS_BASE_URL", "https://api.asaas.com/v3")
 
-WHATSAPP_URL = "https://whatsapptest-stij.onrender.com/send"
+# Endpoint da API do WhatsApp
+WHATSAPP_URL = os.getenv(
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
+)
 SENHA_PADRAO = os.getenv("SENHA_PADRAO", "123456")
 
 logging.basicConfig(level=logging.INFO)

@@ -17,12 +17,17 @@ UNIDADE_ID = os.getenv("UNIDADE_ID")
 OM_BASE = os.getenv("OM_BASE")
 
 # Endpoint do WhatsApp (não requer token)
-WHATSAPP_URL = "https://whatsapptest-stij.onrender.com/send"
+WHATSAPP_URL = os.getenv(
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
+)
 # Número para receber logs via WhatsApp
 WHATSAPP_LOG_NUM = os.getenv("WHATSAPP_LOG_NUM", "556186660241")
 
-# ** CONSTANTE DO WEBHOOK DISCORD **
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1377838283975036928/IgVvwyrBBWflKyXbIU9dgH4PhLwozHzrf-nJpj3w7dsZC-Ds9qN8_Toym3Tnbj-3jdU4"
+# ** Webhook do Discord para logs **
+DISCORD_WEBHOOK_URL = os.getenv(
+    "DISCORD_WEBHOOK_URL",
+    "https://discord.com/api/webhooks/1377838283975036928/IgVvwyrBBWflKyXbIU9dgH4PhLwozHzrf-nJpj3w7dsZC-Ds9qN8_Toym3Tnbj-3jdU4",
+)
 
 # Prefixo para gerar CPFs sequenciais na OM
 CPF_PREFIXO = "20254158"

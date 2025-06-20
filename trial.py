@@ -14,6 +14,9 @@ router = APIRouter(prefix="/teste-gratis", tags=["Teste Gratuito"])
 TRIAL_DAYS = 3
 TRIALS_FILE = os.getenv("TRIALS_FILE", "trials.json")
 SENHA_PADRAO = os.getenv("SENHA_PADRAO", "123456")
+WHATSAPP_URL = os.getenv(
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
+)
 
 
 def _load_trials() -> List[Dict]:
@@ -51,7 +54,7 @@ def _send_mensagem_teste(
     )
     try:
         requests.get(
-            "https://whatsapptest-stij.onrender.com/send",
+            WHATSAPP_URL,
             params={"para": whatsapp, "mensagem": msg},
             timeout=10,
         )
@@ -128,7 +131,7 @@ def _enviar_cobranca(t: Dict) -> None:
     msg = f"Olá {t['nome']}, seu teste gratuito encerrou. Para continuar estudando, entre em contato e regularize o pagamento."
     try:
         requests.get(
-            "https://whatsapptest-stij.onrender.com/send",
+            WHATSAPP_URL,
             params={"para": t["whatsapp"], "mensagem": msg},
             timeout=10,
         )

@@ -20,8 +20,10 @@ from utils import formatar_numero_whatsapp
 router = APIRouter()
 
 # Endpoints da API do WhatsApp
-WHATSAPP_URL = "https://whatsapptest-stij.onrender.com/send"
-WP_API = "https://whatsapptest-stij.onrender.com"
+WHATSAPP_URL = os.getenv(
+    "WHATSAPP_URL", "https://whatsapptest-stij.onrender.com/send"
+)
+WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
 
 
 def get_conn():
