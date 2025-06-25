@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const descriptions = {
     'Excel PRO': 'Domine planilhas e crie relat\u00f3rios avan\u00e7ados para impulsionar sua produtividade.',
     'Design Gr\u00e1fico': 'Aprenda t\u00e9cnicas profissionais de cria\u00e7\u00e3o visual e destaque-se no mercado.',
+    'Design Gráfico Profissional': 'Aprenda técnicas completas de design para web e impressos.',
     'Analista e Desenvolvimento de Sistemas': 'Forma\u00e7\u00e3o completa para quem deseja programar e projetar sistemas de alta qualidade.',
     'Administra\u00e7\u00e3o': 'Construa habilidades essenciais para gerenciar neg\u00f3cios com efici\u00eancia.',
     'Ingl\u00eas Fluente': 'Alcance a flu\u00eancia no idioma mais requisitado pelo mercado de trabalho.',
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const details = {
     'Excel PRO': 'Curso completo para dominar planilhas, gráficos e automações no Excel, com foco em aplicações práticas.',
     'Design Gráfico': 'Aprenda a criar peças profissionais para web e impressão utilizando as principais ferramentas do mercado.',
+    'Design Gráfico Profissional': 'Illustrator, Photoshop, InDesign e CorelDRAW para projetos profissionais.',
     'Analista e Desenvolvimento de Sistemas': 'Formação abrangente em programação, análise de requisitos e desenvolvimento de sistemas de ponta a ponta.',
     'Administração': 'Capacitação em gestão empresarial, finanças e processos administrativos modernos.',
     'Inglês Fluente': 'Metodologia eficaz para alcançar fluência e se comunicar com confiança em qualquer situação.',

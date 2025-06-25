@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         coursesSelect.appendChild(opt);
       });
     } catch (err) {
-      ['Excel PRO','Design Gráfico','Administração'].forEach(n => {
+      ['Excel PRO','Design Gráfico Profissional','Administração'].forEach(n => {
         const opt = document.createElement('option');
         opt.value = n;
         opt.textContent = n;
