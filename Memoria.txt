@@ -5,3 +5,5 @@ Usuario solicitou remover a integração automatizada com o ASAAS, mantendo apen
 Usuario solicitou remover o texto de 3 dias de teste e restaurar o valor normal nos cursos. O agente removeu a seção de teste gratuito do index.html e exibiu o preço normal.
 Usuario solicitou alterar completamente o mapeamento de cursos para novos IDs em cursos.py, afetam as rotas /cursos, matricula e integracao Kiwify.
 Usuario solicitou atualizar o catalogo em index.html para refletir o novo mapeamento de cursos. O agente substituiu nomes, descricoes e tabela de afiliados, destacando 'Mestre em Excel' como curso recomendado.
+Usuario solicitou: "no index.html aba cursos melhore a descrição dos cursos, mais detalhes inclua os cursos do pacote".
+O agente atualizou os objetos COURSE_DESCRIPTIONS e COURSE_DETAILS no index.html, adicionando descrições mais completas e listando os cursos de cada pacote.
