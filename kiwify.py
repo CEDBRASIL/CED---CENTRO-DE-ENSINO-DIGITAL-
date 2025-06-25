@@ -5,7 +5,6 @@ import difflib
 import datetime
 from dateutil.relativedelta import relativedelta
 import json
-import asaas
 from utils import formatar_numero_whatsapp, parse_valor, parse_valor_centavos
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import JSONResponse
@@ -169,11 +168,9 @@ def enviar_whatsapp_chatpro(
         f"🔑 Sua senha: {senha_padrao}\n"
     )
 
-    if vencimento:
-        mensagem += f"\n💳 Próximo pagamento em: {vencimento}\n"
-
     mensagem += (
-        "\n🌐 Portal do Aluno: https://ead.cedbrasilia.com.br\n"
+        "\n💳 Link para iniciar a Assinatura: https://www.asaas.com/c/i4q17hkoxqmvdp90\n"
+        "\n🌐 Portal do aluno: https://www.cedbrasilia.com.br/login\n"
         "🤖 APP Android: https://play.google.com/store/apps/datasafety?id=br.com.om.app&hl=pt_BR\n"
         "🍎 APP iOS: https://apps.apple.com/br/app/meu-app-de-cursos/id1581898914\n\n"
         "Qualquer dúvida, estamos à disposição. Boa jornada de estudos! 🚀"
@@ -344,13 +341,6 @@ async def _process_webhook(payload: dict):
             enviar_log_discord(
                 f"✅ Conta do aluno com ID {aluno_id} (CPF: {cpf}) excluída com sucesso."
             )
-            try:
-                canceladas = asaas.cancelar_assinaturas_por_cpf(cpf)
-                enviar_log_discord(
-                    f"🔔 {canceladas} assinatura(s) ASAAS cancelada(s) para o CPF {cpf}."
-                )
-            except Exception as e:
-                enviar_log_discord(f"❌ Erro ao cancelar assinatura ASAAS: {e}")
             return {"message": "Conta do aluno excluída com sucesso."}
 
         if evento != "order_approved":
@@ -440,23 +430,6 @@ async def _process_webhook(payload: dict):
             vencimento=vencimento,
         )
 
-        try:
-            asaas.criar_assinatura_recorrente(
-                {
-                    "nome": nome,
-                    "cpf": cpf,
-                    "whatsapp": celular,
-                    "valor": valor_plano,
-                    "descricao": plano_assinatura,
-                    "cursos_ids": cursos_ids,
-                    "dueDate": (
-                        datetime.datetime.now() + relativedelta(months=1)
-                    ).strftime("%Y-%m-%d"),
-                },
-                enviar_whatsapp=False,
-            )
-        except Exception as e:
-            enviar_log_discord(f"❌ ERRO ASSINATURA ASAAS: {e}")
 
         adicionar_aluno_planilha(
             {
