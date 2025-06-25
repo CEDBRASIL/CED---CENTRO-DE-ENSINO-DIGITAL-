@@ -386,15 +386,11 @@
         <p id="selected-course-name" class="text-center text-sm text-gray-300 mb-4"></p>
         <form id="checkoutForm" class="space-y-4">
             <div>
-                <label for="checkout-nome" class="block mb-2 font-semibold text-gray-300">Nome completo</label>
+                <label for="checkout-nome" class="block mb-2 font-semibold text-gray-300">Como vamos te chamar?</label>
                 <input type="text" id="checkout-nome" required class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
             </div>
-            <div>
-                <label for="checkout-cpf" class="block mb-2 font-semibold text-gray-300">CPF</label>
-                <input type="text" id="checkout-cpf" required placeholder="000.000.000-00" class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
-            </div>
             <div class="mb-2">
-                <label for="checkout-phone" class="block mb-2 font-semibold text-gray-300">Telefone (com DDD)</label>
+                <label for="checkout-phone" class="block mb-2 font-semibold text-gray-300">Whatsapp</label>
                 <input type="tel" id="checkout-phone" required placeholder="(XX) XXXXX-XXXX" class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
             </div>
             <input type="hidden" id="selected-course" />
@@ -1045,7 +1041,6 @@
             const closeCheckout = document.getElementById('close-checkout');
             const checkoutForm = document.getElementById('checkoutForm');
             const checkoutNome = document.getElementById('checkout-nome');
-            const checkoutCPF = document.getElementById('checkout-cpf');
             const checkoutPhone = document.getElementById('checkout-phone');
             const checkoutMsg = document.getElementById('checkout-message');
             const checkoutSubmitButton = document.getElementById('checkout-submit');
@@ -1097,17 +1092,15 @@
                 return value;
             }
 
-            if (checkoutCPF) checkoutCPF.addEventListener('input', e => { e.target.value = applyCPFMask(e.target.value); });
             if (checkoutPhone) checkoutPhone.addEventListener('input', e => { e.target.value = applyWhatsappMask(e.target.value); });
 
 
             if (checkoutForm) checkoutForm.addEventListener('submit', async e => {
                 e.preventDefault();
                 const nome = checkoutNome.value.trim();
-                const cpf = checkoutCPF.value.replace(/\D/g, '');
                 const phone = checkoutPhone.value.replace(/\D/g, '');
 
-                if (!nome || !cpf || !phone || !selectedCourse) {
+                if (!nome || !phone || !selectedCourse) {
                     checkoutMsg.textContent = 'Preencha todos os campos.';
                     checkoutMsg.className = 'text-center text-red-500 mt-2 h-5';
                     return;
@@ -1117,6 +1110,36 @@
                 checkoutMsg.className = 'text-center text-gray-300 mt-2 h-5';
                 checkoutSubmitButton.disabled = true;
                 checkoutSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
+<<<<<<< codex/alterar-campos-de-matrícula-no-index.html
+                
+                try {
+                    // Payload para a nova rota de assinatura
+                    const dados = {
+                        nome: nome,
+                        whatsapp: `55${phone}`,
+                        valor: selectedCourse.price,
+                        cycle: "MONTHLY", // Adicionado conforme a nova API
+                        descricao: `Assinatura Mensal - ${selectedCourse.name}`,
+                        cursos_ids: selectedCourse.ids
+                    };
+                    await criarAssinatura(dados);
+                    const successText = `Sua matrícula foi gerada, ${nome}! Enviamos os dados da assinatura no seu WhatsApp!`;
+                    checkoutMsg.textContent = successText;
+                    checkoutMsg.className = 'text-center text-green-500 mt-2 h-5';
+                    const successMsgEl = document.getElementById('success-message');
+                    const successModal = document.getElementById('success-modal');
+                    if (successMsgEl && successModal) {
+                        successMsgEl.textContent = successText;
+                        successModal.classList.remove('hidden');
+                    }
+                    checkoutSubmitButton.disabled = false;
+                    checkoutSubmitButton.innerHTML = 'Assinar Agora';
+                } catch (err) {
+                    checkoutMsg.textContent = err.message || 'Erro ao processar. Tente novamente.';
+                    checkoutMsg.className = 'text-center text-red-500 mt-2 h-5';
+                    checkoutSubmitButton.disabled = false;
+                    checkoutSubmitButton.innerHTML = 'Assinar Agora';
+=======
 
                 const successText = `Recebemos seus dados, ${nome}! Em breve entraremos em contato para concluir a matrícula.`;
                 checkoutMsg.textContent = successText;
@@ -1126,6 +1149,7 @@
                 if (successMsgEl && successModal) {
                     successMsgEl.textContent = successText;
                     successModal.classList.remove('hidden');
+>>>>>>> main
                 }
                 checkoutSubmitButton.disabled = false;
                 checkoutSubmitButton.innerHTML = 'Assinar Agora';
