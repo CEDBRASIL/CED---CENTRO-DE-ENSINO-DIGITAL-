@@ -265,7 +265,6 @@ def _send_whatsapp_chatpro(
     )
 
     mensagem += (
-        "\n💳 Link para iniciar a Assinatura: https://www.asaas.com/c/i4q17hkoxqmvdp90\n"
         "\n🌐 Portal do aluno: https://www.cedbrasilia.com.br/login\n"
         "🤖 APP Android: https://play.google.com/store/apps/datasafety?id=br.com.om.app&hl=pt_BR\n"
         "🍎 APP iOS: https://apps.apple.com/br/app/meu-app-de-cursos/id1581898914\n\n"
