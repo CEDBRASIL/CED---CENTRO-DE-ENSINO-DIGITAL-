@@ -5,18 +5,24 @@ router = APIRouter()
 
 # Mapeamento de nomes de cursos do CED para os IDs de disciplinas na OM
 CURSOS_OM: Dict[str, List[int]] = {
-    "Excel PRO": [161, 197, 201],
-    "Design Gráfico": [254, 751, 169],
-    "Analista e Desenvolvimento de Sistemas": [590, 176, 239, 203],
-    "Administração": [129, 198, 156, 154],
-    "Inglês Fluente": [263, 280, 281],
-    "Inglês Kids": [266],
-    "Informática Essencial": [130, 599, 161, 160, 162],
-    "Operador de Micro": [130, 599, 160, 161, 162, 163, 222],
-    "Especialista em Marketing & Vendas 360º": [123, 199, 202, 236, 264, 441, 734, 780, 828, 829],
-    "Marketing Digital": [734, 236, 441, 199, 780],
-    "Pacote Office": [160, 161, 162, 197, 201],
-    "None": [129, 198, 156, 154],
+    "Mestre em Excel": [161, 197, 201, 560, 659],
+    "Video Creator Profissional": [138, 240, 169, 254],
+    "Programador Master": [590, 176, 239, 203, 126, 252],
+    "Desenvolvedor Web": [126, 239, 252, 237, 822],
+    "Games Creator": [139, 124, 146, 473, 167],
+    "Projetista Alto Nível": [135, 193, 195, 396, 541],
+    "Administração de Pessoal": [156, 198, 214, 129],
+    "Social Media Pro": [199, 780, 441, 202, 734, 264, 236],
+    "Vendedor Digital": [123, 207, 236, 255, 222],
+    "Crianças do Futuro": [92, 93, 94, 513, 568, 594, 705, 723, 782, 783, 837, 838],
+    "Melhor Idade": [168, 599, 234, 627, 220],
+    "Líder do Futuro": [154, 144, 214, 156, 129],
+    "Auxiliar Contábil": [200, 183, 560, 129],
+    "Auxiliar de Escritório": [754, 130, 160, 161, 162],
+    "Segurança da Saúde": [271, 316, 334, 360, 426, 216],
+    "Cuidador de Idosos": [276, 155, 271, 222],
+    "Operador de Logística": [265, 161, 183, 201, 236],
+    "Youtuber": [136, 240, 441, 264],
 }
 
 
