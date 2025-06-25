@@ -1,15 +1,15 @@
 const COURSE_PRICES = {
-  "Excel PRO": 49.90,
-  "Design Gráfico": 89.90,
-  "Analista e Desenvolvimento de Sistemas": 79.90,
-  "Administração": 49.90,
-  "Inglês Fluente": 99.90,
-  "Inglês Kids": 39.90,
-  "Informática Essencial": 49.90,
-  "Operador de Micro": 59.90,
-  "Especialista em Marketing & Vendas 360º": 149.90,
-  "Marketing Digital": 89.90,
-  "Pacote Office": 29.99,
+  "Excel PRO": 19.90,
+  "Design Gráfico": 19.90,
+  "Analista e Desenvolvimento de Sistemas": 19.90,
+  "Administração": 19.90,
+  "Inglês Fluente": 19.90,
+  "Inglês Kids": 19.90,
+  "Informática Essencial": 19.90,
+  "Operador de Micro": 19.90,
+  "Especialista em Marketing & Vendas 360º": 19.90,
+  "Marketing Digital": 19.90,
+  "Pacote Office": 19.90,
 };
 
 function applyCPFMask(v) {
