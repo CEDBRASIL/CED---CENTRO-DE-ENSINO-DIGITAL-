@@ -1,6 +1,7 @@
 const COURSE_PRICES = {
   "Excel PRO": 19.90,
   "Design Gráfico": 19.90,
+  "Design Gráfico Profissional": 19.90,
   "Analista e Desenvolvimento de Sistemas": 19.90,
   "Administração": 19.90,
   "Inglês Fluente": 19.90,
