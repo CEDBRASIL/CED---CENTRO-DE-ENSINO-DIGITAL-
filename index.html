@@ -1094,22 +1094,6 @@
 
             if (checkoutPhone) checkoutPhone.addEventListener('input', e => { e.target.value = applyWhatsappMask(e.target.value); });
 
-            // **NOVA FUNÇÃO** para criar a assinatura
-            async function criarAssinatura(dadosAssinatura) {
-                const resposta = await fetch('https://api.cedbrasilia.com.br/asaas/assinatura', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dadosAssinatura)
-                });
-
-                if (!resposta.ok) {
-                    const errorData = await resposta.json().catch(() => ({}));
-                    throw new Error(errorData.message || 'Falha ao criar assinatura');
-                }
-
-                const json = await resposta.json();
-                return json;
-            }
 
             if (checkoutForm) checkoutForm.addEventListener('submit', async e => {
                 e.preventDefault();
@@ -1122,10 +1106,11 @@
                     return;
                 }
 
-                checkoutMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando sua assinatura...';
+                checkoutMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
                 checkoutMsg.className = 'text-center text-gray-300 mt-2 h-5';
                 checkoutSubmitButton.disabled = true;
                 checkoutSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
+<<<<<<< codex/alterar-campos-de-matrícula-no-index.html
                 
                 try {
                     // Payload para a nova rota de assinatura
@@ -1154,7 +1139,20 @@
                     checkoutMsg.className = 'text-center text-red-500 mt-2 h-5';
                     checkoutSubmitButton.disabled = false;
                     checkoutSubmitButton.innerHTML = 'Assinar Agora';
+=======
+
+                const successText = `Recebemos seus dados, ${nome}! Em breve entraremos em contato para concluir a matrícula.`;
+                checkoutMsg.textContent = successText;
+                checkoutMsg.className = 'text-center text-green-500 mt-2 h-5';
+                const successMsgEl = document.getElementById('success-message');
+                const successModal = document.getElementById('success-modal');
+                if (successMsgEl && successModal) {
+                    successMsgEl.textContent = successText;
+                    successModal.classList.remove('hidden');
+>>>>>>> main
                 }
+                checkoutSubmitButton.disabled = false;
+                checkoutSubmitButton.innerHTML = 'Assinar Agora';
             });
 
             // --- Fim da Lógica do Checkout ---

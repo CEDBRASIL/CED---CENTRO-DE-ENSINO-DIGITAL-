@@ -44,21 +44,8 @@ function normalizarNumero(num) {
   return num;
 }
 
-async function gerarLinkPagamento(dadosAluno) {
-  const resposta = await fetch('https://api.cedbrasilia.com.br/asaas/checkout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(dadosAluno)
-  });
-
-  if (!resposta.ok) {
-    throw new Error('Falha ao gerar cobrança');
-  }
-
-  const json = await resposta.json();
-  if (json.url) {
-    window.location.href = json.url;
-  }
+function gerarLinkPagamento() {
+  alert('Integração de pagamento desativada.');
 }
 
 async function obterIdsCurso(nome) {
@@ -102,20 +89,9 @@ function initCoursePage(courseName) {
       }
       message.textContent = 'Enviando...';
       message.className = 'text-center text-gray-300 mt-2 h-5';
-      try {
-        await gerarLinkPagamento({
-          nome,
-          cpf,
-          email,
-          whatsapp: phone,
-          valor: price,
-          descricao: courseName,
-          cursos_ids: courseIds
-        });
-      } catch (err) {
-        message.textContent = err.message || 'Erro ao enviar. Tente novamente.';
-        message.className = 'text-center text-red-500 mt-2 h-5';
-      }
+      gerarLinkPagamento();
+      message.textContent = 'Solicitação enviada com sucesso!';
+      message.className = 'text-center text-green-500 mt-2 h-5';
     });
   });
 }
