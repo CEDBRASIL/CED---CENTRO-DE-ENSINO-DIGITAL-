@@ -404,29 +404,6 @@
     </div>
 </div>
 
-<div id="trial-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
-    <div class="bg-gray-900 p-6 rounded-2xl relative max-w-md w-full border border-gray-700 shadow-2xl shadow-spotify-green/10">
-        <button id="close-trial" class="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"><i class="fas fa-times"></i></button>
-        <h2 class="text-2xl font-bold mb-4 text-center text-white">Iniciar Teste Gratuito</h2>
-        <form id="trialForm" class="space-y-4">
-            <input type="hidden" id="trial-course" />
-            <div>
-                <label for="trial-nome" class="block mb-2 font-semibold text-gray-300">Nome completo</label>
-                <input type="text" id="trial-nome" required class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
-            </div>
-            <div>
-                <label for="trial-cpf" class="block mb-2 font-semibold text-gray-300">CPF</label>
-                <input type="text" id="trial-cpf" required placeholder="000.000.000-00" class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
-            </div>
-            <div class="mb-2">
-                <label for="trial-whatsapp" class="block mb-2 font-semibold text-gray-300">WhatsApp</label>
-                <input type="tel" id="trial-whatsapp" required placeholder="(XX) XXXXX-XXXX" class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
-            </div>
-            <button type="submit" id="trial-submit" class="w-full button-glow bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-500 transition-all">Começar Teste</button>
-            <div id="trial-message" class="text-center mt-2 h-5 text-gray-300"></div>
-        </form>
-    </div>
-</div>
 
 <div id="success-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
     <div class="bg-gray-900 p-8 rounded-2xl relative max-w-md w-full border border-gray-700 shadow-2xl shadow-spotify-green/10 success-content text-center">
@@ -833,9 +810,7 @@
                     <p class="text-muted text-sm mb-4">${course.description}</p>
                     <div class="flex items-center justify-between w-full mt-auto gap-2">
                         <div>
-                            <span class="preco-antigo">R$ ${course.price.toFixed(2).replace('.', ',')}</span>
-                            <span class="preco-novo">R$ 0,00</span>
-                            <span class="text-muted text-xs block">3 dias de teste</span>
+                            <span class="preco-novo">R$ ${course.price.toFixed(2).replace('.', ',')}</span>
                         </div>
                         <button class="trial-course button-glow bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition-all duration-300" data-course-name="${course.name}">Me matricular agora!</button>
                     </div>
@@ -849,7 +824,15 @@
             document.querySelectorAll(".trial-course").forEach(button => {
                 button.addEventListener("click", e => {
                     const courseName = e.currentTarget.dataset.courseName;
-                    openTrial(courseName);
+                    const course = availableCourses.find(c => c.name === courseName);
+                    if (course) {
+                        selectedCourse = course;
+                        const selectedCourseInput = document.getElementById('selected-course');
+                        const selectedCourseNameEl = document.getElementById('selected-course-name');
+                        if (selectedCourseInput) selectedCourseInput.value = course.name;
+                        if (selectedCourseNameEl) selectedCourseNameEl.textContent = `Curso: ${course.name} (R$ ${course.price.toFixed(2).replace('.', ',')}/mês)`;
+                        openCheckout();
+                    }
                 });
             });
         }
@@ -1160,81 +1143,6 @@
 
             // --- Fim da Lógica do Checkout ---
 
-            // --- Lógica do Teste Gratuito ---
-            const trialModal = document.getElementById('trial-modal');
-            const closeTrial = document.getElementById('close-trial');
-            const trialForm = document.getElementById('trialForm');
-            const trialNome = document.getElementById('trial-nome');
-            const trialCPF = document.getElementById('trial-cpf');
-            const trialWhatsapp = document.getElementById('trial-whatsapp');
-            const trialCourse = document.getElementById('trial-course');
-            const trialMsg = document.getElementById('trial-message');
-            const trialSubmitButton = document.getElementById('trial-submit');
-
-            window.openTrial = function(courseName) {
-                if (trialModal) {
-                    trialModal.classList.remove('hidden');
-                    trialForm.reset();
-                    if (trialCourse) trialCourse.value = courseName || '';
-                    trialMsg.textContent = '';
-                    trialSubmitButton.disabled = false;
-                    trialSubmitButton.innerHTML = 'Começar Teste';
-                }
-            };
-
-            function closeTrialFn() {
-                if (trialModal) trialModal.classList.add('hidden');
-            }
-
-            if (closeTrial) closeTrial.addEventListener('click', closeTrialFn);
-            if (trialModal) trialModal.addEventListener('click', e => { if (e.target === trialModal) closeTrialFn(); });
-
-            if (trialCPF) trialCPF.addEventListener('input', e => { e.target.value = applyCPFMask(e.target.value); });
-            if (trialWhatsapp) trialWhatsapp.addEventListener('input', e => { e.target.value = applyWhatsappMask(e.target.value); });
-
-            if (trialForm) trialForm.addEventListener('submit', async e => {
-                e.preventDefault();
-                const nome = trialNome.value.trim();
-                const cpf = trialCPF.value.replace(/\D/g, '');
-                const whatsapp = trialWhatsapp.value.replace(/\D/g, '');
-                const curso = trialCourse.value;
-
-                if (!nome || !cpf || !whatsapp || !curso) {
-                    trialMsg.textContent = 'Preencha todos os campos.';
-                    trialMsg.className = 'text-center text-red-500 mt-2 h-5';
-                    return;
-                }
-
-                trialMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-                trialMsg.className = 'text-center text-gray-300 mt-2 h-5';
-                trialSubmitButton.disabled = true;
-                trialSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
-
-                try {
-                    const price = COURSE_PRICES[curso] || 0;
-                    const resposta = await fetch('https://api.cedbrasilia.com.br/teste-gratis', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nome, cpf, whatsapp, curso, valor: price })
-                    });
-
-                    if (!resposta.ok) {
-                        const errorData = await resposta.json().catch(() => ({}));
-                        throw new Error(errorData.detail || 'Erro ao iniciar teste');
-                    }
-
-                    trialMsg.textContent = 'Teste iniciado! Verifique seu WhatsApp.';
-                    trialMsg.className = 'text-center text-green-500 mt-2 h-5';
-                } catch (err) {
-                    trialMsg.textContent = err.message || 'Erro ao processar';
-                    trialMsg.className = 'text-center text-red-500 mt-2 h-5';
-                } finally {
-                    trialSubmitButton.disabled = false;
-                    trialSubmitButton.innerHTML = 'Começar Teste';
-                }
-            });
-
-            // --- Fim da Lógica do Teste Gratuito ---
 
 
             const testimonialsData = [
