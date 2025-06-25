@@ -701,46 +701,67 @@
 
     <script>
 
-        const COURSE_PRICES = {
-            "Excel PRO": 19.90,
-            "Design Gráfico": 19.90,
-            "Analista e Desenvolvimento de Sistemas": 19.90,
-            "Administração": 19.90,
-            "Inglês Fluente": 19.90,
-            "Inglês Kids": 19.90,
-            "Informática Essencial": 19.90,
-            "Operador de Micro": 19.90,
-            "Especialista em Marketing & Vendas 360º": 19.90,
-            "Marketing Digital": 19.90,
-            "Pacote Office": 19.90,
+                const COURSE_PRICES = {
+            "Mestre em Excel": 19.90,
+            "Video Creator Profissional": 19.90,
+            "Programador Master": 19.90,
+            "Desenvolvedor Web": 19.90,
+            "Games Creator": 19.90,
+            "Projetista Alto Nível": 19.90,
+            "Administração de Pessoal": 19.90,
+            "Social Media Pro": 19.90,
+            "Vendedor Digital": 19.90,
+            "Crianças do Futuro": 19.90,
+            "Melhor Idade": 19.90,
+            "Líder do Futuro": 19.90,
+            "Auxiliar Contábil": 19.90,
+            "Auxiliar de Escritório": 19.90,
+            "Segurança da Saúde": 19.90,
+            "Cuidador de Idosos": 19.90,
+            "Operador de Logística": 19.90,
+            "Youtuber": 19.90,
         };
 
-        const COURSE_DESCRIPTIONS = {
-            'Excel PRO': 'Domine planilhas e crie relatórios avançados para impulsionar sua produtividade.',
-            'Design Gráfico': 'Aprenda técnicas profissionais de criação visual e destaque-se no mercado.',
-            'Analista e Desenvolvimento de Sistemas': 'Formação completa para quem deseja programar e projetar sistemas de alta qualidade.',
-            'Administração': 'Construa habilidades essenciais para gerenciar negócios com eficiência.',
-            'Inglês Fluente': 'Alcance a fluência no idioma mais requisitado pelo mercado de trabalho.',
-            'Inglês Kids': 'Aulas divertidas e interativas para crianças aprenderem inglês brincando.',
-            'Informática Essencial': 'Conhecimentos fundamentais de informática para o dia a dia.',
-            'Operador de Micro': 'Tudo sobre operacionalização de computadores e pacote office.',
-            'Especialista em Marketing & Vendas 360º': 'Estratégias de marketing e vendas para alavancar qualquer negócio.',
-            'Marketing Digital': 'Domine as principais ferramentas de divulgação online.',
-            'Pacote Office': 'Aprenda Word, Excel, PowerPoint e muito mais para o mercado.'
+                const COURSE_DESCRIPTIONS = {
+            'Mestre em Excel': 'Domine planilhas e dashboards profissionais com técnicas avançadas.',
+            'Video Creator Profissional': 'Crie vídeos de impacto para as principais plataformas.',
+            'Programador Master': 'Aprenda programação do básico ao avançado em múltiplas linguagens.',
+            'Desenvolvedor Web': 'Construa sites e aplicações com as tecnologias mais modernas.',
+            'Games Creator': 'Desenvolva games incríveis do zero ao avançado.',
+            'Projetista Alto Nível': 'Aprenda projetos técnicos e modelagem profissional.',
+            'Administração de Pessoal': 'Domine rotinas de RH e departamento pessoal.',
+            'Social Media Pro': 'Gestão de redes sociais e criação de conteúdo vencedor.',
+            'Vendedor Digital': 'Técnicas de vendas online para multiplicar resultados.',
+            'Crianças do Futuro': 'Formação criativa em tecnologia e inovação para crianças.',
+            'Melhor Idade': 'Cursos de informática e bem-estar para a terceira idade.',
+            'Líder do Futuro': 'Desenvolva habilidades de liderança e gestão moderna.',
+            'Auxiliar Contábil': 'Procedimentos contábeis essenciais para o dia a dia.',
+            'Auxiliar de Escritório': 'Organização e rotinas administrativas de escritório.',
+            'Segurança da Saúde': 'Prevenção de acidentes e normas de segurança em saúde.',
+            'Cuidador de Idosos': 'Cuidados especiais e acompanhamento humanizado.',
+            'Operador de Logística': 'Gestão de estoque e operações logísticas eficientes.',
+            'Youtuber': 'Crie, edite e monetize seu canal no YouTube.'
         };
 
-        const COURSE_DETAILS = {
-            'Excel PRO': 'Curso completo para dominar planilhas, gráficos e automações no Excel, com foco em aplicações práticas.',
-            'Design Gráfico': 'Aprenda a criar peças profissionais para web e impressão utilizando as principais ferramentas do mercado.',
-            'Analista e Desenvolvimento de Sistemas': 'Formação abrangente em programação, análise de requisitos e desenvolvimento de sistemas de ponta a ponta.',
-            'Administração': 'Capacitação em gestão empresarial, finanças e processos administrativos modernos.',
-            'Inglês Fluente': 'Metodologia eficaz para alcançar fluência e se comunicar com confiança em qualquer situação.',
-            'Inglês Kids': 'Conteúdo lúdico que estimula o aprendizado do idioma de forma divertida para crianças.',
-            'Informática Essencial': 'Fundamentos de computação para uso pessoal e profissional, incluindo internet e segurança.',
-            'Operador de Micro': 'Treinamento para operar computadores e dominar o pacote office no dia a dia.',
-            'Especialista em Marketing & Vendas 360º': 'Estrategias avançadas para impulsionar vendas e posicionamento de marcas no ambiente digital.',
-            'Marketing Digital': 'Domine redes sociais, anúncios pagos e SEO para atrair clientes online.',
-            'Pacote Office': 'Do básico ao avançado em Word, Excel e PowerPoint com exercícios práticos.'
+                const COURSE_DETAILS = {
+            'Mestre em Excel': 'Curso completo de Excel para criar planilhas avançadas, gráficos e automações.',
+            'Video Creator Profissional': 'Todas as técnicas de filmagem, edição e publicação de vídeos profissionais.',
+            'Programador Master': 'Formação intensiva em programação e desenvolvimento de sistemas completos.',
+            'Desenvolvedor Web': 'Crie sites responsivos e aplicações web usando as stacks mais atuais.',
+            'Games Creator': 'Aprenda a projetar, programar e publicar jogos em diversas plataformas.',
+            'Projetista Alto Nível': 'Domine ferramentas de CAD e design para projetos de alta complexidade.',
+            'Administração de Pessoal': 'Prática em processos de RH, folha de pagamento e legislação.',
+            'Social Media Pro': 'Planejamento estratégico e produção de conteúdo para redes sociais.',
+            'Vendedor Digital': 'Métodos de prospecção e fechamento de vendas pela internet.',
+            'Crianças do Futuro': 'Trilha completa de tecnologia e criatividade voltada para crianças.',
+            'Melhor Idade': 'Iniciação à informática e atividades para qualidade de vida.',
+            'Líder do Futuro': 'Capacitação em liderança, gestão de equipes e produtividade.',
+            'Auxiliar Contábil': 'Processos contábeis, lançamentos e demonstrações financeiras.',
+            'Auxiliar de Escritório': 'Rotinas administrativas, organização de documentos e atendimento.',
+            'Segurança da Saúde': 'Normas e práticas de segurança no ambiente da saúde.',
+            'Cuidador de Idosos': 'Atenção integral e cuidados específicos para idosos.',
+            'Operador de Logística': 'Operações de armazenamento, transporte e distribuição.',
+            'Youtuber': 'Estratégias para criação, edição e monetização de vídeos no YouTube.'
         };
 
         let availableCourses = [];
@@ -764,8 +785,8 @@
                         detail: COURSE_DETAILS[name] || COURSE_DESCRIPTIONS[name] || ''
                     }));
                 availableCourses.sort((a, b) => {
-                    if (a.name === 'Pacote Office') return -1;
-                    if (b.name === 'Pacote Office') return 1;
+                    if (a.name === 'Mestre em Excel') return -1;
+                    if (b.name === 'Mestre em Excel') return 1;
                     return a.name.localeCompare(b.name);
                 });
                 loadCourses();
@@ -780,8 +801,8 @@
                     detail: COURSE_DETAILS[name] || COURSE_DESCRIPTIONS[name] || ''
                 }));
                 availableCourses.sort((a, b) => {
-                    if (a.name === 'Pacote Office') return -1;
-                    if (b.name === 'Pacote Office') return 1;
+                    if (a.name === 'Mestre em Excel') return -1;
+                    if (b.name === 'Mestre em Excel') return 1;
                     return a.name.localeCompare(b.name);
                 });
                 loadCourses();
@@ -797,8 +818,8 @@
             availableCourses.forEach(course => {
                 const courseCard = document.createElement('div');
                 let badge = '';
-                if (course.name === 'Pacote Office') {
-                    courseCard.id = 'office';
+                if (course.name === 'Mestre em Excel') {
+                    courseCard.id = 'excel';
                     courseCard.className = 'card card-glow p-6 flex flex-col justify-between items-start border-2 border-green-500';
                     badge = '<span class="bg-green-500 text-black px-2 py-1 rounded text-sm mb-2 inline-block">Recomendado</span>';
                 } else {
@@ -1222,18 +1243,25 @@
             });
             
             function loadAfiliadosProducts() {
-                const afiliadosProducts = [
-                    { name: "Administração", price: "19,90" },
-                    { name: "Análise e Desenvolvimento de Sistemas", price: "19,90" },
-                    { name: "Excel PRO", price: "19,90" },
-                    { name: "Inglês Kids", price: "19,90" },
-                    { name: "Informática Essencial", price: "19,90" },
-                    { name: "Marketing Digital", price: "19,90" },
-                    { name: "Inglês Fluente", price: "19,90" },
-                    { name: "Design Gráfico", price: "19,90" },
-                    { name: "Operador de Micro", price: "19,90" },
-                    { name: "Pacote Office", price: "19,90" },
-                    { name: "Especialista em Marketing & Vendas 360º", price: "19,90" },
+                                const afiliadosProducts = [
+                    { name: "Mestre em Excel", price: "19,90" },
+                    { name: "Video Creator Profissional", price: "19,90" },
+                    { name: "Programador Master", price: "19,90" },
+                    { name: "Desenvolvedor Web", price: "19,90" },
+                    { name: "Games Creator", price: "19,90" },
+                    { name: "Projetista Alto Nível", price: "19,90" },
+                    { name: "Administração de Pessoal", price: "19,90" },
+                    { name: "Social Media Pro", price: "19,90" },
+                    { name: "Vendedor Digital", price: "19,90" },
+                    { name: "Crianças do Futuro", price: "19,90" },
+                    { name: "Melhor Idade", price: "19,90" },
+                    { name: "Líder do Futuro", price: "19,90" },
+                    { name: "Auxiliar Contábil", price: "19,90" },
+                    { name: "Auxiliar de Escritório", price: "19,90" },
+                    { name: "Segurança da Saúde", price: "19,90" },
+                    { name: "Cuidador de Idosos", price: "19,90" },
+                    { name: "Operador de Logística", price: "19,90" },
+                    { name: "Youtuber", price: "19,90" },
                 ];
                 const tableBody = document.getElementById('afiliados-products-table-body');
                 if(tableBody){
@@ -1261,7 +1289,7 @@
             renderTestimonials();
             loadAfiliadosProducts();
 
-            if (window.location.hash === '#cursos' || window.location.hash === '#office') {
+            if (window.location.hash === '#cursos' || window.location.hash === '#excel') {
                 showSection('cursos');
                 const cursosSection = document.getElementById('cursos');
                 if (cursosSection) {
@@ -1270,18 +1298,18 @@
             }
 
             coursesPromise.then(() => {
-                if (window.location.hash === '#office') {
-                    const officeCourse = availableCourses.find(c => c.name === 'Pacote Office');
-                    if (officeCourse) {
-                        selectedCourse = officeCourse;
+                if (window.location.hash === '#excel') {
+                    const excelCourse = availableCourses.find(c => c.name === 'Mestre em Excel');
+                    if (excelCourse) {
+                        selectedCourse = excelCourse;
                         const selectedCourseInput = document.getElementById('selected-course');
                         const selectedCourseNameEl = document.getElementById('selected-course-name');
-                        if (selectedCourseInput) selectedCourseInput.value = officeCourse.name;
-                        if (selectedCourseNameEl) selectedCourseNameEl.textContent = `Curso: ${officeCourse.name} (R$ ${officeCourse.price.toFixed(2).replace('.', ',')}/mês)`;
+                        if (selectedCourseInput) selectedCourseInput.value = excelCourse.name;
+                        if (selectedCourseNameEl) selectedCourseNameEl.textContent = `Curso: ${excelCourse.name} (R$ ${excelCourse.price.toFixed(2).replace('.', ',')}/mês)`;
                         openCheckout();
                     }
-                    const officeEl = document.getElementById('office');
-                    if (officeEl) officeEl.scrollIntoView({ behavior: 'smooth' });
+                    const excelEl = document.getElementById('excel');
+                    if (excelEl) excelEl.scrollIntoView({ behavior: 'smooth' });
                 }
             });
 
