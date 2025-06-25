@@ -264,12 +264,9 @@ def _send_whatsapp_chatpro(
         f"🔑 Sua senha: {senha_padrao}\n"
     )
 
-    if vencimento:
-        mensagem += f"\n💳 Próximo pagamento em: {vencimento}\n"
-
     mensagem += (
-        "\n🌐 Site da escola: https://www.cedbrasilia.com.br\n"
-        "❤ Ganhe dinheiro conosco: https://www.cedbrasilia.com.br/afiliados\n"
+        "\n💳 Link para iniciar a Assinatura: https://www.asaas.com/c/i4q17hkoxqmvdp90\n"
+        "\n🌐 Portal do aluno: https://www.cedbrasilia.com.br/login\n"
         "🤖 APP Android: https://play.google.com/store/apps/datasafety?id=br.com.om.app&hl=pt_BR\n"
         "🍎 APP iOS: https://apps.apple.com/br/app/meu-app-de-cursos/id1581898914\n\n"
         "Qualquer dúvida, estamos à disposição. Boa jornada de estudos! 🚀"

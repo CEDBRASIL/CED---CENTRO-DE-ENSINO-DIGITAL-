@@ -30,7 +30,6 @@ import cobrancas
 import bloquear
 import login
 import auth
-import testegratuito
 import disparos
 from app import whatsapp
 from backend.app import models as disparo_models
@@ -80,7 +79,6 @@ app.include_router(bloquear.router, tags=["Bloqueio"])
 app.include_router(login.router, prefix="/login", tags=["Login"])
 app.include_router(auth.router)
 app.include_router(whatsapp.router)
-app.include_router(testegratuito.router)
 app.include_router(disparos.router)
 app.include_router(arq_r.router)
 app.include_router(listas_r.router)
