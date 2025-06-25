@@ -25,7 +25,7 @@ const dados = {
   nome: 'Maria',
   cpf: '12345678909',
   whatsapp: '(61) 99999-9999',
-  valor: 29.9,
+  valor: 19.9,
   descricao: 'Pacote Office',
   cursos_ids: [130]
 };

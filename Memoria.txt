@@ -1,2 +1,3 @@
 Usuario solicitou: "remove o fundo de grade de todas as abas".
 O agente removeu o CSS que adicionava uma grade de fundo em todos os arquivos HTML e no style.css.
+Usuario solicitou: "Mude o preço de todos os cursos para 19,90 e troque o botão teste grátis por Me matricular agora". O agente atualizou os preços nos arquivos HTML e JS para R$ 19,90 e alterou o texto do botão conforme solicitado.
