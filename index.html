@@ -1110,37 +1110,6 @@
                 checkoutMsg.className = 'text-center text-gray-300 mt-2 h-5';
                 checkoutSubmitButton.disabled = true;
                 checkoutSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
-<<<<<<< codex/alterar-campos-de-matrícula-no-index.html
-                
-                try {
-                    // Payload para a nova rota de assinatura
-                    const dados = {
-                        nome: nome,
-                        whatsapp: `55${phone}`,
-                        valor: selectedCourse.price,
-                        cycle: "MONTHLY", // Adicionado conforme a nova API
-                        descricao: `Assinatura Mensal - ${selectedCourse.name}`,
-                        cursos_ids: selectedCourse.ids
-                    };
-                    await criarAssinatura(dados);
-                    const successText = `Sua matrícula foi gerada, ${nome}! Enviamos os dados da assinatura no seu WhatsApp!`;
-                    checkoutMsg.textContent = successText;
-                    checkoutMsg.className = 'text-center text-green-500 mt-2 h-5';
-                    const successMsgEl = document.getElementById('success-message');
-                    const successModal = document.getElementById('success-modal');
-                    if (successMsgEl && successModal) {
-                        successMsgEl.textContent = successText;
-                        successModal.classList.remove('hidden');
-                    }
-                    checkoutSubmitButton.disabled = false;
-                    checkoutSubmitButton.innerHTML = 'Assinar Agora';
-                } catch (err) {
-                    checkoutMsg.textContent = err.message || 'Erro ao processar. Tente novamente.';
-                    checkoutMsg.className = 'text-center text-red-500 mt-2 h-5';
-                    checkoutSubmitButton.disabled = false;
-                    checkoutSubmitButton.innerHTML = 'Assinar Agora';
-=======
-
                 const successText = `Recebemos seus dados, ${nome}! Em breve entraremos em contato para concluir a matrícula.`;
                 checkoutMsg.textContent = successText;
                 checkoutMsg.className = 'text-center text-green-500 mt-2 h-5';
@@ -1149,10 +1118,8 @@
                 if (successMsgEl && successModal) {
                     successMsgEl.textContent = successText;
                     successModal.classList.remove('hidden');
->>>>>>> main
                 }
                 checkoutSubmitButton.disabled = false;
-                checkoutSubmitButton.innerHTML = 'Assinar Agora';
             });
 
             // --- Fim da Lógica do Checkout ---
