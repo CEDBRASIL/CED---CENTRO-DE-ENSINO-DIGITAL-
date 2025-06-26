@@ -261,14 +261,15 @@ def _send_whatsapp_chatpro(
         f"📚 Curso(s) adquirido(s):\n"
         f"{cursos_texto}\n\n"
         f"🔐 Seu login: {cpf}\n"
-        f"🔑 Sua senha: {senha_padrao}\n"
+        f"🔑 Sua senha: {senha_padrao}\n\n"
+        "💳 Link de pagamento da sua assinatura https://www.asaas.com/c/i4q17hkoxqmvdp90\n"
     )
 
     mensagem += (
-        "\n🌐 Portal do aluno: https://www.cedbrasilia.com.br/login\n"
+        "\n🌐Portal do aluno: https://www.cedbrasilia.com.br/login\n"
         "🤖 APP Android: https://play.google.com/store/apps/datasafety?id=br.com.om.app&hl=pt_BR\n"
         "🍎 APP iOS: https://apps.apple.com/br/app/meu-app-de-cursos/id1581898914\n\n"
-        "Qualquer dúvida, estamos à disposição. Boa jornada de estudos! 🚀"
+        "Qualquer dúvida, estamos à disposição. Boa jornada de estudos!"
     )
 
     # Envia a mensagem utilizando o novo endpoint
