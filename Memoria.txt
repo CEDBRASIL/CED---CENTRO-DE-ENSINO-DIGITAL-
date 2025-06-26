@@ -10,3 +10,4 @@ O agente atualizou os objetos COURSE_DESCRIPTIONS e COURSE_DETAILS no index.html
 Usuario solicitou alterar o formulario de matricula para pedir apenas nome e WhatsApp e ajustar os rótulos. O agente removeu o campo de CPF do index.html, substituiu os textos conforme pedido e ajustou o script.
 Usuario solicitou remover totalmente a integracao com o ASAAS. O agente excluiu todos os arquivos e rotas relacionados ao ASAAS e removeu chamadas no frontend.
 Usuario relatou problema no index.html apresentando erros. O agente removeu marcadores de conflito e uma chamada de função ausente, restaurando o funcionamento da página.
+Usuario solicitou matricula automatica via index com envio de boas-vindas e link de pagamento. Implementado POST /matricular no checkout e atualizado mensagens no WhatsApp.
