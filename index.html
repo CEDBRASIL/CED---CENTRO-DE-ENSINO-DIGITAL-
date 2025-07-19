@@ -339,6 +339,7 @@
                     <div class="slider"></div>
                 </label>
                 <span id="userGreeting" class="hidden text-white font-semibold mr-4"></span>
+                <a id="eadButton" href="#" class="header-button font-semibold py-2 px-6 rounded-lg transition-colors hidden">Acessar EAD</a>
                 <a id="registerButton" href="#" class="header-button font-semibold py-2 px-6 rounded-lg transition-colors">Cadastrar</a>
                 <a id="loginButton" href="login.html" class="header-button font-semibold py-2 px-6 rounded-lg transition-colors">Entrar</a>
             </div>
@@ -356,6 +357,7 @@
             <a href="#" data-section="depoimentos" class="hover:text-spotify-green transition-colors">Depoimentos</a>
             <a href="#" data-section="afiliados" class="hover:text-spotify-green transition-colors">Afiliados</a>
             <span id="mobileUserGreeting" class="hidden"></span>
+            <a id="mobileEadButton" href="#" class="hover:text-spotify-green transition-colors hidden">Acessar EAD</a>
             <a id="mobileRegisterButton" href="#" class="hover:text-spotify-green transition-colors">Cadastrar</a>
             <a id="mobileLoginButton" href="login.html" class="hover:text-spotify-green transition-colors">Entrar</a>
             
@@ -933,6 +935,8 @@
             const registerSubmitButton = document.getElementById('registerSubmitButton');
             const greetingEl = document.getElementById('userGreeting');
             const mobileGreetingEl = document.getElementById('mobileUserGreeting');
+            const eadButton = document.getElementById('eadButton');
+            const mobileEadButton = document.getElementById('mobileEadButton');
 
             if (mobileMenuButton && mobileMenu) {
                 mobileMenuButton.addEventListener('click', () => {
@@ -966,9 +970,18 @@
                         if (mobileRegisterButton) mobileRegisterButton.classList.add('hidden');
                         if (loginButton) loginButton.classList.add('hidden');
                         if (mobileLoginButton) mobileLoginButton.classList.add('hidden');
+                        const token = aluno.token || '';
+                        if (token){
+                            const url = `https://ead.cedbrasilia.com.br/index.php?pag=entrar&token=${token}`;
+                            if (eadButton) { eadButton.href = url; eadButton.classList.remove('hidden'); }
+                            if (mobileEadButton) { mobileEadButton.href = url; mobileEadButton.classList.remove('hidden'); }
+                        }
                     }catch(e){
                         localStorage.removeItem('alunoInfo');
                     }
+                }else{
+                    if (eadButton) eadButton.classList.add('hidden');
+                    if (mobileEadButton) mobileEadButton.classList.add('hidden');
                 }
             }
 

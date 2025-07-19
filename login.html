@@ -26,6 +26,8 @@
                     <input type="checkbox" id="theme-checkbox" />
                     <div class="slider"></div>
                 </label>
+                <span id="userGreeting" class="hidden text-white font-semibold mr-4"></span>
+                <a id="eadButton" href="#" class="header-button font-semibold py-2 px-6 rounded-lg transition-colors hidden">Acessar EAD</a>
             </div>
         </div>
     </header>
@@ -52,6 +54,8 @@
             const loginForm = document.getElementById('loginForm');
             const themeCheckbox = document.getElementById('theme-checkbox');
             const body = document.body;
+            const greetingEl = document.getElementById('userGreeting');
+            const eadButton = document.getElementById('eadButton');
 
             function applyTheme(isLight) {
                 body.classList.toggle('light-theme', isLight);
@@ -61,6 +65,28 @@
             const savedTheme = localStorage.getItem('theme') === 'light';
             applyTheme(savedTheme);
 
+            function updateGreeting(){
+                const info = localStorage.getItem('alunoInfo');
+                if(info){
+                    try{
+                        const aluno = JSON.parse(info);
+                        const nome = aluno.nome || '';
+                        const token = aluno.token || '';
+                        if(greetingEl){
+                            greetingEl.textContent = `Olá, ${nome}`;
+                            greetingEl.classList.remove('hidden');
+                        }
+                        if(eadButton && token){
+                            eadButton.href = `https://ead.cedbrasilia.com.br/index.php?pag=entrar&token=${token}`;
+                            eadButton.classList.remove('hidden');
+                        }
+                    }catch(e){
+                        localStorage.removeItem('alunoInfo');
+                    }
+                }
+            }
+            updateGreeting();
+
             if (themeCheckbox) {
                 themeCheckbox.addEventListener('change', e => {
                     const isChecked = e.currentTarget.checked;
@@ -69,15 +95,31 @@
                 });
             }
 
-            loginForm.addEventListener('submit', e => {
+            loginForm.addEventListener('submit', async e => {
                 e.preventDefault();
                 const usuario = document.getElementById('usuario').value.trim();
                 const senha = document.getElementById('senha').value.trim();
                 const msg = document.getElementById('loginMsg');
-                msg.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-green-500 text-xl"></i> Redirecionando...';
+                msg.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-green-500 text-xl"></i> Validando...';
                 msg.className = 'mt-4 text-center text-gray-300';
-                const url = `https://api.cedbrasilia.com.br/login/?usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`;
-                window.location.href = url;
+                try {
+                    const resp = await fetch('/login/check', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({usuario, senha})
+                    });
+                    if(!resp.ok) throw new Error();
+                    const data = await resp.json();
+                    localStorage.setItem('alunoInfo', JSON.stringify(data.data));
+                    msg.textContent = 'Login realizado com sucesso!';
+                    msg.classList.add('text-green-500');
+                    updateGreeting();
+                    setTimeout(() => { window.location.href = 'index.html'; }, 800);
+                } catch(err){
+                    msg.textContent = 'Usuário ou senha inválidos';
+                    msg.classList.remove('text-gray-300');
+                    msg.classList.add('text-red-500');
+                }
             });
         });
     </script>
