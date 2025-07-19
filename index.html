@@ -386,22 +386,6 @@
                 <label for="checkout-phone" class="block mb-2 font-semibold text-gray-300">Whatsapp</label>
                 <input type="tel" id="checkout-phone" required placeholder="(XX) XXXXX-XXXX" class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
             </div>
-            <div>
-                <label for="card-holder" class="block mb-2 font-semibold text-gray-300">Nome no Cartão</label>
-                <input type="text" id="card-holder" required class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
-            </div>
-            <div>
-                <label for="card-cpf" class="block mb-2 font-semibold text-gray-300">CPF do Titular</label>
-                <input type="text" id="card-cpf" required class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
-            </div>
-            <div>
-                <label for="card-number" class="block mb-2 font-semibold text-gray-300">Número do Cartão</label>
-                <input type="text" id="card-number" required class="w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
-            </div>
-            <div class="flex gap-2">
-                <input type="text" id="card-expiration" placeholder="MM/AA" required class="w-1/2 p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
-                <input type="text" id="card-cvc" placeholder="CVC" required class="w-1/2 p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green" />
-            </div>
             <input type="hidden" id="selected-course" />
             <button type="submit" id="checkout-submit" class="w-full button-glow bg-spotify-green text-black font-bold py-3 px-6 rounded-full hover-bg-spotify-green-darker transition-all">Assinar Agora</button>
             <div id="checkout-message" class="text-center mt-2 h-5 text-gray-300"></div>
@@ -1053,11 +1037,6 @@
             const checkoutPhone = document.getElementById('checkout-phone');
             const checkoutMsg = document.getElementById('checkout-message');
             const checkoutSubmitButton = document.getElementById('checkout-submit');
-            const cardNumber = document.getElementById('card-number');
-            const cardExpiration = document.getElementById('card-expiration');
-            const cardCvc = document.getElementById('card-cvc');
-            const cardHolder = document.getElementById('card-holder');
-            const cardCpf = document.getElementById('card-cpf');
 
             window.openCheckout = function() {
                 if (checkoutModal) {
@@ -1126,42 +1105,31 @@
                 checkoutSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
 
                 try {
-                    const tokenResp = await new Promise((resolve, reject) => {
-                        Asaas.createToken({
-                            creditCardNumber: cardNumber.value,
-                            creditCardHolderName: cardHolder.value,
-                            creditCardExpiry: cardExpiration.value,
-                            creditCardCcv: cardCvc.value
-                        }, resp => resp && resp.creditCardToken ? resolve(resp) : reject(resp));
-                    });
-
-                    const resp = await fetch('/asaas/checkout', {
+                    const resp = await fetch('/matricular/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             nome,
                             whatsapp: phone,
-                            valor: selectedCourse.price,
-                            curso: selectedCourse.name,
-                            creditCardToken: tokenResp.creditCardToken,
-                            creditCardHolderInfo: {
-                                name: cardHolder.value,
-                                cpfCnpj: cardCpf.value,
-                                phone: phone
-                            }
+                            cursos: [selectedCourse.name]
                         })
                     });
                     if (resp.ok) {
-                        checkoutMsg.textContent = 'Pagamento realizado com sucesso!';
+                        const data = await resp.json();
+                        let msg = `Matrícula realizada! Confira seu WhatsApp para mais detalhes.`;
+                        if (data.status === 'ja_matriculado') {
+                            msg = 'Você já está matriculado! Confira seu WhatsApp.';
+                        }
+                        checkoutMsg.textContent = msg;
                         checkoutMsg.className = 'text-center text-green-500 mt-2 h-5';
                         const successMsgEl = document.getElementById('success-message');
                         const successModal = document.getElementById('success-modal');
                         if (successMsgEl && successModal) {
-                            successMsgEl.textContent = 'Processando matrícula. Aguarde a confirmação.';
+                            successMsgEl.textContent = msg;
                             successModal.classList.remove('hidden');
                         }
                     } else {
-                        checkoutMsg.textContent = 'Erro ao processar pagamento.';
+                        checkoutMsg.textContent = 'Erro ao enviar dados. Tente novamente.';
                         checkoutMsg.className = 'text-center text-red-500 mt-2 h-5';
                     }
                 } catch (err) {
@@ -1342,6 +1310,5 @@
             }
         });
     </script>
-    <script src="https://checkout.asaas.com/sdk.js"></script>
 </body>
 </html>
