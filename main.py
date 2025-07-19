@@ -27,6 +27,7 @@ import bloquear
 import login
 import auth
 import disparos
+import asaas
 from app import whatsapp
 from backend.app import models as disparo_models
 from backend.app.worker import worker_loop
@@ -77,6 +78,7 @@ app.include_router(listas_r.router)
 app.include_router(cont_r.router)
 app.include_router(msg_r.router)
 app.include_router(disp_r.router)
+app.include_router(asaas.router)
 
 @app.on_event("startup")
 async def _on_startup() -> None:
