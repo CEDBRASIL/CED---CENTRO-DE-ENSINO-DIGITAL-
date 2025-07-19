@@ -13,3 +13,4 @@ Usuario relatou problema no index.html apresentando erros. O agente removeu marc
 Usuario solicitou matricula automatica via index com envio de boas-vindas e link de pagamento. Implementado POST /matricular no checkout e atualizado mensagens no WhatsApp.
 Usuario relatou problema no envio de WhatsApp ao matricular: numero 61986660241 era formatado como 5561986660241. Solicitou regra 'se tiver 55 nao pode ter 9'. O agente ajustou formatar_numero_whatsapp para remover o nono digito apos o DDD e garantir prefixo 55 apenas.
 Usuario solicitou manter login persistente e botao Acessar EAD. Implementado armazenamento do aluno e exibicao de saudacao e botao.
+Usuario relatou erro ao cadastrar e status 400. O agente ajustou registrar.py para enviar campos completos (whatsapp, endereco, unidade) e sanitizar cpf e telefone.

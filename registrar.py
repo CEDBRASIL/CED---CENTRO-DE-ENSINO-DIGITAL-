@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -8,6 +9,7 @@ router = APIRouter()
 OM_BASE = os.getenv("OM_BASE")
 BASIC_B64 = os.getenv("BASIC_B64")
 TOKEN_KEY = os.getenv("TOKEN_KEY")
+UNIDADE_ID = os.getenv("UNIDADE_ID")
 
 class NovoAluno(BaseModel):
     nome: str
@@ -19,16 +21,30 @@ class NovoAluno(BaseModel):
 
 @router.post("/cadastro", summary="Registra novo aluno na plataforma")
 def registrar(dados: NovoAluno):
-    if not OM_BASE or not BASIC_B64 or not TOKEN_KEY:
+    if not all([OM_BASE, BASIC_B64, TOKEN_KEY, UNIDADE_ID]):
         raise HTTPException(500, detail="Variáveis de ambiente OM não configuradas.")
 
+    telefone = re.sub(r"\D", "", dados.celular or dados.telefone or "")
+    cpf = re.sub(r"\D", "", dados.cpf)
     payload = {
         "token": TOKEN_KEY,
         "nome": dados.nome,
-        "email": dados.email or "",
-        "fone": dados.telefone or "",
-        "celular": dados.celular or "",
-        "doc_cpf": dados.cpf,
+        "email": dados.email or f"{telefone}@nao-informado.com",
+        "whatsapp": telefone,
+        "fone": telefone,
+        "celular": telefone,
+        "data_nascimento": "2000-01-01",
+        "doc_cpf": cpf,
+        "doc_rg": "000000000",
+        "pais": "Brasil",
+        "uf": "DF",
+        "cidade": "Brasília",
+        "endereco": "Não informado",
+        "bairro": "Centro",
+        "cep": "70000-000",
+        "complemento": "",
+        "numero": "0",
+        "unidade_id": UNIDADE_ID,
         "senha": dados.senha,
     }
 
