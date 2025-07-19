@@ -25,6 +25,7 @@ import deletar
 import kiwify
 import bloquear
 import login
+import registrar
 import auth
 import disparos
 from app import whatsapp
@@ -69,6 +70,7 @@ app.include_router(kiwify.router, prefix="/kiwify", tags=["Kiwify"])
 app.include_router(deletar.router, tags=["Excluir Aluno"])
 app.include_router(bloquear.router, tags=["Bloqueio"])
 app.include_router(login.router, prefix="/login", tags=["Login"])
+app.include_router(registrar.router, tags=["Cadastro"])
 app.include_router(auth.router)
 app.include_router(whatsapp.router)
 app.include_router(disparos.router)

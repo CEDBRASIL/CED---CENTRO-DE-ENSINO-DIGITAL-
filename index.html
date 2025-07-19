@@ -338,6 +338,8 @@
                     <input type="checkbox" id="theme-checkbox" />
                     <div class="slider"></div>
                 </label>
+                <span id="userGreeting" class="hidden text-white font-semibold mr-4"></span>
+                <a id="registerButton" href="#" class="header-button font-semibold py-2 px-6 rounded-lg transition-colors">Cadastrar</a>
                 <a id="loginButton" href="login.html" class="header-button font-semibold py-2 px-6 rounded-lg transition-colors">Entrar</a>
             </div>
             <button id="mobileMenuButton" class="md:hidden text-white z-50">
@@ -353,6 +355,8 @@
             <a href="#" data-section="cursos" class="hover:text-spotify-green transition-colors">Cursos</a>
             <a href="#" data-section="depoimentos" class="hover:text-spotify-green transition-colors">Depoimentos</a>
             <a href="#" data-section="afiliados" class="hover:text-spotify-green transition-colors">Afiliados</a>
+            <span id="mobileUserGreeting" class="hidden"></span>
+            <a id="mobileRegisterButton" href="#" class="hover:text-spotify-green transition-colors">Cadastrar</a>
             <a id="mobileLoginButton" href="login.html" class="hover:text-spotify-green transition-colors">Entrar</a>
             
             <div class="flex justify-center space-x-6 mt-8">
@@ -423,6 +427,42 @@
                 </div>
                 <button type="submit" id="loginSubmitButton" class="w-full bg-spotify-green text-black font-bold py-3 rounded-lg hover-bg-spotify-green-darker transition-colors button-glow login-submit-loading">Entrar</button>
                 <p id="loginMsg" class="mt-4 text-center text-red-500 font-semibold h-5"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="register-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center hidden z-50">
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-[-1]">
+            <div class="glow-effect -top-40 -left-40 w-96 h-96 bg-green-500 rounded-full"></div>
+            <div class="glow-effect top-1/2 left-1/3 w-[500px] h-[500px] bg-emerald-600 rounded-full"></div>
+            <div class="glow-effect -bottom-40 -right-40 w-96 h-96 bg-teal-500 rounded-full"></div>
+        </div>
+        <div class="bg-[#181818] p-8 rounded-2xl shadow-2xl shadow-spotify-green/10 border border-gray-800 relative w-full max-w-md">
+            <button id="close-register" class="absolute top-2 right-2 text-white"><i class="fas fa-times"></i></button>
+            <form id="registerForm" class="space-y-4">
+                <h1 class="text-2xl font-bold mb-6 text-center text-white">Cadastro</h1>
+                <div class="mb-4">
+                    <label for="reg-nome" class="block mb-2 text-sm font-semibold text-gray-300">Nome*</label>
+                    <input type="text" id="reg-nome" required class="form-control w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green transition-all" />
+                </div>
+                <div class="mb-4">
+                    <label for="reg-email" class="block mb-2 text-sm font-semibold text-gray-300">E-mail</label>
+                    <input type="email" id="reg-email" class="form-control w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green transition-all" />
+                </div>
+                <div class="mb-4">
+                    <label for="reg-cpf" class="block mb-2 text-sm font-semibold text-gray-300">CPF*</label>
+                    <input type="text" id="reg-cpf" required class="form-control w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green transition-all" />
+                </div>
+                <div class="mb-4">
+                    <label for="reg-phone" class="block mb-2 text-sm font-semibold text-gray-300">Celular*</label>
+                    <input type="text" id="reg-phone" required class="form-control w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green transition-all" />
+                </div>
+                <div class="mb-6">
+                    <label for="reg-senha" class="block mb-2 text-sm font-semibold text-gray-300">Senha*</label>
+                    <input type="password" id="reg-senha" required class="form-control w-full p-3 rounded-lg text-white bg-gray-800 border border-gray-600 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green transition-all" />
+                </div>
+                <button type="submit" id="registerSubmitButton" class="w-full bg-spotify-green text-black font-bold py-3 rounded-lg hover-bg-spotify-green-darker transition-colors button-glow">Cadastrar</button>
+                <p id="registerMsg" class="mt-4 text-center text-red-500 font-semibold h-5"></p>
             </form>
         </div>
     </div>
@@ -598,7 +638,7 @@
                             <div class="bg-spotify-green bg-opacity-20 text-spotify-green w-12 h-12 rounded-lg flex items-center justify-center mb-4 text-2xl"><i class="fas fa-eye"></i></div>
                             <h3 class="text-2xl font-bold mb-2">Conta de Demonstração</h3>
                             <p class="text-muted mb-3">Experimente a plataforma antes de indicar.</p>
-                            <a href="https://ead.cedbrasilia.com.br/index.php?pag=entrar&token=98eb3a5d-4b42-11f0-8cdc-0eecf9347bc9" target="_blank" class="inline-block bg-spotify-green text-black font-bold px-4 py-2 rounded-lg text-sm hover-bg-spotify-green-darker transition shadow-md">Acessar</a>
+                            <a href="https://ead.cedbrasilia.com.br/index.php?pag=entrar&token=98eb3a5d-4b42-11f0-8cdc-0eecf9347bc9" target="_blank" class="inline-block bg-spotify-green text-black font-bold px-4 py-2 rounded-lg text-sm hover-bg-spotify-green-darker transition shadow-md">Acessar EAD</a>
                         </div>
                         <div class="card card-glow">
                             <div class="bg-spotify-green bg-opacity-20 text-spotify-green w-12 h-12 rounded-lg flex items-center justify-center mb-4 text-2xl"><i class="fas fa-bullhorn"></i></div>
@@ -882,6 +922,17 @@
             const loginForm = document.getElementById('loginForm');
             const loginMsg = document.getElementById('loginMsg');
             const loginSubmitButton = document.getElementById('loginSubmitButton');
+            const loginButton = document.getElementById('loginButton');
+            const mobileLoginButton = document.getElementById('mobileLoginButton');
+            const registerButton = document.getElementById('registerButton');
+            const mobileRegisterButton = document.getElementById('mobileRegisterButton');
+            const registerModal = document.getElementById('register-modal');
+            const closeRegister = document.getElementById('close-register');
+            const registerForm = document.getElementById('registerForm');
+            const registerMsg = document.getElementById('registerMsg');
+            const registerSubmitButton = document.getElementById('registerSubmitButton');
+            const greetingEl = document.getElementById('userGreeting');
+            const mobileGreetingEl = document.getElementById('mobileUserGreeting');
 
             if (mobileMenuButton && mobileMenu) {
                 mobileMenuButton.addEventListener('click', () => {
@@ -893,23 +944,76 @@
                 if (loginModal) loginModal.classList.add('hidden');
             }
 
+            function openRegisterFn() {
+                if (registerModal) registerModal.classList.remove('hidden');
+                if (registerForm) registerForm.reset();
+                if (registerMsg) registerMsg.textContent = '';
+            }
+
+            function closeRegisterFn() {
+                if (registerModal) registerModal.classList.add('hidden');
+            }
+
+            function updateGreeting(){
+                const info = localStorage.getItem('alunoInfo');
+                if (info){
+                    try{
+                        const aluno = JSON.parse(info);
+                        const nome = aluno.nome || '';
+                        if (greetingEl) { greetingEl.textContent = `Olá, ${nome}`; greetingEl.classList.remove('hidden'); }
+                        if (mobileGreetingEl) { mobileGreetingEl.textContent = `Olá, ${nome}`; mobileGreetingEl.classList.remove('hidden'); }
+                        if (registerButton) registerButton.classList.add('hidden');
+                        if (mobileRegisterButton) mobileRegisterButton.classList.add('hidden');
+                        if (loginButton) loginButton.classList.add('hidden');
+                        if (mobileLoginButton) mobileLoginButton.classList.add('hidden');
+                    }catch(e){
+                        localStorage.removeItem('alunoInfo');
+                    }
+                }
+            }
+
             if (closeLogin) closeLogin.addEventListener('click', closeLoginFn);
             if (loginModal) loginModal.addEventListener('click', e => { if (e.target === loginModal) closeLoginFn(); });
 
-            if (loginForm) loginForm.addEventListener('submit', e => {
+            if (registerButton) registerButton.addEventListener('click', e => { e.preventDefault(); openRegisterFn(); });
+            if (mobileRegisterButton) mobileRegisterButton.addEventListener('click', e => { e.preventDefault(); openRegisterFn(); if (mobileMenu) mobileMenu.classList.add('hidden'); });
+            if (closeRegister) closeRegister.addEventListener('click', closeRegisterFn);
+            if (registerModal) registerModal.addEventListener('click', e => { if (e.target === registerModal) closeRegisterFn(); });
+
+            if (loginForm) loginForm.addEventListener('submit', async e => {
                 e.preventDefault();
                 const usuario = document.getElementById('usuario').value.trim();
                 const senha = document.getElementById('senha').value.trim();
 
-                loginMsg.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-spotify-green text-xl"></i> Redirecionando...';
+                loginMsg.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-spotify-green text-xl"></i> Validando...';
                 loginMsg.classList.remove('hidden', 'text-red-500');
                 loginMsg.classList.add('text-gray-300');
                 loginSubmitButton.disabled = true;
                 loginSubmitButton.classList.add('opacity-50', 'cursor-not-allowed');
                 loginSubmitButton.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Entrando...';
-
-                const url = `https://api.cedbrasilia.com.br/login/?usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`;
-                window.location.href = url;
+                try {
+                    const resp = await fetch('/login/check', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({usuario, senha})
+                    });
+                    if (!resp.ok) throw new Error('Falha no login');
+                    const data = await resp.json();
+                    localStorage.setItem('alunoInfo', JSON.stringify(data.data));
+                    updateGreeting();
+                    loginMsg.textContent = 'Login realizado com sucesso!';
+                    loginMsg.classList.remove('text-red-500');
+                    loginMsg.classList.add('text-green-500');
+                    setTimeout(closeLoginFn, 800);
+                } catch(err){
+                    loginMsg.textContent = 'Usuário ou senha inválidos';
+                    loginMsg.classList.remove('text-gray-300');
+                    loginMsg.classList.add('text-red-500');
+                } finally {
+                    loginSubmitButton.disabled = false;
+                    loginSubmitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    loginSubmitButton.textContent = 'Entrar';
+                }
             });
 
             const themeCheckboxes = [
@@ -1086,6 +1190,10 @@
             }
 
             if (checkoutPhone) checkoutPhone.addEventListener('input', e => { e.target.value = applyWhatsappMask(e.target.value); });
+            const regPhone = document.getElementById('reg-phone');
+            const regCpf = document.getElementById('reg-cpf');
+            if (regPhone) regPhone.addEventListener('input', e => { e.target.value = applyWhatsappMask(e.target.value); });
+            if (regCpf) regCpf.addEventListener('input', e => { e.target.value = applyCPFMask(e.target.value); });
 
 
             if (checkoutForm) checkoutForm.addEventListener('submit', async e => {
@@ -1141,6 +1249,48 @@
             });
 
             // --- Fim da Lógica do Checkout ---
+
+            if (registerForm) registerForm.addEventListener('submit', async e => {
+                e.preventDefault();
+                const nome = document.getElementById('reg-nome').value.trim();
+                const email = document.getElementById('reg-email').value.trim();
+                const cpf = document.getElementById('reg-cpf').value.replace(/\D/g, '');
+                const celular = document.getElementById('reg-phone').value.replace(/\D/g, '');
+                const senha = document.getElementById('reg-senha').value.trim();
+                if (!nome || !cpf || !celular || !senha){
+                    registerMsg.textContent = 'Preencha os campos obrigatórios.';
+                    registerMsg.classList.remove('text-green-500');
+                    registerMsg.classList.add('text-red-500');
+                    return;
+                }
+                registerSubmitButton.disabled = true;
+                registerSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
+                registerMsg.classList.remove('text-red-500');
+                registerMsg.classList.add('text-gray-300');
+                registerMsg.textContent = 'Enviando...';
+                try {
+                    const resp = await fetch('/cadastro', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({nome, email, cpf, celular, telefone:'', senha})
+                    });
+                    if (!resp.ok) throw new Error();
+                    const data = await resp.json();
+                    localStorage.setItem('alunoInfo', JSON.stringify(data.data));
+                    updateGreeting();
+                    registerMsg.textContent = 'Cadastro realizado!';
+                    registerMsg.classList.remove('text-gray-300');
+                    registerMsg.classList.add('text-green-500');
+                    setTimeout(closeRegisterFn, 1000);
+                } catch(err){
+                    registerMsg.textContent = 'Erro ao cadastrar. Tente novamente.';
+                    registerMsg.classList.remove('text-gray-300');
+                    registerMsg.classList.add('text-red-500');
+                } finally {
+                    registerSubmitButton.disabled = false;
+                    registerSubmitButton.innerHTML = 'Cadastrar';
+                }
+            });
 
 
 
@@ -1308,6 +1458,7 @@
                     document.getElementById('cursos').scrollIntoView({ behavior: 'smooth' });
                 });
             }
+            updateGreeting();
         });
     </script>
 </body>
