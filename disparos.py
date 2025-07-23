@@ -67,8 +67,8 @@ def ensure_tables() -> None:
         conn.commit()
 
 
-# Garante que as tabelas sejam criadas quando o módulo é importado
-ensure_tables()
+
+# As tabelas são criadas no evento de startup em main.py
 
 
 def buscar_numeros_do_grupo(nome: str) -> list[str]:

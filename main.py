@@ -84,6 +84,8 @@ app.include_router(disp_r.router)
 async def _on_startup() -> None:
     """Dispara aviso de inicialização e prepara módulo de disparos."""
     send_startup_message()
+    import disparos
+    disparos.ensure_tables()
     await disparo_models.init_db()
     import asyncio
     asyncio.create_task(worker_loop())
