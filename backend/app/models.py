@@ -9,7 +9,12 @@ PG_DB = os.getenv('PG_DB', 'ced')
 PG_USER = os.getenv('PG_USER', 'ced')
 PG_PASS = os.getenv('PG_PASS', 'ced')
 
-DB_URL = f"postgresql+asyncpg://{PG_USER}:{PG_PASS}@{PG_HOST}:{PG_PORT}/{PG_DB}"
+PG_SSLROOTCERT = os.getenv('PG_SSLROOTCERT', '/etc/ssl/certs/ca-certificates.crt')
+
+DB_URL = (
+    f"postgresql+asyncpg://{PG_USER}:{PG_PASS}@{PG_HOST}:{PG_PORT}/{PG_DB}"
+    f"?sslmode=require&sslrootcert={PG_SSLROOTCERT}"
+)
 
 engine = create_async_engine(DB_URL, future=True, echo=False)
 AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
