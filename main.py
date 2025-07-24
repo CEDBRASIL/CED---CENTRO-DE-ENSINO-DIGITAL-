@@ -3,8 +3,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from contextlib import asynccontextmanager
 import requests
 import re
+import asyncio
 
 from log_config import setup_logging, send_startup_message
 
@@ -80,15 +82,18 @@ app.include_router(cont_r.router)
 app.include_router(msg_r.router)
 app.include_router(disp_r.router)
 
-@app.on_event("startup")
-async def _on_startup() -> None:
-    """Dispara aviso de inicialização e prepara módulo de disparos."""
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Preparação inicial do serviço com retries para o banco."""
     send_startup_message()
-    import disparos
-    disparos.ensure_tables()
+    await asyncio.to_thread(disparos.wait_for_db)
+    await asyncio.to_thread(disparos.ensure_tables)
     await disparo_models.init_db()
-    import asyncio
     asyncio.create_task(worker_loop())
+    yield
+
+app.router.lifespan_context = lifespan
 
 
 # ──────────────────────────────────────────────────────────
@@ -98,6 +103,15 @@ async def _on_startup() -> None:
 def health():
     """Verifica se o serviço está operacional."""
     return {"status": "online", "version": app.version}
+
+
+@app.get("/healthz", include_in_schema=False)
+async def healthz():
+    """Health-check utilizado pelo Render."""
+    ok = await asyncio.to_thread(disparos.check_db)
+    if ok:
+        return {"status": "ok"}
+    raise HTTPException(503, "DB unreachable")
 
 
 @app.get("/disparo", include_in_schema=False)
