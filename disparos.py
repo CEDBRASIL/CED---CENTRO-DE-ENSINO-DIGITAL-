@@ -56,8 +56,17 @@ def get_conn(connect_timeout: int = 5):
     )
 
 
-def wait_for_db(max_attempts: int = 5, base_delay: float = 1.0) -> None:
-    """Tenta conectar ao banco até ``max_attempts`` com backoff exponencial."""
+def wait_for_db(max_attempts: int | None = None, base_delay: float = 1.0) -> None:
+    """Tenta conectar ao banco até ``max_attempts`` com backoff exponencial.
+
+    Se ``max_attempts`` não for informado, o valor será lido da variável de
+    ambiente ``DB_MAX_RETRIES`` (padrão 5).
+    """
+    if max_attempts is None:
+        try:
+            max_attempts = int(os.getenv("DB_MAX_RETRIES", "5"))
+        except ValueError:
+            max_attempts = 5
     for attempt in range(1, max_attempts + 1):
         try:
             with get_conn() as conn, conn.cursor() as cur:
