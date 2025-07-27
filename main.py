@@ -31,8 +31,6 @@ import registrar
 import auth
 import disparos
 from app import whatsapp
-from backend.app import models as disparo_models
-from backend.app.worker import worker_loop
 from backend.app.routers import arquivos as arq_r, listas as listas_r, contatos as cont_r, mensagens as msg_r, disparos as disp_r
 
 # ──────────────────────────────────────────────────────────
@@ -85,12 +83,9 @@ app.include_router(disp_r.router)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Preparação inicial do serviço com retries para o banco."""
+    """Preparação inicial do serviço (sem banco de dados)."""
     send_startup_message()
-    await asyncio.to_thread(disparos.wait_for_db)
-    await asyncio.to_thread(disparos.ensure_tables)
-    await disparo_models.init_db()
-    asyncio.create_task(worker_loop())
+    # Banco de dados desativado temporariamente
     yield
 
 app.router.lifespan_context = lifespan
