@@ -1,8 +1,9 @@
 // Exemplo de integração no site (frontend)
 // Envia os dados do aluno para a API e redireciona para o link de pagamento.
+const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
 
 async function gerarLinkPagamento(dadosAluno) {
-  const resposta = await fetch('https://api.cedbrasilia.com.br/asaas/checkout', {
+  const resposta = await fetch(`${API_BASE}/asaas/checkout`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dadosAluno)

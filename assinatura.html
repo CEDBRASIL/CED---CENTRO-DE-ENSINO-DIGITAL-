@@ -217,6 +217,7 @@
     </footer>
 
     <script>
+        const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('currentYear').textContent = new Date().getFullYear();
 
@@ -230,8 +231,8 @@
             const formMessage = document.getElementById('form-message');
             const submitButton = document.getElementById('submitButton');
 
-            const API_CURSOS_URL = 'https://api.cedbrasilia.com.br/cursos';
-            const WEBHOOK_MATRICULAR_URL = 'https://api.cedbrasilia.com.br/matricular';
+            const API_CURSOS_URL = `${API_BASE}/cursos`;
+            const WEBHOOK_MATRICULAR_URL = `${API_BASE}/matricular`;
 
             async function loadCourses() {
                 try {

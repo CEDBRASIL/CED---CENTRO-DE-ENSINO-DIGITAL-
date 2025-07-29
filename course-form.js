@@ -1,3 +1,4 @@
+const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
 const COURSE_PRICES = {
   "Excel PRO": 19.90,
   "Design Gráfico": 19.90,
@@ -45,7 +46,7 @@ function normalizarNumero(num) {
 }
 
 async function gerarLinkPagamento(dadosAluno) {
-  const resposta = await fetch('https://api.cedbrasilia.com.br/asaas/checkout', {
+  const resposta = await fetch(`${API_BASE}/asaas/checkout`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dadosAluno)
@@ -63,7 +64,7 @@ async function gerarLinkPagamento(dadosAluno) {
 
 async function obterIdsCurso(nome) {
   try {
-    const res = await fetch('https://api.cedbrasilia.com.br/cursos');
+    const res = await fetch(`${API_BASE}/cursos`);
     const data = await res.json();
     return (data.cursos && data.cursos[nome]) ? data.cursos[nome] : [];
   } catch (_) {

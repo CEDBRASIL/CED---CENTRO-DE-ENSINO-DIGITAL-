@@ -47,6 +47,7 @@
         </div>
     </div>
     <script>
+        const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
         document.addEventListener('DOMContentLoaded', () => {
             const loginForm = document.getElementById('loginForm');
             const themeCheckbox = document.getElementById('theme-checkbox');
@@ -75,7 +76,7 @@
                 const msg = document.getElementById('loginMsg');
                 msg.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-green-500 text-xl"></i> Redirecionando...';
                 msg.className = 'mt-4 text-center text-gray-300';
-                const url = `https://api.cedbrasilia.com.br/login/?usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`;
+                const url = `${API_BASE}/login/?usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`;
                 window.location.href = url;
             });
         });

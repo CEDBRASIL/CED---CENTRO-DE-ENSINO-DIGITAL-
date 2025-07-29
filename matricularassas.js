@@ -1,6 +1,7 @@
 // Script for matricularassas.html
 
 // Reuses validation and masking logic from assinatura page
+const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
 
 function applyWhatsappMask(value) {
   value = value.replace(/\D/g, "");
@@ -58,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const loadCourses = async () => {
     try {
-      const res = await fetch('https://api.cedbrasilia.com.br/cursos');
+      const res = await fetch(`${API_BASE}/cursos`);
       const data = await res.json();
       const nomes = Object.keys(data.cursos || {});
       nomes.forEach(n => {
@@ -118,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formMessage.className = 'text-center loading-message';
 
     try {
-      const res = await fetch('https://api.cedbrasilia.com.br/matricularasaas', {
+      const res = await fetch(`${API_BASE}/matricularasaas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nome, cpf, phone, cursos })

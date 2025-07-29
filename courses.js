@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
   const courseList = document.getElementById('course-list');
   if (!courseList) return;
 
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
   try {
-    const res = await fetch('https://api.cedbrasilia.com.br/cursos');
+    const res = await fetch(`${API_BASE}/cursos`);
     const data = await res.json();
     const cursos = data.cursos || {};
 
