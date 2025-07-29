@@ -8,12 +8,9 @@ from typing import Iterable, Optional
 import urllib.parse
 import requests
 
-import phonenumbers
 from utils import formatar_numero_whatsapp
 
 from flask import Flask, request, jsonify
-import psycopg2
-from psycopg2.extras import RealDictCursor
 import pandas as pd
 
 app = Flask(__name__)
@@ -25,15 +22,35 @@ WHATSAPP_URL = os.getenv(
 WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
 
 
-def get_conn():
-    return psycopg2.connect(
-        host=os.getenv('PG_HOST'),
-        port=os.getenv('PG_PORT'),
-        dbname=os.getenv('PG_DB'),
-        user=os.getenv('PG_USER'),
-        password=os.getenv('PG_PASS'),
-        sslmode='require'
-    )
+# Arquivos locais para armazenamento
+CONTACTS_FILE = "contatos.json"
+MESSAGES_FILE = "mensagens.json"
+
+
+def load_contacts() -> list[dict]:
+    try:
+        with open(CONTACTS_FILE, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+
+def save_contacts(data: list[dict]) -> None:
+    with open(CONTACTS_FILE, "w") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def load_messages() -> list[dict]:
+    try:
+        with open(MESSAGES_FILE, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+
+def save_messages(data: list[dict]) -> None:
+    with open(MESSAGES_FILE, "w") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def buscar_numeros_do_grupo(nome: str) -> list[str]:
@@ -58,12 +75,8 @@ def grupos():
             return jsonify(resp.json())
     except Exception:
         pass
-    with get_conn() as conn, conn.cursor() as cur:
-        cur.execute(
-            "SELECT DISTINCT TRIM(grupo) AS grupo "
-            "FROM contatos WHERE grupo IS NOT NULL ORDER BY 1"
-        )
-        grupos = [r[0] for r in cur.fetchall()]
+    contatos = load_contacts()
+    grupos = sorted({c.get('grupo') for c in contatos if c.get('grupo')})
     return jsonify({'grupos': grupos})
 
 
@@ -82,33 +95,34 @@ def grupo_detalhe(nome: str):
 def mensagens():
     if request.method == 'POST':
         data = request.get_json()
-        with get_conn() as conn, conn.cursor() as cur:
-            cur.execute(
-                'INSERT INTO mensagens (conteudo, tipo, ativa) VALUES (%s,%s,true) RETURNING id',
-                (data['conteudo'], data.get('tipo', 'texto'))
-            )
-            new_id = cur.fetchone()[0]
-            conn.commit()
+        msgs = load_messages()
+        new_id = max([m.get('id', 0) for m in msgs], default=0) + 1
+        msgs.append({
+            'id': new_id,
+            'conteudo': data['conteudo'],
+            'tipo': data.get('tipo', 'texto'),
+            'ativa': True
+        })
+        save_messages(msgs)
         return jsonify({'id': new_id})
     else:
-        with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute('SELECT * FROM mensagens')
-            msgs = cur.fetchall()
-        return jsonify(msgs)
+        return jsonify(load_messages())
 
 
 @app.route('/mensagens/<int:mid>', methods=['PATCH', 'DELETE'])
 def mensagem_det(mid):
     if request.method == 'PATCH':
         ativa = request.get_json().get('ativa', True)
-        with get_conn() as conn, conn.cursor() as cur:
-            cur.execute('UPDATE mensagens SET ativa=%s WHERE id=%s', (ativa, mid))
-            conn.commit()
+        msgs = load_messages()
+        for m in msgs:
+            if m.get('id') == mid:
+                m['ativa'] = ativa
+                break
+        save_messages(msgs)
         return jsonify({'ok': True})
     else:
-        with get_conn() as conn, conn.cursor() as cur:
-            cur.execute('DELETE FROM mensagens WHERE id=%s', (mid,))
-            conn.commit()
+        msgs = [m for m in load_messages() if m.get('id') != mid]
+        save_messages(msgs)
         return jsonify({'ok': True})
 
 
@@ -125,12 +139,13 @@ def importar():
         numero = str(row.get('numero') or row.get('Numero') or '').strip()
         if not numero:
             continue
-        records.append((row.get('nome'), numero, row.get('grupo')))
-    with get_conn() as conn, conn.cursor() as cur:
-        for r in records:
-            cur.execute('INSERT INTO contatos (nome, numero, grupo) VALUES (%s,%s,%s) ON CONFLICT (numero) DO NOTHING', r)
-        conn.commit()
-    return jsonify({'importados': len(records)})
+        records.append({'nome': row.get('nome'), 'numero': numero, 'grupo': row.get('grupo')})
+    contatos = load_contacts()
+    existentes = {c['numero'] for c in contatos}
+    novos = [r for r in records if r['numero'] not in existentes]
+    contatos.extend(novos)
+    save_contacts(contatos)
+    return jsonify({'importados': len(novos)})
 
 
 # ------------- Log helpers -------------
@@ -201,13 +216,9 @@ async def envio_async(grupos: Iterable[str] | None = None, numeros: Iterable[str
             for n in buscar_numeros_do_grupo(g):
                 contatos.append({'nome': None, 'numero': n, 'grupo': g})
     else:
-        with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute('SELECT nome, numero, grupo FROM contatos')
-            contatos = cur.fetchall()
+        contatos = load_contacts()
     contatos.extend({'nome': None, 'numero': n, 'grupo': None} for n in numeros)
-    with get_conn() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute('SELECT conteudo FROM mensagens WHERE ativa=true')
-        msgs = [r['conteudo'] for r in cur.fetchall()]
+    msgs = [m['conteudo'] for m in load_messages() if m.get('ativa')]
     random.shuffle(contatos)
     log = load_log()
     enviados = {e['numero'] for e in log}

@@ -7,8 +7,5 @@ gspread
 google-auth-oauthlib
 phonenumbers
 python-dateutil
-psycopg2-binary
 pandas
 openpyxl
-SQLAlchemy
-asyncpg
