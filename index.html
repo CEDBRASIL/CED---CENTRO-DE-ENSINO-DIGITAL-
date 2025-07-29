@@ -702,6 +702,7 @@
     <div id="notification-popup"></div>
 
     <script>
+        const API_BASE = window.API_BASE || 'https://api.cedbrasilia.com.br';
 
                 const COURSE_PRICES = {
             "Mestre em Excel": 19.90,
@@ -774,7 +775,7 @@
 
         async function fetchCourses() {
             try {
-                const response = await fetch('https://api.cedbrasilia.com.br/cursos');
+                const response = await fetch(`${API_BASE}/cursos`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -921,7 +922,7 @@
                 loginSubmitButton.classList.add('opacity-50', 'cursor-not-allowed');
                 loginSubmitButton.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Entrando...';
 
-                const url = `https://api.cedbrasilia.com.br/login/?usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`;
+                const url = `${API_BASE}/login/?usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`;
                 window.location.href = url;
             });
 
@@ -1103,7 +1104,7 @@
 
             // **NOVA FUNÇÃO** para criar a assinatura
             async function criarAssinatura(dadosAssinatura) {
-                const resposta = await fetch('https://api.cedbrasilia.com.br/asaas/assinatura', {
+                const resposta = await fetch(`${API_BASE}/asaas/assinatura`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dadosAssinatura)
