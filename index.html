@@ -270,12 +270,6 @@
       /* Garante que a cor do cursor mude com o tema */
     }
 
-    width: 100%;
-    /* Botão de finalizar matrícula em largura total */
-    border-radius: 9999px;
-    /* Totalmente arredondado */
-    }
-
     /* Estilos da notificação */
     #notification-popup {
       position: fixed;
@@ -1128,7 +1122,15 @@
           showSection(id);
           if (mobileMenu) mobileMenu.classList.add('hidden');
         });
-      }); // --- Lógica do Checkout para Assinaturas --- const checkoutModal = document.getElementById('checkout-modal'); const closeCheckout = document.getElementById('close-checkout'); const checkoutForm = document.getElementById('checkoutForm'); const checkoutNome = document.getElementById('checkout-nome'); const checkoutPhone = document.getElementById('checkout-phone'); const checkoutMsg = document.getElementById('checkout-message'); const checkoutSubmitButton = document.getElementById('checkout-submit');
+      });
+      // --- Lógica do Checkout para Assinaturas ---
+      const checkoutModal = document.getElementById('checkout-modal');
+      const closeCheckout = document.getElementById('close-checkout');
+      const checkoutForm = document.getElementById('checkoutForm');
+      const checkoutNome = document.getElementById('checkout-nome');
+      const checkoutPhone = document.getElementById('checkout-phone');
+      const checkoutMsg = document.getElementById('checkout-message');
+      const checkoutSubmitButton = document.getElementById('checkout-submit');
 
       window.openCheckout = function() {
         if (checkoutModal) {
