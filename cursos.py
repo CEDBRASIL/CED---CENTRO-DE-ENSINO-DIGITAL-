@@ -7,7 +7,7 @@ router = APIRouter()
 CURSOS_OM: Dict[str, List[int]] = {
     "Mestre em Excel": [161, 197, 201, 560, 659],
     "Video Creator Profissional": [138, 240, 169, 254],
-    "Design Gráfico Profissional": [301, 302, 303, 304, 305, 306, 307],
+    "Design Gráfico Profissional": [751, 169, 822, 78, 441],
     "Programador Master": [590, 176, 239, 203, 126, 252],
     "Desenvolvedor Web": [126, 239, 252, 237, 822],
     "Games Creator": [139, 124, 146, 473, 167],
