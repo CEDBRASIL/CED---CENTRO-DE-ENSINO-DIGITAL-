@@ -11,7 +11,6 @@
     <link rel="icon" href="favicon.jpg" type="image/jpeg" />
 </head>
 <body class="min-h-screen overflow-x-hidden bg-gradient-to-br from-black via-gray-900 to-gray-950">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1011423466993279" crossorigin="anonymous"></script>
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-[-1]">
         <div class="glow-effect -top-40 -left-40 w-[500px] h-[500px] bg-green-500 rounded-full"></div>
         <div class="glow-effect top-1/2 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-emerald-600 rounded-full"></div>
@@ -26,8 +25,6 @@
                     <input type="checkbox" id="theme-checkbox" />
                     <div class="slider"></div>
                 </label>
-                <span id="userGreeting" class="hidden text-white font-semibold mr-4"></span>
-                <a id="eadButton" href="#" class="header-button font-semibold py-2 px-6 rounded-lg transition-colors hidden">Acessar EAD</a>
             </div>
         </div>
     </header>
@@ -54,8 +51,6 @@
             const loginForm = document.getElementById('loginForm');
             const themeCheckbox = document.getElementById('theme-checkbox');
             const body = document.body;
-            const greetingEl = document.getElementById('userGreeting');
-            const eadButton = document.getElementById('eadButton');
 
             function applyTheme(isLight) {
                 body.classList.toggle('light-theme', isLight);
@@ -65,28 +60,6 @@
             const savedTheme = localStorage.getItem('theme') === 'light';
             applyTheme(savedTheme);
 
-            function updateGreeting(){
-                const info = localStorage.getItem('alunoInfo');
-                if(info){
-                    try{
-                        const aluno = JSON.parse(info);
-                        const nome = aluno.nome || '';
-                        const token = aluno.token || '';
-                        if(greetingEl){
-                            greetingEl.textContent = `Olá, ${nome}`;
-                            greetingEl.classList.remove('hidden');
-                        }
-                        if(eadButton && token){
-                            eadButton.href = `https://ead.cedbrasilia.com.br/index.php?pag=entrar&token=${token}`;
-                            eadButton.classList.remove('hidden');
-                        }
-                    }catch(e){
-                        localStorage.removeItem('alunoInfo');
-                    }
-                }
-            }
-            updateGreeting();
-
             if (themeCheckbox) {
                 themeCheckbox.addEventListener('change', e => {
                     const isChecked = e.currentTarget.checked;
@@ -95,31 +68,15 @@
                 });
             }
 
-            loginForm.addEventListener('submit', async e => {
+            loginForm.addEventListener('submit', e => {
                 e.preventDefault();
                 const usuario = document.getElementById('usuario').value.trim();
                 const senha = document.getElementById('senha').value.trim();
                 const msg = document.getElementById('loginMsg');
-                msg.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-green-500 text-xl"></i> Validando...';
+                msg.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-green-500 text-xl"></i> Redirecionando...';
                 msg.className = 'mt-4 text-center text-gray-300';
-                try {
-                    const resp = await fetch('/login/check', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({usuario, senha})
-                    });
-                    if(!resp.ok) throw new Error();
-                    const data = await resp.json();
-                    localStorage.setItem('alunoInfo', JSON.stringify(data.data));
-                    msg.textContent = 'Login realizado com sucesso!';
-                    msg.classList.add('text-green-500');
-                    updateGreeting();
-                    setTimeout(() => { window.location.href = 'index.html'; }, 800);
-                } catch(err){
-                    msg.textContent = 'Usuário ou senha inválidos';
-                    msg.classList.remove('text-gray-300');
-                    msg.classList.add('text-red-500');
-                }
+                const url = `https://api.cedbrasilia.com.br/login/?usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`;
+                window.location.href = url;
             });
         });
     </script>

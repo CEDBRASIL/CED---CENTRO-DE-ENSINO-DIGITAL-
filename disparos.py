@@ -12,8 +12,6 @@ import phonenumbers
 import pandas as pd
 import psycopg2
 from psycopg2.extras import RealDictCursor
-import logging
-import time
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 
@@ -28,56 +26,15 @@ WHATSAPP_URL = os.getenv(
 WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
 
 
-def get_conn(connect_timeout: int = 5):
-    """Abre conexão usando ``DATABASE_URL`` ou variáveis separadas."""
-    db_url = os.getenv("DATABASE_URL")
-    conn_kwargs = dict(
-        connect_timeout=connect_timeout,
-        keepalives=1,
-        keepalives_idle=30,
-        keepalives_interval=10,
-        keepalives_count=5,
-        options="-c statement_timeout=60000 -c idle_in_transaction_session_timeout=30000",
-    )
-    if db_url:
-        if "sslmode" not in db_url:
-            sep = "&" if "?" in db_url else "?"
-            db_url += f"{sep}sslmode=require"
-        return psycopg2.connect(db_url, **conn_kwargs)
+def get_conn():
     return psycopg2.connect(
-        host=os.getenv("DB_HOST", os.getenv("PG_HOST")),
-        port=os.getenv("DB_PORT", os.getenv("PG_PORT", "5432")),
-        dbname=os.getenv("DB_NAME", os.getenv("PG_DB")),
-        user=os.getenv("DB_USER", os.getenv("PG_USER")),
-        password=os.getenv("DB_PASSWORD", os.getenv("PG_PASS")),
-        sslmode="require",
-        sslrootcert=os.getenv("PG_SSLROOTCERT", "/etc/ssl/certs/ca-certificates.crt"),
-        **conn_kwargs,
+        host=os.getenv('PG_HOST'),
+        port=os.getenv('PG_PORT'),
+        dbname=os.getenv('PG_DB'),
+        user=os.getenv('PG_USER'),
+        password=os.getenv('PG_PASS'),
+        sslmode='require',
     )
-
-
-def wait_for_db(max_attempts: int | None = None, base_delay: float = 1.0) -> None:
-    """Tenta conectar ao banco até ``max_attempts`` com backoff exponencial.
-
-    Se ``max_attempts`` não for informado, o valor será lido da variável de
-    ambiente ``DB_MAX_RETRIES`` (padrão 5).
-    """
-    if max_attempts is None:
-        try:
-            max_attempts = int(os.getenv("DB_MAX_RETRIES", "5"))
-        except ValueError:
-            max_attempts = 5
-    for attempt in range(1, max_attempts + 1):
-        try:
-            with get_conn() as conn, conn.cursor() as cur:
-                cur.execute("SELECT 1")
-                cur.fetchone()
-            return
-        except Exception as exc:  # pragma: no cover - log and retry
-            logging.warning("DB connection failed (%s/%s): %s", attempt, max_attempts, exc)
-            if attempt == max_attempts:
-                raise
-            time.sleep(base_delay * 2 ** (attempt - 1))
 
 
 # ─────────────────────────────────────────────────────────────
@@ -85,46 +42,32 @@ def wait_for_db(max_attempts: int | None = None, base_delay: float = 1.0) -> Non
 # ─────────────────────────────────────────────────────────────
 def ensure_tables() -> None:
     """Cria as tabelas necessárias caso não existam."""
-    try:
-        with get_conn() as conn, conn.cursor() as cur:
-            cur.execute(
-                """
-                CREATE TABLE IF NOT EXISTS contatos (
-                    id SERIAL PRIMARY KEY,
-                    nome TEXT,
-                    numero TEXT UNIQUE,
-                    grupo TEXT
-                )
-                """
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS contatos (
+                id SERIAL PRIMARY KEY,
+                nome TEXT,
+                numero TEXT UNIQUE,
+                grupo TEXT
             )
-            cur.execute(
-                """
-                CREATE TABLE IF NOT EXISTS mensagens (
-                    id SERIAL PRIMARY KEY,
-                    conteudo TEXT NOT NULL,
-                    tipo TEXT DEFAULT 'texto',
-                    ativa BOOLEAN DEFAULT TRUE
-                )
-                """
+            """
+        )
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS mensagens (
+                id SERIAL PRIMARY KEY,
+                conteudo TEXT NOT NULL,
+                tipo TEXT DEFAULT 'texto',
+                ativa BOOLEAN DEFAULT TRUE
             )
-            conn.commit()
-    except Exception as exc:  # pragma: no cover - log
-        logging.error("Erro ao criar tabelas: %s", exc)
+            """
+        )
+        conn.commit()
 
 
-def check_db() -> bool:
-    """Executa SELECT 1 para verificar a conexão com o banco."""
-    try:
-        with get_conn(connect_timeout=2) as conn, conn.cursor() as cur:
-            cur.execute("SELECT 1")
-            cur.fetchone()
-        return True
-    except Exception:
-        return False
-
-
-
-# As tabelas são criadas no evento de startup em main.py
+# Garante que as tabelas sejam criadas quando o módulo é importado
+ensure_tables()
 
 
 def buscar_numeros_do_grupo(nome: str) -> list[str]:

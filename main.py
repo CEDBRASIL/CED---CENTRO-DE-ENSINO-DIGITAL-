@@ -3,10 +3,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from contextlib import asynccontextmanager
 import requests
 import re
-import asyncio
 
 from log_config import setup_logging, send_startup_message
 
@@ -25,12 +23,17 @@ import matricular
 import alunos
 import deletar
 import kiwify
+import asaas
+import assinantes
+import msgasaas
+import cobrancas
 import bloquear
 import login
-import registrar
 import auth
 import disparos
 from app import whatsapp
+from backend.app import models as disparo_models
+from backend.app.worker import worker_loop
 from backend.app.routers import arquivos as arq_r, listas as listas_r, contatos as cont_r, mensagens as msg_r, disparos as disp_r
 
 # ──────────────────────────────────────────────────────────
@@ -67,10 +70,13 @@ app.include_router(secure.router, tags=["Autenticação"])
 app.include_router(matricular.router, prefix="/matricular", tags=["Matrícula"])
 app.include_router(alunos.router, prefix="/alunos", tags=["Alunos"])
 app.include_router(kiwify.router, prefix="/kiwify", tags=["Kiwify"])
+app.include_router(asaas.router, tags=["Matrícula Assas"])
+app.include_router(assinantes.router)
+app.include_router(msgasaas.router)
+app.include_router(cobrancas.router)
 app.include_router(deletar.router, tags=["Excluir Aluno"])
 app.include_router(bloquear.router, tags=["Bloqueio"])
 app.include_router(login.router, prefix="/login", tags=["Login"])
-app.include_router(registrar.router, tags=["Cadastro"])
 app.include_router(auth.router)
 app.include_router(whatsapp.router)
 app.include_router(disparos.router)
@@ -80,15 +86,13 @@ app.include_router(cont_r.router)
 app.include_router(msg_r.router)
 app.include_router(disp_r.router)
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Preparação inicial do serviço (sem banco de dados)."""
+@app.on_event("startup")
+async def _on_startup() -> None:
+    """Dispara aviso de inicialização e prepara módulo de disparos."""
     send_startup_message()
-    # Banco de dados desativado temporariamente
-    yield
-
-app.router.lifespan_context = lifespan
+    await disparo_models.init_db()
+    import asyncio
+    asyncio.create_task(worker_loop())
 
 
 # ──────────────────────────────────────────────────────────
@@ -98,15 +102,6 @@ app.router.lifespan_context = lifespan
 def health():
     """Verifica se o serviço está operacional."""
     return {"status": "online", "version": app.version}
-
-
-@app.get("/healthz", include_in_schema=False)
-async def healthz():
-    """Health-check utilizado pelo Render."""
-    ok = await asyncio.to_thread(disparos.check_db)
-    if ok:
-        return {"status": "ok"}
-    raise HTTPException(503, "DB unreachable")
 
 
 @app.get("/disparo", include_in_schema=False)

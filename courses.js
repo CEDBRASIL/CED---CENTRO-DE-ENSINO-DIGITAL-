@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const addBtn = card.querySelector('.enroll');
       const detailsBtn = card.querySelector('.details');
       addBtn.addEventListener('click', () => {
-        window.location.href = `assinatura.html?curso=${encodeURIComponent(name)}`;
+        window.location.href = `matricularasaas.html?curso=${encodeURIComponent(name)}`;
       });
       if (detailsBtn) {
         detailsBtn.addEventListener('click', () => {

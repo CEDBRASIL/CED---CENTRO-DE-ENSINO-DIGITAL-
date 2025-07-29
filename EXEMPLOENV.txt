@@ -1,8 +1,0 @@
-ASAAS_TOKEN=token do banco asaas
-BASIC_B64=token do EAD em base 64
-LOGIN=login para acessar o sistema
-OM_BASE=https://meuappdecursos.com.br/ws/v2
-SENHA=senha para acessar o sistema
-TOKEN_KEY=token bruta do API EAD
-UNIDADE_ID=token da unidade escolar
-DB_MAX_RETRIES=5

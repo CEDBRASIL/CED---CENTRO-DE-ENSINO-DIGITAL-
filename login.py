@@ -51,21 +51,3 @@ def login_get(usuario: str, senha: str):
     """Recebe usuário e senha por GET e redireciona para o EAD."""
     redirect_url = _gera_url_redirecionamento(usuario, senha)
     return RedirectResponse(url=redirect_url, status_code=302)
-
-@router.post("/check", summary="Valida login do aluno e retorna informações")
-def login_check(dados: LoginData):
-    if not OM_BASE or not BASIC_B64:
-        raise HTTPException(500, detail="Variáveis de ambiente OM não configuradas.")
-    url = f"{OM_BASE}/alunos/token"
-    headers = {"Authorization": f"Basic {BASIC_B64}"}
-    payload = {"usuario": dados.usuario, "senha": dados.senha}
-    try:
-        r = requests.post(url, headers=headers, data=payload, timeout=8)
-    except requests.RequestException as e:
-        raise HTTPException(500, detail=f"Erro de conexão: {e}")
-
-    if r.ok:
-        resp = r.json()
-        if resp.get("status") == "true":
-            return {"ok": True, "data": resp.get("data")}
-    raise HTTPException(401, detail="Usuário ou senha inválidos.")

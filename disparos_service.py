@@ -27,13 +27,12 @@ WP_API = os.getenv("WP_API", "https://whatsapptest-stij.onrender.com")
 
 def get_conn():
     return psycopg2.connect(
-        host=os.getenv("PG_HOST"),
-        port=os.getenv("PG_PORT"),
-        dbname=os.getenv("PG_DB"),
-        user=os.getenv("PG_USER"),
-        password=os.getenv("PG_PASS"),
-        sslmode="require",
-        sslrootcert=os.getenv("PG_SSLROOTCERT", "/etc/ssl/certs/ca-certificates.crt"),
+        host=os.getenv('PG_HOST'),
+        port=os.getenv('PG_PORT'),
+        dbname=os.getenv('PG_DB'),
+        user=os.getenv('PG_USER'),
+        password=os.getenv('PG_PASS'),
+        sslmode='require'
     )
 
 
